@@ -16,7 +16,7 @@
 <title>Chalk Log</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap">
 <style>
 /* Layout: calm travel-app feel — white canvas, generous whitespace, hairline borders, soft lifted shadows on interactive cards, one coral accent; the day form reads like a booking card, the calendar like a date picker. */
 :root{
@@ -26,7 +26,8 @@
   --p-red:#E5484D; --p-blue:#3E7BFA; --p-green:#2A9D6E; --p-yellow:#D99A06; --p-teal:#0F9AA8; --p-orange:#EE7A2A; --p-purple:#8257E6; --p-grey:#8A8A8A;
   --ok:#008A05; --danger:#C13515;
   --f:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
-  --r:12px;
+  --f-d:"Jua","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --r:20px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#121212; --surface:#1C1C1C; --soft:#242424; --ink:#F2F2F2; --ink-2:#D0D0D0; --muted:#A3A3A3; --line:#3A3A3A; --hair:#2C2C2C;
@@ -166,8 +167,7 @@ form.day{background:var(--surface);border:1px solid var(--line);border-radius:va
 .recent .when{font-size:14px;font-weight:600}
 .recent .what{display:flex;flex-direction:column;gap:2px;min-width:0}
 .recent .tags{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:14px}
-.recent .tags span{display:inline-flex;align-items:center;gap:6px}
-.recent .tags span::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c)}
+.recent .tags span{display:inline-flex;align-items:center;gap:4px}
 .recent .note{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .recent .chev{color:var(--muted)}
 .empty{color:var(--muted);font-size:14px;padding:16px 0 4px}
@@ -278,6 +278,51 @@ input[type=date]::-webkit-calendar-picker-indicator{margin-left:auto;opacity:.6}
 .confetti i{position:absolute;top:-16px;width:8px;height:12px;border-radius:2px;background:var(--c);animation:fall var(--dur) cubic-bezier(.2,.6,.4,1) forwards}
 @keyframes fall{to{transform:translate(var(--dx),105vh) rotate(var(--rot));opacity:.9}}
 @media (prefers-reduced-motion:no-preference){.chip,.cell .d,.btn,.tabs a{transition:background-color .15s,border-color .15s,box-shadow .15s,transform .1s}}
+
+/* ---------- cute layer: rounded display face, mascot, emoji, pastel tints ---------- */
+.brand b,.sec-title,.pr-head h1,.day-head h2,.cal-head h2,.group h3,.blk-title,.bk-sec h3,.dlg .t h2,.dlg-bar .bt,.recent-pr .sec-title{font-family:var(--f-d);font-weight:400;letter-spacing:0}
+.brand svg{width:36px;height:36px}
+.brand b{font-size:24px}
+.brand small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.tabs a[aria-current="page"]{font-family:var(--f-d);font-weight:400;font-size:16px}
+.stat .v,.lift .w,.big,.recent-pr .rw,.hist .hw,.pct div b,.bar .n{font-family:var(--f-d);font-weight:400;letter-spacing:0}
+.stats{border:0;gap:12px}
+.stat{--c:var(--p-purple);position:relative;border-radius:18px;background:color-mix(in srgb,var(--c) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 22%,var(--hair))!important}
+.stat .ic{position:absolute;top:14px;right:16px;font-size:20px}
+.stat .v{font-size:34px}
+@media (max-width:680px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{border-top:1px solid color-mix(in srgb,var(--c) 22%,var(--hair))!important}}
+form.day{border-radius:24px}
+.box{border-radius:16px}
+.box .cell-f:focus-within{border-radius:16px}
+.chip{padding:7px 14px 7px 10px;gap:6px}
+.chip::before{display:none}
+.chip .em{font-size:16px;line-height:1}
+.chip[aria-pressed="true"]{border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c);background:color-mix(in srgb,var(--c) 14%,var(--surface))}
+@media (prefers-reduced-motion:no-preference){.chip[aria-pressed="true"]{animation:pop .22s ease-out}@keyframes pop{50%{transform:scale(1.07)}}}
+.btn{border-radius:999px}
+.btn.primary{box-shadow:0 4px 0 color-mix(in srgb,var(--accent-2) 70%,#000 30%)}
+.btn.primary:active{transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--accent-2) 70%,#000 30%)}
+.inline-add input{border-radius:999px;padding-inline:16px}
+.cell{height:62px}
+.cell.has .d{background:color-mix(in srgb,var(--c) 16%,var(--surface))}
+.cell.sel .d{background:var(--ink)}
+.ems{font-size:13px;line-height:1;height:14px;display:flex;gap:1px;align-items:center}
+.ems em{font-style:normal;font-size:10px;color:var(--muted);margin-left:1px}
+.legend span{gap:4px}
+.lift{border-radius:20px}
+.lift .w{font-size:38px}
+.lift .w.none{font-family:var(--f)}
+.recent-pr{border-radius:20px}
+.pct div{border-radius:14px}
+.pct div.hi{border-color:var(--accent);background:var(--accent-soft)}
+dialog{border-radius:24px}
+.best-box{background:var(--accent-soft);border-radius:20px;padding:20px;border-bottom:0}
+.big{font-size:56px}
+.seg{background:var(--surface)}
+.pr-badge{border-radius:999px;background:var(--accent);color:var(--on-accent);border:0;padding:1px 8px}
+.toast{border-radius:999px}
+.mascot-empty{display:flex;align-items:center;gap:10px}
+.mascot-empty svg{width:34px;height:34px;flex:none}
 </style>
 <style>
 /* base reset that the artifact host used to provide */
@@ -292,13 +337,18 @@ html{-webkit-text-size-adjust:100%}
 <header class="top">
   <div class="wrap">
     <div class="brand">
-      <svg viewBox="0 0 32 32" aria-hidden="true">
-        <rect x="1" y="1" width="30" height="30" rx="9" fill="currentColor"/>
-        <rect x="6" y="10" width="4" height="12" rx="2" fill="#fff"/>
-        <rect x="22" y="10" width="4" height="12" rx="2" fill="#fff"/>
-        <rect x="10" y="14.5" width="12" height="3" rx="1.5" fill="#fff"/>
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <rect x="2" y="13" width="9" height="22" rx="4.5" fill="var(--p-purple)"/>
+        <rect x="37" y="13" width="9" height="22" rx="4.5" fill="var(--p-purple)"/>
+        <rect x="9" y="21" width="30" height="6" rx="3" fill="var(--muted)"/>
+        <circle cx="24" cy="24" r="12" fill="var(--accent)"/>
+        <circle cx="19.8" cy="22.5" r="1.8" fill="#fff"/>
+        <circle cx="28.2" cy="22.5" r="1.8" fill="#fff"/>
+        <path d="M20.5 27.2q3.5 3 7 0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <circle cx="16.6" cy="26.6" r="1.6" fill="#FFC2CF" opacity=".9"/>
+        <circle cx="31.4" cy="26.6" r="1.6" fill="#FFC2CF" opacity=".9"/>
       </svg>
-      <b>chalk log</b>
+      <div><b>chalk log</b><small>오늘도 득근했나요?</small></div>
     </div>
     <nav class="tabs" aria-label="화면">
       <a href="#log" id="tab-log">운동 일지</a>
@@ -383,7 +433,7 @@ html{-webkit-text-size-adjust:100%}
     <section class="view" id="view-pr" hidden>
       <div class="pr-head">
         <div class="t">
-          <h1>PR 보드</h1>
+          <h1>PR 보드 🏆</h1>
           <div class="sub">동작별 1RM과 기록 추이</div>
         </div>
         <div class="seg" role="group" aria-label="단위">
@@ -397,7 +447,7 @@ html{-webkit-text-size-adjust:100%}
         <button type="submit" class="btn sm">추가</button>
       </form>
       <div class="recent-pr" id="recentPr" hidden>
-        <h2 class="sec-title" style="font-size:18px">최근 PR</h2>
+        <h2 class="sec-title" style="font-size:19px">최근에 깬 PR 🎉</h2>
         <ul id="recentPrList"></ul>
       </div>
       <div id="groups" style="display:flex;flex-direction:column;gap:36px"></div>
@@ -512,14 +562,14 @@ function lsSet(k,v){ try { localStorage.setItem(k,v); return true; } catch(e){ r
 /* ---------- reference data ---------- */
 const COLORS = ['red','blue','green','yellow','teal','orange','purple','grey'];
 const PRESET_TYPES = [
-  {id:'crossfit', name:'크로스핏', c:'red'},
-  {id:'running',  name:'러닝',    c:'blue'},
-  {id:'hiking',   name:'등산',    c:'green'},
-  {id:'weight',   name:'웨이트',  c:'yellow'},
-  {id:'swim',     name:'수영',    c:'teal'},
-  {id:'cycle',    name:'사이클',  c:'orange'},
-  {id:'yoga',     name:'요가',    c:'purple'},
-  {id:'walk',     name:'걷기',    c:'grey'},
+  {id:'crossfit', name:'크로스핏', c:'red',    em:'🏋️'},
+  {id:'running',  name:'러닝',    c:'blue',   em:'🏃'},
+  {id:'hiking',   name:'등산',    c:'green',  em:'⛰️'},
+  {id:'weight',   name:'웨이트',  c:'yellow', em:'💪'},
+  {id:'swim',     name:'수영',    c:'teal',   em:'🏊'},
+  {id:'cycle',    name:'사이클',  c:'orange', em:'🚴'},
+  {id:'yoga',     name:'요가',    c:'purple', em:'🧘'},
+  {id:'walk',     name:'걷기',    c:'grey',   em:'🚶'},
 ];
 const LIFT_GROUPS = [
   ['스쿼트', [['back-squat','백 스쿼트','Back Squat'],['front-squat','프론트 스쿼트','Front Squat'],['overhead-squat','오버헤드 스쿼트','Overhead Squat']]],
@@ -540,11 +590,12 @@ const S = {
 let backend = null;
 
 function allTypes(){
-  const custom = (S.settings.customTypes || []).map((t,i) => ({id:t.id, name:t.name, c:COLORS[(i+4) % COLORS.length], custom:true}));
+  const custom = (S.settings.customTypes || []).map((t,i) => ({id:t.id, name:t.name, c:COLORS[(i+4) % COLORS.length], em:'✨', custom:true}));
   return PRESET_TYPES.concat(custom);
 }
-function typeOf(id){ return allTypes().find(t => t.id === id) || {id, name:id, c:'grey'}; }
+function typeOf(id){ return allTypes().find(t => t.id === id) || {id, name:id, c:'grey', em:'✨'}; }
 const cvar = c => `--c:var(--p-${c})`;
+const MASCOT = '<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="2" y="13" width="9" height="22" rx="4.5" fill="var(--p-purple)"/><rect x="37" y="13" width="9" height="22" rx="4.5" fill="var(--p-purple)"/><rect x="9" y="21" width="30" height="6" rx="3" fill="var(--muted)"/><circle cx="24" cy="24" r="12" fill="var(--accent)"/><circle cx="19.8" cy="22.5" r="1.8" fill="#fff"/><circle cx="28.2" cy="22.5" r="1.8" fill="#fff"/><path d="M20.5 27.2q3.5 3 7 0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>';
 
 function liftList(){
   const groups = LIFT_GROUPS.map(([g, items]) => ({g, items: items.map(([id,name,en]) => ({id, name, en, custom:false, history:(S.lifts[id] && S.lifts[id].history) || []}))}));
@@ -657,11 +708,11 @@ function renderStats(){
   const minutes = days.filter(d => d.startsWith(key)).reduce((a,d) => a + (Number(S.workouts[d].minutes) || 0), 0);
   const hrs = Math.round(minutes / 6) / 10;
   $('#stats').innerHTML = [
-    [monthDays, '일', `${m.getMonth()+1}월 운동한 날`],
-    [week, '회', '이번 주 (월–일)'],
-    [streak(), '일', '연속 운동'],
-    [hrs, '시간', `${m.getMonth()+1}월 운동 시간`],
-  ].map(([v,u,l]) => `<div class="stat"><div class="v">${v}<small>${u}</small></div><div class="l">${l}</div></div>`).join('');
+    ['purple','📅', monthDays, '일', `${m.getMonth()+1}월에 운동한 날`],
+    ['blue','💦', week, '회', '이번 주 (월–일)'],
+    ['orange','🔥', streak(), '일', '연속 운동 중'],
+    ['green','⏱️', hrs, '시간', `${m.getMonth()+1}월 운동 시간`],
+  ].map(([c,ic,v,u,l]) => `<div class="stat" style="${cvar(c)}"><span class="ic" aria-hidden="true">${ic}</span><div class="v">${v}<small>${u}</small></div><div class="l">${l}</div></div>`).join('');
 }
 
 /* ---------- log: form ---------- */
@@ -680,7 +731,7 @@ function loadForm(){
 function renderFormMeta(){
   const w = S.workouts[S.sel];
   $('#dayTitle').textContent = fmtDay(S.sel);
-  $('#daySub').textContent = S.sel === todayStr() ? '오늘 어떤 운동을 했나요?' : (w ? '이 날의 기록이에요' : '이 날 어떤 운동을 했나요?');
+  $('#daySub').textContent = S.sel === todayStr() ? (w ? '오늘도 수고했어요 👏' : '오늘은 무슨 운동 했어요?') : (w ? '이 날의 기록이에요' : '이 날 어떤 운동을 했나요?');
   $('#savedPill').hidden = !w;
   $('#dayDel').hidden = !w;
   $('#daySave').textContent = w ? '기록 수정' : '기록 저장';
@@ -688,8 +739,8 @@ function renderFormMeta(){
 }
 function renderChips(){
   const types = allTypes();
-  const html = types.map(t => `<button type="button" class="chip" style="${cvar(t.c)}" data-type="${esc(t.id)}" aria-pressed="${S.formTypes.has(t.id)}">${esc(t.name)}</button>`).join('')
-    + [...S.formTypes].filter(id => !types.some(t => t.id === id)).map(id => `<button type="button" class="chip" style="${cvar('grey')}" data-type="${esc(id)}" aria-pressed="true">${esc(id)}</button>`).join('')
+  const html = types.map(t => `<button type="button" class="chip" style="${cvar(t.c)}" data-type="${esc(t.id)}" aria-pressed="${S.formTypes.has(t.id)}"><span class="em" aria-hidden="true">${t.em}</span>${esc(t.name)}</button>`).join('')
+    + [...S.formTypes].filter(id => !types.some(t => t.id === id)).map(id => `<button type="button" class="chip" style="${cvar('grey')}" data-type="${esc(id)}" aria-pressed="true"><span class="em" aria-hidden="true">✨</span>${esc(id)}</button>`).join('')
     + `<button type="button" class="chip add" id="typeAddBtn">+ 종목 추가</button>`;
   $('#typeChips').innerHTML = html;
 }
@@ -737,7 +788,7 @@ $('#dayForm').addEventListener('submit', async e => {
   const data = {date:S.sel, types:[...S.formTypes], minutes:min, feel, note:$('#dayNote').value.trim(), updatedAt:Date.now()};
   const date = S.sel;
   const isNew = !S.workouts[date];
-  try { await backend.saveWorkout(date, data); S.formDirty = false; toast(isNew ? `${fmtDay(date)} 기록을 저장했어요` : `${fmtDay(date)} 기록을 수정했어요`); renderFormMeta(); }
+  try { await backend.saveWorkout(date, data); S.formDirty = false; toast(isNew ? `${fmtDay(date)} 기록 완료! 수고했어요 👏` : `${fmtDay(date)} 기록을 고쳤어요`); renderFormMeta(); }
   catch(err){ $('#dayErr').textContent = writeErr(err); }
 });
 
@@ -766,15 +817,16 @@ function renderCal(){
     const ds = `${y}-${pad(mo+1)}-${pad(d)}`;
     const w = S.workouts[ds];
     const types = (w && w.types) || [];
-    const dots = types.slice(0,3).map(id => `<i style="${cvar(typeOf(id).c)}"></i>`).join('');
+    const ems = types.slice(0,2).map(id => `<span>${typeOf(id).em}</span>`).join('') + (types.length > 2 ? `<em>+${types.length-2}</em>` : '');
     const label = `${mo+1}월 ${d}일` + (types.length ? ': ' + types.map(id => typeOf(id).name).join(', ') : '');
-    html += `<button type="button" class="cell${w ? ' has' : ''}${ds === today ? ' today' : ''}${ds === S.sel ? ' sel' : ''}" data-date="${ds}" aria-label="${esc(label)}"${ds === S.sel ? ' aria-current="date"' : ''}><span class="d">${d}</span><span class="dots" aria-hidden="true">${dots}</span></button>`;
+    const tint = types.length ? ` style="${cvar(typeOf(types[0]).c)}"` : '';
+    html += `<button type="button" class="cell${w ? ' has' : ''}${ds === today ? ' today' : ''}${ds === S.sel ? ' sel' : ''}"${tint} data-date="${ds}" aria-label="${esc(label)}"${ds === S.sel ? ' aria-current="date"' : ''}><span class="d">${d}</span><span class="ems" aria-hidden="true">${ems}</span></button>`;
   }
   $('#cal').innerHTML = html;
   const used = new Set();
   Object.keys(S.workouts).forEach(k => (S.workouts[k].types || []).forEach(t => used.add(t)));
   const lt = allTypes().filter(t => used.has(t.id));
-  $('#legend').innerHTML = (lt.length ? lt : allTypes().slice(0,4)).map(t => `<span><i style="${cvar(t.c)}"></i>${esc(t.name)}</span>`).join('');
+  $('#legend').innerHTML = (lt.length ? lt : allTypes().slice(0,4)).map(t => `<span>${t.em} ${esc(t.name)}</span>`).join('');
 }
 $('#cal').addEventListener('click', e => { const b = e.target.closest('[data-date]'); if (b) select(b.dataset.date, true); });
 $('#calPrev').addEventListener('click', () => { S.month = new Date(S.month.getFullYear(), S.month.getMonth()-1, 1); renderCal(); renderStats(); renderBars(); });
@@ -790,14 +842,14 @@ function renderBars(){
   const rows = Object.entries(counts).sort((a,b) => b[1] - a[1]);
   if (!rows.length){ $('#bars').innerHTML = `<div class="empty">${m.getMonth()+1}월에는 아직 기록이 없어요.</div>`; return; }
   const max = rows[0][1];
-  $('#bars').innerHTML = rows.map(([id,n]) => { const t = typeOf(id); return `<div class="bar" style="${cvar(t.c)}"><span>${esc(t.name)}</span><div class="track"><div class="fill" style="width:${Math.max(4, n/max*100)}%"></div></div><span class="n">${n}</span></div>`; }).join('');
+  $('#bars').innerHTML = rows.map(([id,n]) => { const t = typeOf(id); return `<div class="bar" style="${cvar(t.c)}"><span>${t.em} ${esc(t.name)}</span><div class="track"><div class="fill" style="width:${Math.max(4, n/max*100)}%"></div></div><span class="n">${n}</span></div>`; }).join('');
 }
 function renderRecent(){
   const days = Object.keys(S.workouts).sort().reverse().slice(0, 8);
-  if (!days.length){ $('#recent').innerHTML = `<li class="empty">아직 기록이 없어요. 오늘 한 운동을 골라 저장해 보세요.</li>`; return; }
+  if (!days.length){ $('#recent').innerHTML = `<li class="empty mascot-empty">${MASCOT}<span>아직 기록이 없어요. 오늘 한 운동을 골라 저장해 보세요!</span></li>`; return; }
   $('#recent').innerHTML = days.map(d => {
     const w = S.workouts[d];
-    const tags = (w.types || []).map(id => { const t = typeOf(id); return `<span style="${cvar(t.c)}">${esc(t.name)}</span>`; }).join('');
+    const tags = (w.types || []).map(id => { const t = typeOf(id); return `<span class="te">${t.em} ${esc(t.name)}</span>`; }).join('');
     const extra = [w.minutes ? `${w.minutes}분` : '', w.feel ? `컨디션 ${w.feel}/5` : '', w.note || ''].filter(Boolean).join(' · ');
     return `<li><button type="button" data-date="${d}"><span class="when">${fmtDay(d)}</span><span class="what"><span class="tags">${tags}</span>${extra ? `<span class="note">${esc(extra)}</span>` : ''}</span><span class="chev" aria-hidden="true">›</span></button></li>`;
   }).join('');
@@ -811,7 +863,7 @@ function renderPR(){
   const u = S.unit;
   $('#groups').innerHTML = liftList().map(g => `<div class="group"><h3>${esc(g.g)}</h3><div class="lifts">${g.items.map(it => {
     const b = bestOf(it.history); const dl = deltaOf(it.history);
-    const w = b ? `<div class="w">${fmtW(b.kg)}<small>${u}</small></div>` : `<div class="w none">+ 첫 기록 추가</div>`;
+    const w = b ? `<div class="w">${fmtW(b.kg)}<small>${u}</small></div>` : `<div class="w none">눌러서 첫 기록하기 ✏️</div>`;
     const meta = b ? `<div class="meta"><span>${fmtDot(b.date)}</span>${dl > 0 ? `<span class="up">+${fmtW(dl)}${u}</span>` : ''}</div>` : `<div class="meta">기록 없음</div>`;
     return `<button type="button" class="lift" data-lift="${esc(it.id)}"><div class="nm"><b>${esc(it.name)}</b><span>${esc(it.en)}</span></div>${w}${sparkline(it.history)}${meta}</button>`;
   }).join('')}</div></div>`).join('');
@@ -847,7 +899,7 @@ function drawTrend(it){
   const box = $('#trend');
   const h = it.history;
   $('#trendKey').hidden = h.length < 2;
-  if (h.length < 2){ box.innerHTML = `<div class="empty" style="padding-top:0">기록이 2개 이상 쌓이면 추이 그래프가 그려져요.</div>`; return; }
+  if (h.length < 2){ box.innerHTML = `<div class="empty mascot-empty" style="padding-top:0">${MASCOT}<span>기록이 2개 이상 쌓이면 추이 그래프가 그려져요 📈</span></div>`; return; }
   const c = chronPR(h).map(e => ({...e, v: toUnit(e.kg), bv: toUnit(e.best), t: parse(e.date).getTime()}));
   const W = Math.max(280, Math.round(box.clientWidth || 480)), H = 210;
   const m = {l:38, r:64, t:16, b:28};
@@ -970,7 +1022,7 @@ $('#dlgForm').addEventListener('submit', async e => {
   try {
     await backend.saveLift(it.id, liftDoc(it, history));
     $('#dlgW').value = ''; $('#dlgErr').textContent = '';
-    if (prev && kg > prev.kg){ confetti(); toast(`새 PR! ${it.name} ${fmtW(kg)}${S.unit}`); }
+    if (prev && kg > prev.kg){ confetti(); toast(`🎉 새 PR! ${it.name} ${fmtW(kg)}${S.unit}`); }
     else toast(!prev ? `${it.name} 첫 기록 ${fmtW(kg)}${S.unit}을 저장했어요` : `${it.name} ${fmtW(kg)}${S.unit} 기록을 추가했어요`);
   } catch(err){ $('#dlgErr').textContent = writeErr(err); }
 });
