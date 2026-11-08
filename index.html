@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#F5F2FF" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1B1726" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
 <meta name="description" content="운동 일지와 크로스핏 PR 기록장">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -16,240 +16,268 @@
 <title>Chalk Log</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap">
 <style>
-/* Layout: playful sticker-book tracker — pastel lavender ground, chunky rounded cards with a hard drop "sticker" shadow, bubblegum-pink accent; exercise types wear emoji + a pastel color. */
+/* Layout: calm travel-app feel — white canvas, generous whitespace, hairline borders, soft lifted shadows on interactive cards, one coral accent; the day form reads like a booking card, the calendar like a date picker. */
 :root{
-  --bg:#F5F2FF; --surface:#FFFFFF; --surface-2:#F3EFFC; --ink:#2B2540; --muted:#7A7391; --line:#E4DDF4; --shadow:#DDD4F2;
-  --accent:#FF5C8A; --accent-deep:#D93B6B; --accent-soft:#FFE1EA; --accent-ink:#FFFFFF; --focus:#7B5CFF;
-  --p-red:#FF6B6B; --p-blue:#4D94FF; --p-yellow:#F5B521; --p-green:#2FBF7F; --p-teal:#1FB8C1; --p-orange:#FF9233; --p-purple:#9B6BFF; --p-grey:#9A94AE;
-  --ok:#1E9E66; --danger:#E0384F;
-  --f-display:"Jua","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
-  --f-body:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
-  --r:22px;
+  --bg:#FFFFFF; --surface:#FFFFFF; --soft:#F7F7F7; --ink:#222222; --ink-2:#484848; --muted:#6A6A6A; --line:#DDDDDD; --hair:#EBEBEB;
+  --accent:#F0435E; --accent-2:#D9285A; --accent-soft:#FFF0F2; --on-accent:#FFFFFF; --focus:#222222;
+  --shadow:0 6px 16px rgba(0,0,0,.12); --shadow-sm:0 1px 2px rgba(0,0,0,.08);
+  --p-red:#E5484D; --p-blue:#3E7BFA; --p-green:#2A9D6E; --p-yellow:#D99A06; --p-teal:#0F9AA8; --p-orange:#EE7A2A; --p-purple:#8257E6; --p-grey:#8A8A8A;
+  --ok:#008A05; --danger:#C13515;
+  --f:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --r:12px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#1B1726; --surface:#262036; --surface-2:#2F2843; --ink:#F4F0FF; --muted:#ABA3C6; --line:#3A3252; --shadow:#120F1C;
-  --accent:#FF7AA2; --accent-deep:#E0587F; --accent-soft:#4A2639; --accent-ink:#2A0F1B; --focus:#B39CFF;
-  --p-red:#FF8585; --p-blue:#73AAFF; --p-yellow:#FFCB4D; --p-green:#4FD69A; --p-teal:#4CD3DB; --p-orange:#FFA95C; --p-purple:#B697FF; --p-grey:#ABA3C6;
-  --ok:#4FD69A; --danger:#FF7085; color-scheme:dark;
+  --bg:#121212; --surface:#1C1C1C; --soft:#242424; --ink:#F2F2F2; --ink-2:#D0D0D0; --muted:#A3A3A3; --line:#3A3A3A; --hair:#2C2C2C;
+  --accent:#FF5A73; --accent-2:#F0396A; --accent-soft:#3A1F25; --on-accent:#FFFFFF; --focus:#F2F2F2;
+  --shadow:0 6px 16px rgba(0,0,0,.5); --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+  --p-red:#FF6B6F; --p-blue:#6F9BFF; --p-green:#45C08E; --p-yellow:#F2B731; --p-teal:#35BFCB; --p-orange:#FF9550; --p-purple:#A585FF; --p-grey:#A3A3A3;
+  --ok:#3DCB6B; --danger:#FF6B57; color-scheme:dark;
 }}
 :root[data-theme="dark"]{
-  --bg:#1B1726; --surface:#262036; --surface-2:#2F2843; --ink:#F4F0FF; --muted:#ABA3C6; --line:#3A3252; --shadow:#120F1C;
-  --accent:#FF7AA2; --accent-deep:#E0587F; --accent-soft:#4A2639; --accent-ink:#2A0F1B; --focus:#B39CFF;
-  --p-red:#FF8585; --p-blue:#73AAFF; --p-yellow:#FFCB4D; --p-green:#4FD69A; --p-teal:#4CD3DB; --p-orange:#FFA95C; --p-purple:#B697FF; --p-grey:#ABA3C6;
-  --ok:#4FD69A; --danger:#FF7085; color-scheme:dark;
+  --bg:#121212; --surface:#1C1C1C; --soft:#242424; --ink:#F2F2F2; --ink-2:#D0D0D0; --muted:#A3A3A3; --line:#3A3A3A; --hair:#2C2C2C;
+  --accent:#FF5A73; --accent-2:#F0396A; --accent-soft:#3A1F25; --on-accent:#FFFFFF; --focus:#F2F2F2;
+  --shadow:0 6px 16px rgba(0,0,0,.5); --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+  --p-red:#FF6B6F; --p-blue:#6F9BFF; --p-green:#45C08E; --p-yellow:#F2B731; --p-teal:#35BFCB; --p-orange:#FF9550; --p-purple:#A585FF; --p-grey:#A3A3A3;
+  --ok:#3DCB6B; --danger:#FF6B57; color-scheme:dark;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+body{background:var(--bg);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 button,input,textarea{font:inherit;color:inherit}
-:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
-.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.disp{font-family:var(--f-display);font-weight:400}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.num{font-variant-numeric:tabular-nums}
 
-/* top bar */
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.top .wrap{display:flex;align-items:center;gap:12px;padding-block:12px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:10px;margin-right:auto}
-.brand svg{width:40px;height:40px;flex:none}
-.brand b{font-family:var(--f-display);font-weight:400;font-size:26px;line-height:1;letter-spacing:.01em}
-.brand small{display:block;font-size:12px;color:var(--muted);margin-top:3px}
-.tabs{display:flex;gap:4px;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:4px}
-.tabs a{padding:7px 16px;border-radius:999px;text-decoration:none;color:var(--muted);font-family:var(--f-display);font-size:16px}
-.tabs a[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--hair)}
+.top .wrap{display:flex;align-items:center;gap:16px;height:72px}
+.brand{display:flex;align-items:center;gap:8px;margin-right:auto;color:var(--accent)}
+.brand svg{width:30px;height:30px;flex:none}
+.brand b{font-size:21px;font-weight:800;letter-spacing:-.02em}
+.tabs{display:flex;gap:4px}
+.tabs a{position:relative;padding:10px 14px;text-decoration:none;color:var(--muted);font-weight:500;font-size:15px;border-radius:999px}
+.tabs a:hover{background:var(--soft);color:var(--ink)}
+.tabs a[aria-current="page"]{color:var(--ink);font-weight:700}
+.tabs a[aria-current="page"]::after{content:"";position:absolute;left:14px;right:14px;bottom:2px;height:2px;border-radius:2px;background:var(--ink)}
 
-.banner{max-width:46ch;margin:0 auto;font-size:12.5px;line-height:1.6;color:var(--muted);text-align:center;text-wrap:balance}
-.banner::before{content:"💾 "}
-main{padding-block:18px 72px;display:flex;flex-direction:column;gap:20px}
-section.view{display:flex;flex-direction:column;gap:20px}
-.card{background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:0 5px 0 var(--shadow)}
-h2{font-family:var(--f-display);font-weight:400;font-size:22px;margin:0;text-wrap:balance;line-height:1.25}
-.eyebrow{font-family:var(--f-display);font-size:14px;color:var(--muted)}
+main{padding-block:32px 64px;display:flex;flex-direction:column;gap:40px}
+section.view{display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{margin:0;letter-spacing:-.02em;text-wrap:balance}
+.sec-title{font-size:22px;font-weight:700;line-height:1.3}
+.sub{font-size:14px;color:var(--muted)}
+.label{font-size:12px;font-weight:700;color:var(--ink)}
 
-/* stats */
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.stat{--c:var(--p-purple);position:relative;background:color-mix(in srgb,var(--c) 14%,var(--surface));border:2px solid color-mix(in srgb,var(--c) 30%,var(--line));border-radius:20px;padding:14px 16px 14px;min-width:0}
-.stat .ic{position:absolute;top:12px;right:14px;font-size:22px}
-.stat .v{font-family:var(--f-display);font-size:40px;line-height:1;margin-top:4px}
-.stat .v small{font-size:17px;color:var(--muted);margin-left:3px}
+/* summary row */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:var(--r)}
+.stat{padding:20px 24px;min-width:0}
+.stat+.stat{border-left:1px solid var(--hair)}
+.stat .v{font-size:30px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat .v small{font-size:15px;font-weight:500;color:var(--muted);margin-left:3px}
 .stat .l{font-size:13px;color:var(--muted);margin-top:6px}
-@media (max-width:680px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:680px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{padding:16px 18px}.stat:nth-child(3){border-left:0}.stat:nth-child(n+3){border-top:1px solid var(--hair)}}
 
 /* log layout */
-.log-grid{display:grid;grid-template-columns:minmax(0,390px) minmax(0,1fr);gap:20px;align-items:start}
-@media (max-width:840px){.log-grid{grid-template-columns:minmax(0,1fr)}}
-form.day{display:flex;flex-direction:column;gap:16px}
-.day-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.saved-pill{font-family:var(--f-display);font-size:13px;padding:4px 12px;border-radius:999px;background:color-mix(in srgb,var(--ok) 16%,var(--surface));color:var(--ok)}
-.field{display:flex;flex-direction:column;gap:6px}
-.field label,.field .lab{font-family:var(--f-display);font-size:14px;color:var(--muted)}
-input[type=date],input[type=number],input[type=text],textarea{width:100%;background:var(--surface-2);border:2px solid transparent;border-radius:14px;padding:10px 13px}
-input:focus,textarea:focus{border-color:var(--focus);outline:none;background:var(--surface)}
-.field{min-width:0}
-/* iOS Safari gives date inputs an intrinsic min-width that ignores width:100% */
-input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;min-height:46px;line-height:1.4}
-input[type=date]::-webkit-date-and-time-value{text-align:left;margin:0}
-input[type=date]::-webkit-calendar-picker-indicator{margin-left:auto}
-textarea{resize:vertical;min-height:76px}
-.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.log-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,380px);gap:56px;align-items:start}
+.log-grid .cal-col{order:0}
+.log-grid form.day{order:1;position:sticky;top:calc(96px + env(safe-area-inset-top,0px))}
+@media (max-width:900px){.log-grid{grid-template-columns:minmax(0,1fr);gap:32px}.log-grid form.day{order:-1;position:static}}
+
+/* booking-card style form */
+form.day{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:24px;display:flex;flex-direction:column;gap:18px}
+.day-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.day-head h2{font-size:22px;font-weight:700}
+.saved-pill{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);white-space:nowrap}
+.saved-pill::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:2px}
+.box{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.box .cell-f{display:flex;flex-direction:column;padding:10px 12px;min-width:0;position:relative}
+.box .cell-f+.cell-f{border-top:1px solid var(--line)}
+.box .row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-top:1px solid var(--line)}
+.box .row .cell-f+.cell-f{border-top:0;border-left:1px solid var(--line)}
+.box .cell-f:focus-within{box-shadow:inset 0 0 0 2px var(--ink);border-radius:10px}
+.box label,.box .lab{font-size:10.5px;font-weight:800;letter-spacing:.04em;color:var(--ink)}
+.box input,.box textarea{border:0;background:transparent;padding:2px 0 0;width:100%;font-size:15px;color:var(--ink);outline:none}
+.box input::placeholder,.box textarea::placeholder{color:var(--muted)}
+.box textarea{resize:vertical;min-height:58px}
+.field{display:flex;flex-direction:column;gap:10px;min-width:0}
+.field .lab{font-size:14px;font-weight:600}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{--c:var(--p-grey);display:inline-flex;align-items:center;gap:6px;padding:7px 14px 7px 10px;border-radius:999px;border:2px solid var(--line);background:var(--surface);cursor:pointer;font-family:var(--f-display);font-size:15px;color:var(--ink)}
-.chip .em{font-size:17px;line-height:1}
-.chip[aria-pressed="true"]{border-color:var(--c);background:color-mix(in srgb,var(--c) 22%,var(--surface));box-shadow:0 3px 0 color-mix(in srgb,var(--c) 45%,var(--surface))}
-.chip.add{border-style:dashed;color:var(--muted);padding-left:14px}
+.chip{--c:var(--p-grey);display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:14px;color:var(--ink)}
+.chip::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c)}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);background:var(--soft);font-weight:600}
+.chip.add{border-style:dashed;color:var(--muted)}
+.chip.add::before{display:none}
 .inline-add{display:flex;gap:8px}
-.inline-add input{flex:1;min-width:0}
-.btns{display:flex;gap:8px;flex-wrap:wrap}
-.btn{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:9px 18px;font-family:var(--f-display);font-size:16px;cursor:pointer;color:var(--ink)}
-.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);box-shadow:0 4px 0 var(--accent-deep)}
-.btn.primary:active{transform:translateY(3px);box-shadow:0 1px 0 var(--accent-deep)}
+.inline-add input{flex:1;min-width:0;border:1px solid var(--line);border-radius:8px;padding:9px 12px;background:var(--surface)}
+.inline-add input:focus{outline:none;border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--ink);background:var(--surface);border-radius:8px;padding:10px 18px;font-weight:600;font-size:15px;cursor:pointer;color:var(--ink)}
+.btn:hover{background:var(--soft)}
+.btn.primary{border:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:var(--on-accent);padding:13px 22px;font-size:16px}
+.btn.primary:hover{filter:brightness(.96)}
+.btn.primary:active{transform:scale(.98)}
 .btn.primary.wide{flex:1}
-.btn.ghost-danger{color:var(--danger)}
-.btn.arm{background:var(--danger);border-color:var(--danger);color:#fff}
-.btn.sm{padding:6px 14px;font-size:14px}
+.btn.ghost{border-color:transparent;background:transparent;text-decoration:underline;text-underline-offset:3px;padding-inline:8px}
+.btn.ghost:hover{background:var(--soft)}
+.btn.ghost-danger{border-color:transparent;background:transparent;color:var(--ink);text-decoration:underline;text-underline-offset:3px;padding-inline:8px}
+.btn.arm{background:var(--danger);border-color:var(--danger);color:#fff;text-decoration:none}
+.btn.sm{padding:7px 14px;font-size:14px}
+.err{color:var(--danger);font-size:13.5px}
+.err:empty{display:none}
 
-/* calendar */
-.cal-head{display:flex;align-items:center;gap:8px;margin-bottom:14px}
-.cal-head h2{margin-right:auto;font-size:26px}
-.icon-btn{width:36px;height:36px;border-radius:50%;border:2px solid var(--line);background:var(--surface);cursor:pointer;font-family:var(--f-display);font-size:18px;line-height:1;color:var(--ink)}
-.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
-.wd{font-family:var(--f-display);font-size:14px;color:var(--muted);text-align:center;padding-bottom:2px}
-.wd:first-child{color:var(--p-red)}
-.wd:last-child{color:var(--p-blue)}
-.cell{--c:transparent;min-height:64px;border:2px solid transparent;border-radius:14px;background:var(--surface-2);padding:5px 6px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;cursor:pointer;text-align:left;color:var(--ink)}
+/* date-picker calendar */
+.cal-head{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.cal-head h2{margin-right:auto}
+.icon-btn{width:34px;height:34px;border-radius:50%;border:0;background:transparent;cursor:pointer;font-size:18px;line-height:1;color:var(--ink);display:inline-grid;place-items:center}
+.icon-btn:hover{background:var(--soft)}
+.icon-btn svg{width:16px;height:16px}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));row-gap:6px}
+.wd{font-size:12px;color:var(--muted);text-align:center;padding-bottom:8px;font-weight:600}
+.cell{--c:var(--p-grey);height:58px;border:0;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;cursor:pointer;color:var(--ink)}
 .cell.out{visibility:hidden}
-.cell .d{font-family:var(--f-display);font-size:15px;color:var(--muted);min-width:22px;text-align:center;line-height:22px;border-radius:50%}
-.cell.has{background:color-mix(in srgb,var(--c) 22%,var(--surface))}
-.cell.has .d{color:var(--ink)}
-.cell.today .d{background:var(--accent);color:var(--accent-ink)}
-.cell.sel{border-color:var(--focus)}
-.ems{font-size:17px;line-height:1;display:flex;gap:1px;align-items:center}
-.ems em{font-style:normal;font-family:var(--f-display);font-size:11px;color:var(--muted);margin-left:2px}
-@media (max-width:480px){.cell{min-height:52px;padding:4px}.ems{font-size:14px}.cell .ems span:nth-child(2){display:none}}
-.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:14px;font-size:13px;color:var(--muted)}
+.cell .d{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--muted);border:1px solid transparent}
+.cell:hover .d{border-color:var(--ink)}
+.cell.has .d{color:var(--ink);font-weight:700}
+.cell.today .d{color:var(--accent);font-weight:800}
+.cell.sel .d{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.dots{display:flex;gap:3px;height:6px}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--c)}
+@media (max-width:420px){.cell .d{width:36px;height:36px}.cell{height:52px}}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:16px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:8px;height:8px;border-radius:50%;background:var(--c)}
 
-/* breakdown + recent */
-.lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:20px;align-items:start}
-@media (max-width:840px){.lower{grid-template-columns:minmax(0,1fr)}}
-.bars{display:flex;flex-direction:column;gap:12px;margin-top:14px}
-.bar{display:grid;grid-template-columns:96px minmax(0,1fr) 30px;gap:10px;align-items:center;font-size:14px}
-.bar .nmb{font-family:var(--f-display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bar .track{height:14px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+/* lower lists */
+.lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:56px;align-items:start;border-top:1px solid var(--hair);padding-top:40px}
+@media (max-width:900px){.lower{grid-template-columns:minmax(0,1fr);gap:40px}}
+.bars{display:flex;flex-direction:column;gap:14px;margin-top:18px}
+.bar{display:grid;grid-template-columns:76px minmax(0,1fr) 28px;gap:12px;align-items:center;font-size:14px}
+.bar .track{height:6px;border-radius:999px;background:var(--soft);overflow:hidden}
 .bar .fill{height:100%;background:var(--c);border-radius:999px}
-.bar .n{text-align:right;font-family:var(--f-display);font-size:17px}
-.recent{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
-.recent button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:100px minmax(0,1fr);gap:12px;padding:10px 12px;cursor:pointer;border-radius:14px;background:var(--surface-2)}
-.recent button:hover{background:color-mix(in srgb,var(--accent) 10%,var(--surface-2))}
-.recent button:focus-visible{outline:3px solid var(--focus)}
-.recent .when{font-family:var(--f-display);font-size:14px;color:var(--muted)}
+.bar .n{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.recent{list-style:none;margin:10px 0 0;padding:0}
+.recent li+li{border-top:1px solid var(--hair)}
+.recent button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:110px minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px 0;cursor:pointer}
+.recent button:hover .tags{text-decoration:underline;text-underline-offset:3px}
+.recent button:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:6px}
+.recent .when{font-size:14px;font-weight:600}
 .recent .what{display:flex;flex-direction:column;gap:2px;min-width:0}
-.recent .tags{display:flex;flex-wrap:wrap;gap:4px 10px;font-family:var(--f-display);font-size:15px}
+.recent .tags{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:14px}
+.recent .tags span{display:inline-flex;align-items:center;gap:6px}
+.recent .tags span::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c)}
 .recent .note{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.empty{color:var(--muted);font-size:14px;padding:14px 0 4px}
+.recent .chev{color:var(--muted)}
+.empty{color:var(--muted);font-size:14px;padding:16px 0 4px}
 
 /* PR board */
-.pr-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.pr-head h2{font-size:30px;margin-right:auto}
-.seg{display:inline-flex;border:2px solid var(--line);border-radius:999px;overflow:hidden;background:var(--surface);padding:3px;gap:2px}
-.seg button{border:0;background:transparent;padding:5px 14px;cursor:pointer;font-family:var(--f-display);font-size:15px;border-radius:999px;color:var(--muted)}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
-.group{display:flex;flex-direction:column;gap:10px}
-.group h3{margin:0;font-family:var(--f-display);font-weight:400;font-size:17px;color:var(--muted)}
-.lifts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.lift{all:unset;box-sizing:border-box;background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:14px 16px;cursor:pointer;display:flex;flex-direction:column;gap:6px;min-width:0;box-shadow:0 4px 0 var(--shadow)}
-.lift:hover{border-color:var(--accent)}
-.lift:active{transform:translateY(2px);box-shadow:0 2px 0 var(--shadow)}
-.lift:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
-.lift .nm{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
-.lift .nm b{font-family:var(--f-display);font-weight:400;font-size:17px;white-space:nowrap}
-.lift .nm span{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lift .w{font-family:var(--f-display);font-size:44px;line-height:1}
-.lift .w small{font-size:17px;color:var(--muted);margin-left:4px}
-.lift .w.none{font-size:15px;color:var(--muted);line-height:1.4;font-family:var(--f-body);min-height:44px;display:flex;align-items:center}
-.lift .meta{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
-.up{font-family:var(--f-display);color:var(--ok);font-size:14px}
-.pr-badge{font-family:var(--f-display);font-size:12px;color:var(--accent-ink);background:var(--accent);padding:1px 8px;border-radius:999px;margin-left:6px;vertical-align:2px}
-
-/* dialog */
-dialog{border:2px solid var(--line);border-radius:28px;background:var(--surface);color:var(--ink);padding:0;width:min(560px,calc(100% - 24px));max-height:calc(100% - 32px)}
-dialog::backdrop{background:rgba(27,20,45,.5)}
-.dlg{padding:22px;display:flex;flex-direction:column;gap:18px}
-.dlg-top{display:flex;align-items:flex-start;gap:12px}
-.dlg-top .t{margin-right:auto;min-width:0}
-.dlg-top .t h2{font-size:26px}
-.dlg-top .t span{font-size:12px;color:var(--muted)}
-.best-box{background:var(--accent-soft);border-radius:20px;padding:16px 18px}
-.big{font-family:var(--f-display);font-size:64px;line-height:.95}
-.big small{font-size:22px;color:var(--muted);margin-left:6px}
-.add-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:8px;align-items:end}
-@media (max-width:440px){.add-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.add-row .btn{grid-column:1/-1}}
-.pct{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px}
-.pct div{background:var(--surface-2);border-radius:14px;padding:7px 11px}
-.pct div b{display:block;font-family:var(--f-display);font-weight:400;font-size:21px}
-.pct div span{font-family:var(--f-display);font-size:12px;color:var(--muted)}
-.pct div.hi{background:var(--accent-soft)}
-.hist{list-style:none;margin:0;padding:0}
-.hist li{display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-top:2px dotted var(--line);font-size:14px}
-.hist li:first-child{border-top:0}
-.hist .hw{font-family:var(--f-display);font-size:21px}
-.err{color:var(--danger);font-size:13.5px}
-
-/* PR trend */
-.spark{display:block;width:100%;height:26px;overflow:visible}
-.spark path{fill:none;stroke:var(--accent);stroke-width:2.5;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-linecap:round}
-.trend-wrap{position:relative}
-.trend svg{display:block;width:100%;height:auto;overflow:visible;touch-action:pan-y}
-.trend .grid{stroke:var(--line);stroke-width:1;stroke-dasharray:2 4}
-.trend .ax{fill:var(--muted);font-size:12px;font-family:var(--f-display)}
-.trend .best{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linejoin:round}
-.trend .area{fill:var(--accent);opacity:.12}
-.trend .pt{fill:var(--surface);stroke:var(--muted);stroke-width:2}
-.trend .pt.pr{fill:var(--accent);stroke:var(--surface)}
-.trend .endlab{fill:var(--ink);font-family:var(--f-display);font-size:16px}
-.trend .xh{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
-.trend .hit{fill:transparent;cursor:crosshair}
-.trend-key{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:6px}
-.trend-key span{display:inline-flex;align-items:center;gap:6px}
-.trend-key .k-line{width:16px;height:3px;border-radius:2px;background:var(--accent)}
-.trend-key .k-pr{width:10px;height:10px;border-radius:50%;background:var(--accent)}
-.trend-key .k-try{width:10px;height:10px;border-radius:50%;border:2px solid var(--muted);box-sizing:border-box}
-.tip{position:absolute;top:0;pointer-events:none;background:var(--ink);color:var(--surface);border-radius:12px;padding:6px 11px;font-size:12px;line-height:1.45;white-space:nowrap;transform:translateX(-50%);z-index:2}
-.tip b{font-family:var(--f-display);font-weight:400;font-size:17px}
-.recent-pr ul{margin:10px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px 12px}
-.recent-pr button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 12px;border-radius:14px;background:var(--surface-2);cursor:pointer}
-.recent-pr button:hover{background:color-mix(in srgb,var(--accent) 10%,var(--surface-2))}
-.recent-pr button:focus-visible{outline:3px solid var(--focus)}
-.recent-pr .rd{font-family:var(--f-display);font-size:13px;color:var(--muted)}
-.recent-pr .rn{font-family:var(--f-display);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.recent-pr .rw{font-family:var(--f-display);font-size:18px;white-space:nowrap}
-.recent-pr .rw small{font-size:12px;color:var(--muted);margin-left:2px}
+.pr-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.pr-head .t{margin-right:auto}
+.pr-head h1{font-size:28px;font-weight:700}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;padding:6px 14px;cursor:pointer;font-size:14px;font-weight:600;border-radius:999px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.group{display:flex;flex-direction:column;gap:14px}
+.group h3{font-size:18px;font-weight:700}
+.lifts{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.lift{all:unset;box-sizing:border-box;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;cursor:pointer;display:flex;flex-direction:column;gap:8px;min-width:0;transition:box-shadow .2s}
+.lift:hover{box-shadow:var(--shadow)}
+.lift:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.lift .nm{display:flex;flex-direction:column;gap:1px;min-width:0}
+.lift .nm b{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lift .nm span{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lift .w{font-size:32px;font-weight:700;line-height:1.1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.lift .w small{font-size:15px;font-weight:500;color:var(--muted);margin-left:3px}
+.lift .w.none{font-size:14px;font-weight:500;color:var(--muted);line-height:1.4;min-height:35px;display:flex;align-items:center;gap:6px;letter-spacing:0}
+.lift .meta{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);min-height:20px}
+.up{font-weight:600;color:var(--ok);font-size:13px}
+.pr-badge{font-size:11px;font-weight:700;color:var(--accent);border:1px solid var(--accent);padding:0 6px;border-radius:4px;margin-left:8px;vertical-align:2px}
+.recent-pr{border:1px solid var(--line);border-radius:var(--r);padding:20px 24px}
+.recent-pr ul{margin:8px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));column-gap:32px}
+.recent-pr li{border-top:1px solid var(--hair)}
+.recent-pr button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px 0;cursor:pointer}
+.recent-pr button:hover .rn{text-decoration:underline;text-underline-offset:3px}
+.recent-pr button:focus-visible{outline:2px solid var(--focus);border-radius:6px}
+.recent-pr .rd{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.recent-pr .rn{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recent-pr .rw{font-size:15px;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.recent-pr .rw small{font-size:12px;font-weight:500;color:var(--muted);margin-left:2px}
 .recent-pr .rw .up{margin-left:6px}
 
-/* footer + backup */
-.foot{display:flex;flex-direction:column;align-items:center;gap:4px;padding-block:16px 8px;border-top:2px dotted var(--line);margin-top:8px}
-.linkish{background:none;border:0;padding:6px 10px;color:var(--muted);font-size:13px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;border-radius:8px}
-.linkish:hover{color:var(--ink)}
-.bk-sec{display:flex;flex-direction:column;gap:10px;background:var(--surface-2);border-radius:18px;padding:16px}
-.bk-sec h3{margin:0;font-family:var(--f-display);font-weight:400;font-size:18px}
-.bk-sec p{margin:0;font-size:13.5px;color:var(--muted)}
-.bk-sec textarea{background:var(--surface);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;min-height:84px}
-.radios{display:flex;gap:8px;flex-wrap:wrap}
-.radios label{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--surface);border:2px solid var(--line);font-size:14px;cursor:pointer}
-.radios label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
-.radios input{accent-color:var(--accent);margin:0}
-.ok-msg{color:var(--ok);font-size:13.5px}
+/* modal */
+dialog{border:0;border-radius:var(--r);background:var(--surface);color:var(--ink);padding:0;width:min(600px,calc(100% - 24px));max-height:calc(100% - 32px);box-shadow:0 8px 28px rgba(0,0,0,.28)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.dlg-bar{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--hair);background:var(--surface)}
+.dlg-bar .bt{flex:1;text-align:center;font-weight:700;font-size:16px;margin-right:34px}
+.dlg{padding:24px;display:flex;flex-direction:column;gap:24px}
+.dlg .t span{font-size:13px;color:var(--muted)}
+.dlg .t h2{font-size:26px;font-weight:700}
+.best-box{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-bottom:24px;border-bottom:1px solid var(--hair)}
+.big{font-size:52px;font-weight:800;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.big small{font-size:20px;font-weight:500;color:var(--muted);margin-left:6px;letter-spacing:0}
+.blk-title{font-size:18px;font-weight:700;margin-bottom:12px}
+.add-box{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.add-box .cell-f+.cell-f{border-top:0;border-left:1px solid var(--line)}
+.pct{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.pct div{border:1px solid var(--hair);border-radius:10px;padding:8px 12px}
+.pct div b{display:block;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.pct div span{font-size:12px;color:var(--muted)}
+.pct div.hi{border-color:var(--ink)}
+.hist{list-style:none;margin:0;padding:0}
+.hist li{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px 0;border-top:1px solid var(--hair);font-size:14px}
+.hist li:first-child{border-top:0}
+.hist .hw{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
 
-.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:11px 20px;border-radius:999px;font-family:var(--f-display);font-size:15px;z-index:20;max-width:calc(100% - 32px);box-shadow:0 6px 20px rgba(0,0,0,.18)}
+/* PR trend */
+.spark{display:block;width:100%;height:28px;overflow:visible}
+.spark path{fill:none;stroke:var(--accent);stroke-width:2;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.trend-wrap{position:relative}
+.trend svg{display:block;width:100%;height:auto;overflow:visible;touch-action:pan-y}
+.trend .grid{stroke:var(--hair);stroke-width:1}
+.trend .ax{fill:var(--muted);font-size:12px;font-family:var(--f)}
+.trend .best{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round}
+.trend .area{fill:var(--accent);opacity:.07}
+.trend .pt{fill:var(--surface);stroke:var(--muted);stroke-width:2}
+.trend .pt.pr{fill:var(--accent);stroke:var(--surface)}
+.trend .endlab{fill:var(--ink);font-family:var(--f);font-weight:700;font-size:14px}
+.trend .xh{stroke:var(--ink);stroke-width:1;stroke-dasharray:3 3;opacity:.5}
+.trend .hit{fill:transparent;cursor:crosshair}
+.trend-key{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:8px}
+.trend-key span{display:inline-flex;align-items:center;gap:6px}
+.trend-key .k-line{width:16px;height:2px;background:var(--accent)}
+.trend-key .k-pr{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+.trend-key .k-try{width:9px;height:9px;border-radius:50%;border:2px solid var(--muted);box-sizing:border-box}
+.tip{position:absolute;top:0;pointer-events:none;background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 12px;font-size:12px;line-height:1.5;white-space:nowrap;transform:translateX(-50%);z-index:2;box-shadow:var(--shadow);border:1px solid var(--hair)}
+.tip b{font-size:15px;font-weight:700}
+
+/* footer + backup */
+.foot{display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:28px;border-top:1px solid var(--hair)}
+.banner{max-width:52ch;margin:0 auto;font-size:12.5px;line-height:1.6;color:var(--muted);text-align:center;text-wrap:balance}
+.linkish{background:none;border:0;padding:4px 8px;color:var(--ink);font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer;border-radius:6px}
+.bk-sec{display:flex;flex-direction:column;gap:12px}
+.bk-sec+.bk-sec{border-top:1px solid var(--hair);padding-top:24px}
+.bk-sec h3{font-size:18px;font-weight:700}
+.bk-sec p{margin:0;font-size:14px;color:var(--muted)}
+.bk-sec textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;min-height:84px;resize:vertical}
+.bk-sec textarea:focus{outline:none;border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.radios{display:flex;flex-direction:column;gap:10px}
+.radios label{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer}
+.radios input{accent-color:var(--ink);width:18px;height:18px;margin:0}
+.ok-msg{color:var(--ok);font-size:13.5px}
+.ok-msg:empty{display:none}
+
+/* iOS Safari gives date inputs an intrinsic min-width that ignores width:100% */
+input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;min-height:24px}
+input[type=date]::-webkit-date-and-time-value{text-align:left;margin:0}
+input[type=date]::-webkit-calendar-picker-indicator{margin-left:auto;opacity:.6}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:8px;font-size:14px;font-weight:500;z-index:20;max-width:calc(100% - 32px);box-shadow:var(--shadow)}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
-.confetti i{position:absolute;top:-16px;width:9px;height:14px;border-radius:3px;background:var(--c);animation:fall var(--dur) cubic-bezier(.2,.6,.4,1) forwards}
+.confetti i{position:absolute;top:-16px;width:8px;height:12px;border-radius:2px;background:var(--c);animation:fall var(--dur) cubic-bezier(.2,.6,.4,1) forwards}
 @keyframes fall{to{transform:translate(var(--dx),105vh) rotate(var(--rot));opacity:.9}}
-@media (prefers-reduced-motion:no-preference){
-  .chip,.cell,.lift,.btn{transition:background-color .15s,border-color .15s,transform .1s,box-shadow .1s}
-  .chip[aria-pressed="true"]{animation:pop .22s ease-out}
-  @keyframes pop{50%{transform:scale(1.08)}}
-}
+@media (prefers-reduced-motion:no-preference){.chip,.cell .d,.btn,.tabs a{transition:background-color .15s,border-color .15s,box-shadow .15s,transform .1s}}
 </style>
 <style>
 /* base reset that the artifact host used to provide */
@@ -264,18 +292,13 @@ html{-webkit-text-size-adjust:100%}
 <header class="top">
   <div class="wrap">
     <div class="brand">
-      <svg viewBox="0 0 48 48" aria-hidden="true">
-        <rect x="2" y="13" width="9" height="22" rx="4.5" fill="var(--p-purple)"/>
-        <rect x="37" y="13" width="9" height="22" rx="4.5" fill="var(--p-purple)"/>
-        <rect x="9" y="21" width="30" height="6" rx="3" fill="var(--muted)"/>
-        <circle cx="24" cy="24" r="12" fill="var(--accent)"/>
-        <circle cx="19.8" cy="22.5" r="1.8" fill="var(--accent-ink)"/>
-        <circle cx="28.2" cy="22.5" r="1.8" fill="var(--accent-ink)"/>
-        <path d="M20.5 27.2q3.5 3 7 0" stroke="var(--accent-ink)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-        <circle cx="16.6" cy="26.6" r="1.6" fill="var(--accent-soft)" opacity=".8"/>
-        <circle cx="31.4" cy="26.6" r="1.6" fill="var(--accent-soft)" opacity=".8"/>
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="1" y="1" width="30" height="30" rx="9" fill="currentColor"/>
+        <rect x="6" y="10" width="4" height="12" rx="2" fill="#fff"/>
+        <rect x="22" y="10" width="4" height="12" rx="2" fill="#fff"/>
+        <rect x="10" y="14.5" width="12" height="3" rx="1.5" fill="#fff"/>
       </svg>
-      <div><b>Chalk Log</b><small>오늘도 득근했나요?</small></div>
+      <b>chalk log</b>
     </div>
     <nav class="tabs" aria-label="화면">
       <a href="#log" id="tab-log">운동 일지</a>
@@ -291,66 +314,66 @@ html{-webkit-text-size-adjust:100%}
       <div class="stats" id="stats"></div>
 
       <div class="log-grid">
-        <form class="card day" id="dayForm" novalidate>
+        <div class="cal-col">
+          <div class="cal-head">
+            <h2 class="sec-title" id="calTitle">—</h2>
+            <button type="button" class="btn sm ghost" id="calToday">오늘</button>
+            <button type="button" class="icon-btn" id="calPrev" aria-label="이전 달"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 3 5 8l5 5"/></svg></button>
+            <button type="button" class="icon-btn" id="calNext" aria-label="다음 달"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 3 5 5-5 5"/></svg></button>
+          </div>
+          <div class="cal" id="cal"></div>
+          <div class="legend" id="legend"></div>
+        </div>
+
+        <form class="day" id="dayForm" novalidate>
           <div class="day-head">
             <div>
-              <div class="eyebrow">오늘은 무슨 운동 했어요?</div>
               <h2 id="dayTitle">—</h2>
+              <div class="sub" id="daySub">어떤 운동을 했나요?</div>
             </div>
-            <span class="saved-pill" id="savedPill" hidden>기록 완료 ✓</span>
+            <span class="saved-pill" id="savedPill" hidden>기록됨</span>
           </div>
           <div class="field">
-            <label for="dayDate">날짜</label>
-            <input type="date" id="dayDate">
-          </div>
-          <div class="field">
-            <span class="lab" id="typesLab">종목 (여러 개 골라도 돼요)</span>
+            <span class="lab" id="typesLab">종목</span>
             <div class="chips" id="typeChips" role="group" aria-labelledby="typesLab"></div>
             <div class="inline-add" id="newTypeRow" hidden>
               <input type="text" id="newType" maxlength="16" placeholder="예: 클라이밍" aria-label="새 종목 이름">
               <button type="button" class="btn sm" id="newTypeAdd">추가</button>
             </div>
           </div>
-          <div class="row2">
-            <div class="field">
-              <label for="dayMin">운동 시간 (분)</label>
-              <input type="number" id="dayMin" min="0" max="1440" inputmode="numeric" placeholder="60">
+          <div class="box">
+            <div class="cell-f">
+              <label for="dayDate">날짜</label>
+              <input type="date" id="dayDate">
             </div>
-            <div class="field">
-              <label for="dayFeel">컨디션 (1–5)</label>
-              <input type="number" id="dayFeel" min="1" max="5" inputmode="numeric" placeholder="4">
+            <div class="row">
+              <div class="cell-f">
+                <label for="dayMin">운동 시간 (분)</label>
+                <input type="number" id="dayMin" min="0" max="1440" inputmode="numeric" placeholder="60">
+              </div>
+              <div class="cell-f">
+                <label for="dayFeel">컨디션 (1–5)</label>
+                <input type="number" id="dayFeel" min="1" max="5" inputmode="numeric" placeholder="4">
+              </div>
             </div>
-          </div>
-          <div class="field">
-            <label for="dayNote">메모</label>
-            <textarea id="dayNote" maxlength="1000" placeholder="예: WOD Fran 4:32 (Rx) / 한강 5km 28분"></textarea>
+            <div class="cell-f" style="border-top:1px solid var(--line)">
+              <label for="dayNote">메모</label>
+              <textarea id="dayNote" maxlength="1000" placeholder="예: WOD Fran 4:32 (Rx)"></textarea>
+            </div>
           </div>
           <div class="err" id="dayErr" role="alert"></div>
-          <div class="btns">
-            <button type="submit" class="btn primary wide" id="daySave">기록 저장</button>
-            <button type="button" class="btn ghost-danger" id="dayDel" hidden>삭제</button>
-          </div>
+          <button type="submit" class="btn primary" id="daySave">기록 저장</button>
+          <div class="btns" style="justify-content:center"><button type="button" class="btn ghost-danger sm" id="dayDel" hidden>이 날 기록 삭제</button></div>
         </form>
-
-        <div class="card">
-          <div class="cal-head">
-            <h2 id="calTitle">—</h2>
-            <button type="button" class="btn sm" id="calToday">오늘</button>
-            <button type="button" class="icon-btn" id="calPrev" aria-label="이전 달">‹</button>
-            <button type="button" class="icon-btn" id="calNext" aria-label="다음 달">›</button>
-          </div>
-          <div class="cal" id="cal"></div>
-          <div class="legend" id="legend"></div>
-        </div>
       </div>
 
       <div class="lower">
-        <div class="card">
-          <div class="eyebrow" id="breakTitle">이번 달 종목별</div>
+        <div>
+          <h2 class="sec-title" id="breakTitle">이번 달 종목별</h2>
           <div class="bars" id="bars"></div>
         </div>
-        <div class="card">
-          <div class="eyebrow">최근 기록</div>
+        <div>
+          <h2 class="sec-title">최근 기록</h2>
           <ul class="recent" id="recent"></ul>
         </div>
       </div>
@@ -359,23 +382,27 @@ html{-webkit-text-size-adjust:100%}
     <!-- PR 보드 -->
     <section class="view" id="view-pr" hidden>
       <div class="pr-head">
-        <h2>PR 보드 🏆</h2>
+        <div class="t">
+          <h1>PR 보드</h1>
+          <div class="sub">동작별 1RM과 기록 추이</div>
+        </div>
         <div class="seg" role="group" aria-label="단위">
           <button type="button" id="unitKg">kg</button>
           <button type="button" id="unitLb">lb</button>
         </div>
-        <button type="button" class="btn sm" id="liftAddToggle">+ 동작 추가</button>
+        <button type="button" class="btn sm" id="liftAddToggle">동작 추가</button>
       </div>
-      <form class="card inline-add" id="liftAddForm" hidden>
+      <form class="inline-add" id="liftAddForm" hidden>
         <input type="text" id="liftAddName" maxlength="30" placeholder="동작 이름 (예: 오버헤드 런지)" aria-label="새 동작 이름">
-        <button type="submit" class="btn primary sm">추가</button>
+        <button type="submit" class="btn sm">추가</button>
       </form>
-      <div class="card recent-pr" id="recentPr" hidden>
-        <div class="eyebrow">최근에 깬 PR 🎉</div>
+      <div class="recent-pr" id="recentPr" hidden>
+        <h2 class="sec-title" style="font-size:18px">최근 PR</h2>
         <ul id="recentPrList"></ul>
       </div>
-      <div id="groups" style="display:flex;flex-direction:column;gap:22px"></div>
+      <div id="groups" style="display:flex;flex-direction:column;gap:36px"></div>
     </section>
+
     <div class="foot">
       <p class="banner" id="banner" hidden></p>
       <button type="button" class="linkish" id="backupOpen">백업 · 기록 옮기기</button>
@@ -384,42 +411,48 @@ html{-webkit-text-size-adjust:100%}
 </div>
 
 <dialog id="liftDlg" aria-labelledby="dlgName">
+  <div class="dlg-bar">
+    <button type="button" class="icon-btn" id="dlgClose" aria-label="닫기"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 3 10 10M13 3 3 13"/></svg></button>
+    <span class="bt">기록 상세</span>
+  </div>
   <div class="dlg">
-    <div class="dlg-top">
+    <div class="best-box">
       <div class="t">
         <span id="dlgEn"></span>
         <h2 id="dlgName">—</h2>
       </div>
-      <button type="button" class="icon-btn" id="dlgClose" aria-label="닫기">✕</button>
-    </div>
-    <div class="best-box">
-      <div class="eyebrow">지금 내 1RM</div>
-      <div class="big" id="dlgBest">—</div>
-      <div id="dlgBestMeta" style="font-size:13px;color:var(--muted);margin-top:6px"></div>
+      <div style="text-align:right">
+        <div class="sub">현재 1RM</div>
+        <div class="big" id="dlgBest">—</div>
+        <div class="sub" id="dlgBestMeta" style="margin-top:4px"></div>
+      </div>
     </div>
     <div id="trendBlock">
-      <div class="eyebrow" style="margin-bottom:8px">PR 추이</div>
+      <div class="blk-title">PR 추이</div>
       <div class="trend-wrap trend" id="trend"></div>
       <div class="trend-key" id="trendKey"><span><i class="k-line"></i>그때까지 최고 기록</span><span><i class="k-pr"></i>PR 달성</span><span><i class="k-try"></i>PR 아닌 기록</span></div>
     </div>
-    <form class="add-row" id="dlgForm" novalidate>
-      <div class="field">
-        <label for="dlgW" id="dlgWLab">중량 (kg)</label>
-        <input type="number" id="dlgW" min="0" step="0.5" inputmode="decimal" placeholder="100">
+    <form id="dlgForm" novalidate style="display:flex;flex-direction:column;gap:12px">
+      <div class="blk-title" style="margin:0">기록 추가</div>
+      <div class="box add-box">
+        <div class="cell-f">
+          <label for="dlgW" id="dlgWLab">중량 (kg)</label>
+          <input type="number" id="dlgW" min="0" step="0.5" inputmode="decimal" placeholder="100">
+        </div>
+        <div class="cell-f">
+          <label for="dlgDate">날짜</label>
+          <input type="date" id="dlgDate">
+        </div>
       </div>
-      <div class="field">
-        <label for="dlgDate">날짜</label>
-        <input type="date" id="dlgDate">
-      </div>
+      <div class="err" id="dlgErr" role="alert"></div>
       <button type="submit" class="btn primary">기록 추가</button>
     </form>
-    <div class="err" id="dlgErr" role="alert"></div>
     <div id="pctWrap">
-      <div class="eyebrow" style="margin-bottom:8px">% 중량표 (WOD용)</div>
+      <div class="blk-title">% 중량표</div>
       <div class="pct" id="pct"></div>
     </div>
     <div>
-      <div class="eyebrow" style="margin-bottom:4px">기록 히스토리</div>
+      <div class="blk-title" style="margin-bottom:4px">히스토리</div>
       <ul class="hist" id="hist"></ul>
     </div>
     <div class="btns" id="dlgCustomRow" hidden>
@@ -429,20 +462,21 @@ html{-webkit-text-size-adjust:100%}
 </dialog>
 
 <dialog id="bkDlg" aria-labelledby="bkTitle">
+  <div class="dlg-bar">
+    <button type="button" class="icon-btn" id="bkClose" aria-label="닫기"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 3 10 10M13 3 3 13"/></svg></button>
+    <span class="bt" id="bkTitle">백업 · 기록 옮기기</span>
+  </div>
   <div class="dlg">
-    <div class="dlg-top">
-      <div class="t"><h2 id="bkTitle">백업 · 기록 옮기기</h2><span id="bkCount"></span></div>
-      <button type="button" class="icon-btn" id="bkClose" aria-label="닫기">✕</button>
-    </div>
+    <div class="sub" id="bkCount"></div>
     <div class="bk-sec">
-      <h3>📤 내보내기</h3>
+      <h3>내보내기</h3>
       <p>내 기록 전체를 글자로 복사해요. 카톡 '나에게 보내기'나 메모장에 붙여넣어 두면 그게 백업이에요.</p>
       <textarea id="bkOut" readonly aria-label="백업 내용"></textarea>
-      <div class="btns"><button type="button" class="btn primary sm" id="bkCopy">내 기록 복사</button></div>
+      <div class="btns"><button type="button" class="btn sm" id="bkCopy">내 기록 복사</button></div>
       <div class="ok-msg" id="bkCopyMsg" role="status"></div>
     </div>
     <div class="bk-sec">
-      <h3>📥 불러오기</h3>
+      <h3>불러오기</h3>
       <p>다른 기기에서 복사해 둔 백업을 붙여넣으세요.</p>
       <textarea id="bkIn" placeholder="여기에 붙여넣기" aria-label="불러올 백업"></textarea>
       <div class="radios" role="radiogroup" aria-label="불러오는 방식">
@@ -450,7 +484,7 @@ html{-webkit-text-size-adjust:100%}
         <label><input type="radio" name="bkMode" value="replace"> 지금 기록을 지우고 덮어쓰기</label>
       </div>
       <div class="err" id="bkErr" role="alert"></div>
-      <div class="btns"><button type="button" class="btn primary sm" id="bkImport">불러오기</button></div>
+      <div class="btns"><button type="button" class="btn sm" id="bkImport">불러오기</button></div>
     </div>
   </div>
 </dialog>
@@ -478,14 +512,14 @@ function lsSet(k,v){ try { localStorage.setItem(k,v); return true; } catch(e){ r
 /* ---------- reference data ---------- */
 const COLORS = ['red','blue','green','yellow','teal','orange','purple','grey'];
 const PRESET_TYPES = [
-  {id:'crossfit', name:'크로스핏', c:'red',    em:'🏋️'},
-  {id:'running',  name:'러닝',    c:'blue',   em:'🏃'},
-  {id:'hiking',   name:'등산',    c:'green',  em:'⛰️'},
-  {id:'weight',   name:'웨이트',  c:'yellow', em:'💪'},
-  {id:'swim',     name:'수영',    c:'teal',   em:'🏊'},
-  {id:'cycle',    name:'사이클',  c:'orange', em:'🚴'},
-  {id:'yoga',     name:'요가',    c:'purple', em:'🧘'},
-  {id:'walk',     name:'걷기',    c:'grey',   em:'🚶'},
+  {id:'crossfit', name:'크로스핏', c:'red'},
+  {id:'running',  name:'러닝',    c:'blue'},
+  {id:'hiking',   name:'등산',    c:'green'},
+  {id:'weight',   name:'웨이트',  c:'yellow'},
+  {id:'swim',     name:'수영',    c:'teal'},
+  {id:'cycle',    name:'사이클',  c:'orange'},
+  {id:'yoga',     name:'요가',    c:'purple'},
+  {id:'walk',     name:'걷기',    c:'grey'},
 ];
 const LIFT_GROUPS = [
   ['스쿼트', [['back-squat','백 스쿼트','Back Squat'],['front-squat','프론트 스쿼트','Front Squat'],['overhead-squat','오버헤드 스쿼트','Overhead Squat']]],
@@ -506,10 +540,10 @@ const S = {
 let backend = null;
 
 function allTypes(){
-  const custom = (S.settings.customTypes || []).map((t,i) => ({id:t.id, name:t.name, c:COLORS[(i+4) % COLORS.length], em:'✨', custom:true}));
+  const custom = (S.settings.customTypes || []).map((t,i) => ({id:t.id, name:t.name, c:COLORS[(i+4) % COLORS.length], custom:true}));
   return PRESET_TYPES.concat(custom);
 }
-function typeOf(id){ return allTypes().find(t => t.id === id) || {id, name:id, c:'grey', em:'✨'}; }
+function typeOf(id){ return allTypes().find(t => t.id === id) || {id, name:id, c:'grey'}; }
 const cvar = c => `--c:var(--p-${c})`;
 
 function liftList(){
@@ -553,7 +587,7 @@ function confetti(){
   if (reduceMotion()) return;
   const box = document.createElement('div'); box.className = 'confetti'; box.setAttribute('aria-hidden','true');
   let html = '';
-  for (let i = 0; i < 40; i++){
+  for (let i = 0; i < 36; i++){
     const c = COLORS[i % 7];
     html += `<i style="${cvar(c)};left:${Math.random()*100}%;--dx:${(Math.random()-.5)*160}px;--rot:${Math.round((Math.random()-.5)*900)}deg;--dur:${(1.2+Math.random()*1.1).toFixed(2)}s;animation-delay:${(Math.random()*.25).toFixed(2)}s"></i>`;
   }
@@ -565,50 +599,10 @@ function writeErr(e){
   if (code === 'quota_exceeded') return '저장 공간이 가득 찼어요. 오래된 기록을 지운 뒤 다시 시도해 주세요.';
   return '저장하지 못했어요. 잠시 후 다시 시도해 주세요.';
 }
-const queues = {};
-function serial(key, fn){ queues[key] = (queues[key] || Promise.resolve()).catch(() => {}).then(fn); return queues[key]; }
 
-/* ---------- backends ----------
-   1) claude.ai account storage (db) when the viewer may save there;
-   2) otherwise this browser's storage — e.g. people outside the organization, who can open a shared link but not save to it. */
+/* ---------- storage: this browser ---------- */
 const MSG_LOCAL = (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) ? '기록은 이 기기의 Chalk Log 앱에 저장돼요. 다른 기기로 옮길 때는 아래 백업을 써 주세요.' : '기록은 이 브라우저에 저장돼요. 홈 화면에 추가하면 앱처럼 쓸 수 있어요. (홈 화면 앱은 브라우저와 기록을 따로 보관해요. 옮길 땐 백업을 써 주세요)';
 const MSG_NOSTORE = '이 브라우저는 저장을 막고 있어서 창을 닫으면 기록이 사라져요. 일반 창(시크릿 모드 아님)에서 열어 주세요.';
-let dbUnsubs = [];
-function startDb(db, uid){
-  const base = db.doc(`data/users/${uid}/me`);
-  const wCol = base.collection('workouts');
-  const lCol = base.collection('lifts');
-  const loaded = {w:false, l:false, s:false};
-  const timer = setTimeout(() => { if (S.mode === 'db' && !(loaded.w && loaded.l && loaded.s)) banner('저장소에 아직 연결되지 않았어요. 보이는 기록이 최신이 아닐 수 있어요.'); }, 10000);
-  const mark = (k, snap) => {
-    if (!snap.metadata.fromCache) loaded[k] = true;
-    if (loaded.w && loaded.l && loaded.s){ clearTimeout(timer); banner(null); }
-  };
-  const fail = () => { clearTimeout(timer); if (S.mode === 'db') switchToLocal(); };
-  dbUnsubs = [
-    wCol.onSnapshot(snap => { const o = {}; snap.docs.forEach(d => o[d.id] = d.data()); S.workouts = o; mark('w', snap); refresh(); }, fail),
-    lCol.onSnapshot(snap => { const o = {}; snap.docs.forEach(d => o[d.id] = d.data()); S.lifts = o; mark('l', snap); refresh(); }, fail),
-    base.onSnapshot(snap => { S.settings = snap.exists ? snap.data() : {customTypes:[]}; mark('s', snap); refresh(); }, fail),
-  ];
-  // a refused write means this viewer can't save to the account: move to browser storage and redo the action there
-  const guard = (name, key, fn) => (...a) => serial(key(...a), () => fn(...a)).catch(e => {
-    if (e && e.code === 'invalid_argument' && S.mode === 'db'){ switchToLocal(); return backend[name](...a); }
-    throw e;
-  });
-  backend = {
-    saveWorkout: guard('saveWorkout', d => 'w' + d, (date, data) => wCol.doc(date).set(data)),
-    deleteWorkout: guard('deleteWorkout', d => 'w' + d, date => wCol.doc(date).delete()),
-    saveLift: guard('saveLift', id => 'l' + id, (id, data) => lCol.doc(id).set(data)),
-    deleteLift: guard('deleteLift', id => 'l' + id, id => lCol.doc(id).delete()),
-    saveSettings: guard('saveSettings', () => 's', data => base.set(data)),
-  };
-  S.mode = 'db';
-}
-function switchToLocal(){
-  dbUnsubs.forEach(u => { try { u(); } catch(e){} });
-  dbUnsubs = [];
-  startLocal();
-}
 function startLocal(){
   const KEY = 'chalklog.data.v1';
   let saved = null;
@@ -663,11 +657,11 @@ function renderStats(){
   const minutes = days.filter(d => d.startsWith(key)).reduce((a,d) => a + (Number(S.workouts[d].minutes) || 0), 0);
   const hrs = Math.round(minutes / 6) / 10;
   $('#stats').innerHTML = [
-    ['purple','📅', monthDays, '일', `${m.getMonth()+1}월에 운동한 날`],
-    ['blue','💦', week, '회', '이번 주 (월–일)'],
-    ['orange','🔥', streak(), '일', '연속 운동 중'],
-    ['green','⏱️', hrs, '시간', `${m.getMonth()+1}월 총 운동 시간`],
-  ].map(([c,ic,v,u,l]) => `<div class="stat" style="${cvar(c)}"><span class="ic" aria-hidden="true">${ic}</span><div class="v">${v}<small>${u}</small></div><div class="l">${l}</div></div>`).join('');
+    [monthDays, '일', `${m.getMonth()+1}월 운동한 날`],
+    [week, '회', '이번 주 (월–일)'],
+    [streak(), '일', '연속 운동'],
+    [hrs, '시간', `${m.getMonth()+1}월 운동 시간`],
+  ].map(([v,u,l]) => `<div class="stat"><div class="v">${v}<small>${u}</small></div><div class="l">${l}</div></div>`).join('');
 }
 
 /* ---------- log: form ---------- */
@@ -680,12 +674,13 @@ function loadForm(){
   $('#dayNote').value = (w && w.note) || '';
   $('#dayErr').textContent = '';
   S.formDirty = false;
-  disarm($('#dayDel'), '삭제');
+  disarm($('#dayDel'), '이 날 기록 삭제');
   renderFormMeta();
 }
 function renderFormMeta(){
   const w = S.workouts[S.sel];
-  $('#dayTitle').textContent = fmtDay(S.sel) + (S.sel === todayStr() ? ' · 오늘' : '');
+  $('#dayTitle').textContent = fmtDay(S.sel);
+  $('#daySub').textContent = S.sel === todayStr() ? '오늘 어떤 운동을 했나요?' : (w ? '이 날의 기록이에요' : '이 날 어떤 운동을 했나요?');
   $('#savedPill').hidden = !w;
   $('#dayDel').hidden = !w;
   $('#daySave').textContent = w ? '기록 수정' : '기록 저장';
@@ -693,8 +688,8 @@ function renderFormMeta(){
 }
 function renderChips(){
   const types = allTypes();
-  const html = types.map(t => `<button type="button" class="chip" style="${cvar(t.c)}" data-type="${esc(t.id)}" aria-pressed="${S.formTypes.has(t.id)}"><span class="em" aria-hidden="true">${t.em}</span>${esc(t.name)}</button>`).join('')
-    + [...S.formTypes].filter(id => !types.some(t => t.id === id)).map(id => `<button type="button" class="chip" style="${cvar('grey')}" data-type="${esc(id)}" aria-pressed="true"><span class="em" aria-hidden="true">✨</span>${esc(id)}</button>`).join('')
+  const html = types.map(t => `<button type="button" class="chip" style="${cvar(t.c)}" data-type="${esc(t.id)}" aria-pressed="${S.formTypes.has(t.id)}">${esc(t.name)}</button>`).join('')
+    + [...S.formTypes].filter(id => !types.some(t => t.id === id)).map(id => `<button type="button" class="chip" style="${cvar('grey')}" data-type="${esc(id)}" aria-pressed="true">${esc(id)}</button>`).join('')
     + `<button type="button" class="chip add" id="typeAddBtn">+ 종목 추가</button>`;
   $('#typeChips').innerHTML = html;
 }
@@ -715,7 +710,7 @@ async function addType(){
   const t = {id:'t_' + rid(), name};
   S.formTypes.add(t.id); S.formDirty = true;
   const next = {...S.settings, customTypes:[...(S.settings.customTypes || []), t]};
-  try { await backend.saveSettings(next); $('#newType').value = ''; $('#newTypeRow').hidden = true; toast(`'${name}' 종목을 추가했어요 ✨`); }
+  try { await backend.saveSettings(next); $('#newType').value = ''; $('#newTypeRow').hidden = true; toast(`'${name}' 종목을 추가했어요`); }
   catch(e){ toast(writeErr(e)); }
   renderChips();
 }
@@ -729,7 +724,7 @@ function select(date, scroll){
   const d = parse(date);
   S.month = new Date(d.getFullYear(), d.getMonth(), 1);
   loadForm(); renderCal(); renderStats(); renderBars();
-  if (scroll && window.matchMedia('(max-width:840px)').matches) $('#dayForm').scrollIntoView({block:'start', behavior: reduceMotion() ? 'auto' : 'smooth'});
+  if (scroll && window.matchMedia('(max-width:900px)').matches) $('#dayForm').scrollIntoView({block:'start', behavior: reduceMotion() ? 'auto' : 'smooth'});
 }
 
 $('#dayForm').addEventListener('submit', async e => {
@@ -742,7 +737,7 @@ $('#dayForm').addEventListener('submit', async e => {
   const data = {date:S.sel, types:[...S.formTypes], minutes:min, feel, note:$('#dayNote').value.trim(), updatedAt:Date.now()};
   const date = S.sel;
   const isNew = !S.workouts[date];
-  try { await backend.saveWorkout(date, data); S.formDirty = false; toast(isNew ? `${fmtDay(date)} 기록 완료! 수고했어요 👏` : `${fmtDay(date)} 기록을 고쳤어요.`); renderFormMeta(); }
+  try { await backend.saveWorkout(date, data); S.formDirty = false; toast(isNew ? `${fmtDay(date)} 기록을 저장했어요` : `${fmtDay(date)} 기록을 수정했어요`); renderFormMeta(); }
   catch(err){ $('#dayErr').textContent = writeErr(err); }
 });
 
@@ -752,9 +747,9 @@ function arm(btn, label, onConfirm, armedText){
   clearTimeout(btn._t); btn._t = setTimeout(() => disarm(btn, label), 3500);
 }
 function disarm(btn, label){ btn.dataset.armed = ''; btn.classList.remove('arm'); btn.textContent = label; clearTimeout(btn._t); }
-$('#dayDel').addEventListener('click', () => arm($('#dayDel'), '삭제', async () => {
+$('#dayDel').addEventListener('click', () => arm($('#dayDel'), '이 날 기록 삭제', async () => {
   const date = S.sel;
-  try { await backend.deleteWorkout(date); toast(`${fmtDay(date)} 기록을 지웠어요.`); loadForm(); }
+  try { await backend.deleteWorkout(date); toast(`${fmtDay(date)} 기록을 삭제했어요`); loadForm(); }
   catch(err){ $('#dayErr').textContent = writeErr(err); }
 }));
 
@@ -771,16 +766,15 @@ function renderCal(){
     const ds = `${y}-${pad(mo+1)}-${pad(d)}`;
     const w = S.workouts[ds];
     const types = (w && w.types) || [];
-    const ems = types.slice(0,2).map(id => `<span>${typeOf(id).em}</span>`).join('') + (types.length > 2 ? `<em>+${types.length-2}</em>` : '');
+    const dots = types.slice(0,3).map(id => `<i style="${cvar(typeOf(id).c)}"></i>`).join('');
     const label = `${mo+1}월 ${d}일` + (types.length ? ': ' + types.map(id => typeOf(id).name).join(', ') : '');
-    const tint = types.length ? cvar(typeOf(types[0]).c) : '';
-    html += `<button type="button" class="cell${w ? ' has' : ''}${ds === today ? ' today' : ''}${ds === S.sel ? ' sel' : ''}" style="${tint}" data-date="${ds}" aria-label="${esc(label)}"><span class="d">${d}</span><span class="ems" aria-hidden="true">${ems}</span></button>`;
+    html += `<button type="button" class="cell${w ? ' has' : ''}${ds === today ? ' today' : ''}${ds === S.sel ? ' sel' : ''}" data-date="${ds}" aria-label="${esc(label)}"${ds === S.sel ? ' aria-current="date"' : ''}><span class="d">${d}</span><span class="dots" aria-hidden="true">${dots}</span></button>`;
   }
   $('#cal').innerHTML = html;
   const used = new Set();
   Object.keys(S.workouts).forEach(k => (S.workouts[k].types || []).forEach(t => used.add(t)));
   const lt = allTypes().filter(t => used.has(t.id));
-  $('#legend').innerHTML = (lt.length ? lt : allTypes().slice(0,4)).map(t => `<span>${t.em} ${esc(t.name)}</span>`).join('');
+  $('#legend').innerHTML = (lt.length ? lt : allTypes().slice(0,4)).map(t => `<span><i style="${cvar(t.c)}"></i>${esc(t.name)}</span>`).join('');
 }
 $('#cal').addEventListener('click', e => { const b = e.target.closest('[data-date]'); if (b) select(b.dataset.date, true); });
 $('#calPrev').addEventListener('click', () => { S.month = new Date(S.month.getFullYear(), S.month.getMonth()-1, 1); renderCal(); renderStats(); renderBars(); });
@@ -794,18 +788,18 @@ function renderBars(){
   const counts = {};
   Object.keys(S.workouts).filter(d => d.startsWith(key)).forEach(d => (S.workouts[d].types || []).forEach(t => counts[t] = (counts[t] || 0) + 1));
   const rows = Object.entries(counts).sort((a,b) => b[1] - a[1]);
-  if (!rows.length){ $('#bars').innerHTML = `<div class="empty">${m.getMonth()+1}월에는 아직 기록이 없어요. 첫 운동을 기록해 볼까요?</div>`; return; }
+  if (!rows.length){ $('#bars').innerHTML = `<div class="empty">${m.getMonth()+1}월에는 아직 기록이 없어요.</div>`; return; }
   const max = rows[0][1];
-  $('#bars').innerHTML = rows.map(([id,n]) => { const t = typeOf(id); return `<div class="bar" style="${cvar(t.c)}"><span class="nmb">${t.em} ${esc(t.name)}</span><div class="track"><div class="fill" style="width:${Math.max(6, n/max*100)}%"></div></div><span class="n">${n}</span></div>`; }).join('');
+  $('#bars').innerHTML = rows.map(([id,n]) => { const t = typeOf(id); return `<div class="bar" style="${cvar(t.c)}"><span>${esc(t.name)}</span><div class="track"><div class="fill" style="width:${Math.max(4, n/max*100)}%"></div></div><span class="n">${n}</span></div>`; }).join('');
 }
 function renderRecent(){
   const days = Object.keys(S.workouts).sort().reverse().slice(0, 8);
-  if (!days.length){ $('#recent').innerHTML = `<li class="empty">아직 기록이 없어요. 오늘 한 운동을 골라 저장해 보세요!</li>`; return; }
+  if (!days.length){ $('#recent').innerHTML = `<li class="empty">아직 기록이 없어요. 오늘 한 운동을 골라 저장해 보세요.</li>`; return; }
   $('#recent').innerHTML = days.map(d => {
     const w = S.workouts[d];
-    const tags = (w.types || []).map(id => { const t = typeOf(id); return `<span>${t.em} ${esc(t.name)}</span>`; }).join('');
+    const tags = (w.types || []).map(id => { const t = typeOf(id); return `<span style="${cvar(t.c)}">${esc(t.name)}</span>`; }).join('');
     const extra = [w.minutes ? `${w.minutes}분` : '', w.feel ? `컨디션 ${w.feel}/5` : '', w.note || ''].filter(Boolean).join(' · ');
-    return `<li><button type="button" data-date="${d}"><span class="when">${fmtDay(d)}</span><span class="what"><span class="tags">${tags}</span>${extra ? `<span class="note">${esc(extra)}</span>` : ''}</span></button></li>`;
+    return `<li><button type="button" data-date="${d}"><span class="when">${fmtDay(d)}</span><span class="what"><span class="tags">${tags}</span>${extra ? `<span class="note">${esc(extra)}</span>` : ''}</span><span class="chev" aria-hidden="true">›</span></button></li>`;
   }).join('');
 }
 $('#recent').addEventListener('click', e => { const b = e.target.closest('[data-date]'); if (b) select(b.dataset.date, true); });
@@ -817,8 +811,8 @@ function renderPR(){
   const u = S.unit;
   $('#groups').innerHTML = liftList().map(g => `<div class="group"><h3>${esc(g.g)}</h3><div class="lifts">${g.items.map(it => {
     const b = bestOf(it.history); const dl = deltaOf(it.history);
-    const w = b ? `<div class="w">${fmtW(b.kg)}<small>${u}</small></div>` : `<div class="w none">눌러서 첫 기록하기 ✏️</div>`;
-    const meta = b ? `<div class="meta"><span>${fmtDot(b.date)}</span>${dl > 0 ? `<span class="up">▲ ${fmtW(dl)}${u}</span>` : ''}</div>` : `<div class="meta">&nbsp;</div>`;
+    const w = b ? `<div class="w">${fmtW(b.kg)}<small>${u}</small></div>` : `<div class="w none">+ 첫 기록 추가</div>`;
+    const meta = b ? `<div class="meta"><span>${fmtDot(b.date)}</span>${dl > 0 ? `<span class="up">+${fmtW(dl)}${u}</span>` : ''}</div>` : `<div class="meta">기록 없음</div>`;
     return `<button type="button" class="lift" data-lift="${esc(it.id)}"><div class="nm"><b>${esc(it.name)}</b><span>${esc(it.en)}</span></div>${w}${sparkline(it.history)}${meta}</button>`;
   }).join('')}</div></div>`).join('');
   renderRecentPR();
@@ -843,7 +837,7 @@ function renderRecentPR(){
   ev.sort((a,b) => a.date < b.date ? 1 : a.date > b.date ? -1 : b.kg - a.kg);
   const top = ev.slice(0, 6);
   $('#recentPr').hidden = !top.length;
-  $('#recentPrList').innerHTML = top.map(e => `<li><button type="button" data-lift="${esc(e.lift.id)}"><span class="rd">${shortDate(e.date)}</span><span class="rn">${esc(e.lift.name)}</span><span class="rw">${fmtW(e.kg)}<small>${S.unit}</small>${e.gain > 0 ? `<span class="up">▲${fmtW(e.gain)}</span>` : e.first ? '<span class="up" style="color:var(--muted)">첫 기록</span>' : ''}</span></button></li>`).join('');
+  $('#recentPrList').innerHTML = top.map(e => `<li><button type="button" data-lift="${esc(e.lift.id)}"><span class="rd">${shortDate(e.date)}</span><span class="rn">${esc(e.lift.name)}</span><span class="rw">${fmtW(e.kg)}<small>${S.unit}</small>${e.gain > 0 ? `<span class="up">+${fmtW(e.gain)}</span>` : e.first ? '<span class="up" style="color:var(--muted);font-weight:500">첫 기록</span>' : ''}</span></button></li>`).join('');
 }
 $('#recentPrList').addEventListener('click', e => { const b = e.target.closest('[data-lift]'); if (b) openLift(b.dataset.lift); });
 
@@ -853,7 +847,7 @@ function drawTrend(it){
   const box = $('#trend');
   const h = it.history;
   $('#trendKey').hidden = h.length < 2;
-  if (h.length < 2){ box.innerHTML = `<div class="empty" style="padding-top:0">기록이 2개 이상 쌓이면 추이 그래프가 그려져요 📈</div>`; return; }
+  if (h.length < 2){ box.innerHTML = `<div class="empty" style="padding-top:0">기록이 2개 이상 쌓이면 추이 그래프가 그려져요.</div>`; return; }
   const c = chronPR(h).map(e => ({...e, v: toUnit(e.kg), bv: toUnit(e.best), t: parse(e.date).getTime()}));
   const W = Math.max(280, Math.round(box.clientWidth || 480)), H = 210;
   const m = {l:38, r:64, t:16, b:28};
@@ -882,7 +876,7 @@ function drawTrend(it){
   const xEnd = X(c[c.length-1].t);
   svg += `<path class="area" d="${d} V${Y(y0)} H${X(c[0].t)} Z"/><path class="best" d="${d}"/>`;
   c.filter(e => !e.pr).forEach(e => { svg += `<circle class="pt" cx="${X(e.t)}" cy="${Y(e.v)}" r="4"/>`; });
-  c.filter(e => e.pr).forEach(e => { svg += `<circle class="pt pr" cx="${X(e.t)}" cy="${Y(e.v)}" r="5.5"/>`; });
+  c.filter(e => e.pr).forEach(e => { svg += `<circle class="pt pr" cx="${X(e.t)}" cy="${Y(e.v)}" r="5"/>`; });
   const last = c[c.length-1];
   svg += `<text class="endlab" x="${xEnd + 9}" y="${Y(last.bv) + 5}">${fmtW(last.best)}${S.unit}</text>`;
   svg += `<line class="xh" id="xh" y1="${m.t}" y2="${H - m.b}" x1="0" x2="0" visibility="hidden"/>`;
@@ -899,7 +893,7 @@ function drawTrend(it){
     const gx = X(g.t);
     xh.setAttribute('x1', gx); xh.setAttribute('x2', gx); xh.setAttribute('visibility', 'visible');
     const items = [...g.items].sort((a,b) => b.kg - a.kg);
-    tip.innerHTML = `${fmtDot(g.date)}<br>` + items.map(e => `<b>${fmtW(e.kg)}</b>${S.unit}${e.pr ? ' · PR' + (e.gain > 0 ? ` ▲${fmtW(e.gain)}` : '') : ''}`).join('<br>');
+    tip.innerHTML = `${fmtDot(g.date)}<br>` + items.map(e => `<b>${fmtW(e.kg)}</b>${S.unit}${e.pr ? ' · PR' + (e.gain > 0 ? ` +${fmtW(e.gain)}` : '') : ''}`).join('<br>');
     tip.hidden = false;
     const px = gx * r.width / W;
     const half = tip.offsetWidth / 2;
@@ -923,7 +917,7 @@ $('#liftAddForm').addEventListener('submit', async e => {
   const name = $('#liftAddName').value.trim(); if (!name) return;
   if (!backend){ toast('아직 기록을 불러오는 중이에요.'); return; }
   const id = 'c_' + rid();
-  try { await backend.saveLift(id, {name, custom:true, history:[]}); $('#liftAddName').value = ''; $('#liftAddForm').hidden = true; toast(`'${name}' 동작을 추가했어요.`); openLift(id); }
+  try { await backend.saveLift(id, {name, custom:true, history:[]}); $('#liftAddName').value = ''; $('#liftAddForm').hidden = true; toast(`'${name}' 동작을 추가했어요`); openLift(id); }
   catch(err){ toast(writeErr(err)); }
 });
 
@@ -948,8 +942,8 @@ function renderDlg(){
   $('#dlgWLab').textContent = `중량 (${u})`;
   $('#dlgW').step = u === 'lb' ? '1' : '0.5';
   const b = bestOf(it.history);
-  $('#dlgBest').innerHTML = b ? `${fmtW(b.kg)}<small>${u}</small>` : `<span style="font-size:22px;color:var(--muted)">아직 기록이 없어요</span>`;
-  $('#dlgBestMeta').textContent = b ? `${fmtDot(b.date)} 달성` + (S.unit === 'kg' ? ` · ${Math.round(b.kg * LB)} lb` : ` · ${Math.round(b.kg*10)/10} kg`) : '오늘 든 최고 중량을 아래에 입력해 보세요.';
+  $('#dlgBest').innerHTML = b ? `${fmtW(b.kg)}<small>${u}</small>` : `<span style="font-size:18px;font-weight:500;color:var(--muted)">기록 없음</span>`;
+  $('#dlgBestMeta').textContent = b ? `${fmtDot(b.date)} 달성 · ` + (S.unit === 'kg' ? `${Math.round(b.kg * LB)} lb` : `${Math.round(b.kg*10)/10} kg`) : '';
   $('#pctWrap').hidden = !b;
   if (b){
     const ps = [50,55,60,65,70,75,80,85,90,95,100];
@@ -976,21 +970,21 @@ $('#dlgForm').addEventListener('submit', async e => {
   try {
     await backend.saveLift(it.id, liftDoc(it, history));
     $('#dlgW').value = ''; $('#dlgErr').textContent = '';
-    if (prev && kg > prev.kg){ confetti(); toast(`🎉 새 PR! ${it.name} ${fmtW(kg)}${S.unit}`); }
-    else toast(!prev ? `${it.name} 첫 기록 ${fmtW(kg)}${S.unit} 저장했어요` : `${it.name} ${fmtW(kg)}${S.unit} 기록을 추가했어요.`);
+    if (prev && kg > prev.kg){ confetti(); toast(`새 PR! ${it.name} ${fmtW(kg)}${S.unit}`); }
+    else toast(!prev ? `${it.name} 첫 기록 ${fmtW(kg)}${S.unit}을 저장했어요` : `${it.name} ${fmtW(kg)}${S.unit} 기록을 추가했어요`);
   } catch(err){ $('#dlgErr').textContent = writeErr(err); }
 });
 $('#hist').addEventListener('click', e => {
   const b = e.target.closest('[data-del]'); if (!b) return;
   arm(b, '삭제', async () => {
     const it = getLift(S.openLift); if (!it) return;
-    try { await backend.saveLift(it.id, liftDoc(it, it.history.filter(x => x.id !== b.dataset.del))); toast('기록을 지웠어요.'); }
+    try { await backend.saveLift(it.id, liftDoc(it, it.history.filter(x => x.id !== b.dataset.del))); toast('기록을 삭제했어요'); }
     catch(err){ $('#dlgErr').textContent = writeErr(err); }
   });
 });
 $('#dlgDelLift').addEventListener('click', () => arm($('#dlgDelLift'), '이 동작 삭제', async () => {
   const it = getLift(S.openLift); if (!it) return;
-  try { await backend.deleteLift(it.id); closeLift(); toast(`'${it.name}' 동작을 지웠어요.`); }
+  try { await backend.deleteLift(it.id); closeLift(); toast(`'${it.name}' 동작을 삭제했어요`); }
   catch(err){ $('#dlgErr').textContent = writeErr(err); }
 }));
 
@@ -1014,7 +1008,7 @@ $('#bkCopy').addEventListener('click', () => {
   const ta = $('#bkOut'); ta.value = exportText();
   const fallback = () => { ta.focus(); ta.select(); $('#bkCopyMsg').textContent = '자동 복사가 막혀 있어요. 선택된 글자를 직접 복사해 주세요 (Ctrl+C / 길게 눌러 복사).'; };
   try {
-    navigator.clipboard.writeText(ta.value).then(() => { $('#bkCopyMsg').textContent = '복사했어요! 안전한 곳에 붙여넣어 두세요 ✓'; }, fallback);
+    navigator.clipboard.writeText(ta.value).then(() => { $('#bkCopyMsg').textContent = '복사했어요. 안전한 곳에 붙여넣어 두세요.'; }, fallback);
   } catch(e){ fallback(); }
 });
 function parseBackup(txt){
@@ -1040,7 +1034,7 @@ async function doImport(d, mode){
   const next = mode === 'replace' ? d : mergeData({workouts:S.workouts, lifts:S.lifts, settings:S.settings}, d);
   await backend.replaceAll(next);
   bk.close();
-  toast(`불러왔어요! ${countText(next.workouts, next.lifts)}`);
+  toast(`불러왔어요 · ${countText(next.workouts, next.lifts)}`);
 }
 $('#bkImport').addEventListener('click', () => {
   const btn = $('#bkImport');
