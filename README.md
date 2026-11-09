@@ -13,4 +13,5 @@
 - `config.js` – Supabase 주소와 공개(anon) 키. 비어 있으면 로그인 없이 기기 저장 모드로 동작
 - `supabase/schema.sql` – 데이터베이스 표와 접근 규칙 (각자 자기 기록만 읽고 쓰기)
 - `SETUP.md` – 로그인·계정 저장 설정 안내
+- `privacy.html` – 개인정보처리방침
 - `manifest.webmanifest`, `icons/`, `sw.js` – 홈 화면 앱 설정과 오프라인 지원

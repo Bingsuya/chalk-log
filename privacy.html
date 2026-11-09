@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>개인정보처리방침 · Chalk Log</title>
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#FFFFFF;--ink:#222222;--muted:#6A6A6A;--line:#EBEBEB;--accent:#F0435E;color-scheme:light}
+@media (prefers-color-scheme: dark){:root{--bg:#121212;--ink:#F2F2F2;--muted:#A3A3A3;--line:#2C2C2C;--accent:#FF5A73;color-scheme:dark}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:15px;line-height:1.75}
+main{max-width:680px;margin:0 auto;padding:40px max(20px,env(safe-area-inset-right)) 64px max(20px,env(safe-area-inset-left))}
+a{color:var(--accent)}
+.back{font-size:14px;text-decoration:none;font-weight:600}
+h1{font-family:"Jua","Noto Sans KR",sans-serif;font-weight:400;font-size:30px;margin:16px 0 4px}
+h2{font-size:17px;margin:32px 0 8px;padding-top:20px;border-top:1px solid var(--line)}
+p,li{color:var(--ink)}
+.muted{color:var(--muted);font-size:14px}
+ul{padding-left:20px}
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="./">← Chalk Log로 돌아가기</a>
+  <h1>개인정보처리방침</h1>
+  <p class="muted">시행일: 2026년 11월 9일</p>
+
+  <p>Chalk Log(이하 "앱")는 운동 기록을 남기는 개인 프로젝트예요. 기록을 저장하는 데 꼭 필요한 정보만 받고, 다른 곳에 팔거나 넘기지 않아요.</p>
+
+  <h2>1. 어떤 정보를 받나요</h2>
+  <ul>
+    <li><b>구글 로그인 정보:</b> 이메일 주소, 이름, 계정 식별값. 로그인할 때 구글이 앱에 전달해요.</li>
+    <li><b>직접 입력한 운동 기록:</b> 운동한 날짜와 종목, 운동 시간, 컨디션, 메모, 동작별 중량 기록.</li>
+  </ul>
+  <p>광고용 추적, 위치 정보, 연락처, 사진은 받지 않아요.</p>
+
+  <h2>2. 왜 쓰나요</h2>
+  <ul>
+    <li>로그인한 사람을 구분하고, 그 사람의 기록만 보여주기 위해</li>
+    <li>여러 기기에서 같은 기록을 볼 수 있게 저장하기 위해</li>
+  </ul>
+
+  <h2>3. 어디에 보관하나요</h2>
+  <p>기록은 데이터베이스 서비스 <b>Supabase</b>에 보관돼요. 각 사용자는 자기 기록만 읽고 쓸 수 있도록 데이터베이스 규칙으로 막혀 있어요. 로그인 없이 쓰는 경우 기록은 사용 중인 기기의 브라우저에만 저장되고 서버로 보내지 않아요.</p>
+
+  <h2>4. 다른 곳에 넘기나요</h2>
+  <p>넘기지 않아요. 다만 앱을 운영하기 위해 아래 서비스를 사용해요.</p>
+  <ul>
+    <li>Google — 로그인</li>
+    <li>Supabase — 로그인 처리와 기록 저장</li>
+    <li>GitHub Pages — 앱 화면 제공</li>
+  </ul>
+
+  <h2>5. 언제까지 보관하고, 어떻게 지우나요</h2>
+  <p>계정을 쓰는 동안 보관해요. 앱 맨 아래 <b>백업 · 기록 옮기기</b>에서 <b>계정 기록 모두 삭제</b>를 누르면 서버에 저장된 내 운동 기록이 바로 지워져요. 로그인 정보까지 완전히 지우고 싶으면 아래 연락처로 요청해 주세요. 확인 후 지체 없이 삭제해요.</p>
+
+  <h2>6. 문의</h2>
+  <p>개인정보 관련 문의는 구글 로그인 화면에 표시되는 <b>개발자 연락처 이메일</b>로 보내주세요.</p>
+
+  <p class="muted" style="margin-top:40px">이 방침이 바뀌면 이 페이지에 바뀐 날짜와 함께 알려드려요.</p>
+</main>
+</body>
+</html>
