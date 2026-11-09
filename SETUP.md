@@ -88,3 +88,23 @@ Chalk Log에 구글 로그인을 켜고, 기록이 계정에 저장되게 하는
 - **로그인 후 다시 로그인 화면이 나옴**: 5단계의 주소 끝에 `/`까지 정확히 들어갔는지 확인해요.
 - **"액세스 차단됨: 앱이 테스트 중"**: 3-4단계의 **앱 게시**를 눌렀는지 확인해요.
 - **아이폰 홈 화면 앱에서 로그인이 Safari로 넘어가 버림**: 홈 화면 앱 안에서 다시 한 번 로그인해 보세요. 그래도 안 되면 Claude에게 알려주세요.
+
+---
+
+## 고객센터(의견 보내기) 켜기
+
+1. Supabase → **SQL Editor → New query**
+2. [`supabase/feedback.sql`](supabase/feedback.sql) 내용을 전부 붙여넣고 **Run**
+3. 끝! 앱 맨 아래 **고객센터 💌**에서 보낸 의견이 쌓여요.
+
+**받은 의견 보기**
+- Supabase → **Table Editor → feedback**
+- 또는 SQL Editor에서:
+
+```sql
+select created_at, category, message, contact
+from public.feedback
+order by created_at desc;
+```
+
+`category` 값: `idea` 기능 제안 · `bug` 오류 신고 · `etc` 그냥 한마디

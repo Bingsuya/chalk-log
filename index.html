@@ -294,6 +294,21 @@ input[type=date]::-webkit-calendar-picker-indicator{margin-left:auto;opacity:.6}
 .sync.saving{color:var(--muted)}
 .sync.offline,.sync.error{border-color:color-mix(in srgb,var(--p-yellow) 60%,var(--line));color:var(--ink)}
 
+/* help center */
+.faq{display:flex;flex-direction:column}
+.faq details{border-top:1px solid var(--hair);padding:12px 0}
+.faq details:first-child{border-top:0;padding-top:4px}
+.faq summary{cursor:pointer;font-weight:600;font-size:14.5px;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--muted);font-weight:500}
+.faq details[open] summary::after{content:"−"}
+.faq details p{margin:8px 0 0;font-size:14px;color:var(--muted)}
+.bk-sec .box textarea,.bk-sec .box textarea:focus{border:0;border-radius:0;padding:2px 0 0;background:transparent;box-shadow:none;font-family:var(--f);font-size:15px}
+.fb-done{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:12px 0 4px}
+.fb-done svg{width:72px;height:72px}
+.fb-done h3{font-family:var(--f-d);font-weight:400;font-size:22px;margin:0}
+.fb-done p{margin:0;color:var(--muted);font-size:14px}
+
 /* ---------- cute layer: rounded display face, mascot, emoji, pastel tints ---------- */
 .brand b,.sec-title,.pr-head h1,.day-head h2,.cal-head h2,.group h3,.blk-title,.bk-sec h3,.dlg .t h2,.dlg-bar .bt,.recent-pr .sec-title{font-family:var(--f-d);font-weight:400;letter-spacing:0}
 .brand svg{width:36px;height:36px}
@@ -471,10 +486,56 @@ html{-webkit-text-size-adjust:100%}
     <div class="foot">
       <div class="acct" id="acct" hidden></div>
       <p class="banner" id="banner" hidden></p>
+      <button type="button" class="btn sm" id="fbOpen">고객센터 💌</button>
       <div class="acct"><button type="button" class="linkish" id="backupOpen">백업 · 기록 옮기기</button><a class="linkish" href="privacy.html" style="color:var(--muted)">개인정보처리방침</a></div>
     </div>
   </main>
 </div>
+
+<dialog id="fbDlg" aria-labelledby="fbTitle">
+  <div class="dlg-bar">
+    <button type="button" class="icon-btn" id="fbClose" aria-label="닫기"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 3 10 10M13 3 3 13"/></svg></button>
+    <span class="bt" id="fbTitle">고객센터</span>
+  </div>
+  <div class="dlg">
+    <div class="bk-sec">
+      <h3>자주 묻는 질문</h3>
+      <div class="faq">
+        <details><summary>기록은 어디에 저장돼요?</summary><p>로그인하면 계정에 저장돼서 휴대폰·PC 어디서든 같은 기록이 보여요. 로그인 없이 쓰면 지금 쓰는 기기에만 저장돼요.</p></details>
+        <details><summary>폰을 바꾸면 기록이 사라지나요?</summary><p>로그인해서 쓰고 있다면 새 폰에서 같은 구글 계정으로 로그인하면 그대로 있어요. 로그인 없이 썼다면 맨 아래 '백업 · 기록 옮기기'로 옮겨 주세요.</p></details>
+        <details><summary>인터넷이 끊겨도 기록할 수 있어요?</summary><p>네. 기록은 바로 화면에 남고, 인터넷이 연결되면 자동으로 계정에 저장돼요.</p></details>
+        <details><summary>내 기록을 지우고 싶어요.</summary><p>로그인한 상태에서 맨 아래 '백업 · 기록 옮기기' → '계정 기록 모두 삭제'를 누르면 돼요.</p></details>
+      </div>
+    </div>
+    <form class="bk-sec" id="fbForm" novalidate>
+      <h3>의견 보내기</h3>
+      <p>불편한 점, 있었으면 하는 기능, 칭찬 다 좋아요. 보내주신 의견은 관리자만 읽어요.</p>
+      <div class="chips" id="fbCats" role="radiogroup" aria-label="의견 종류">
+        <button type="button" class="chip" style="--c:var(--p-yellow)" data-cat="idea" role="radio" aria-pressed="true" aria-checked="true"><span class="em" aria-hidden="true">💡</span>기능 제안</button>
+        <button type="button" class="chip" style="--c:var(--p-red)" data-cat="bug" role="radio" aria-pressed="false" aria-checked="false"><span class="em" aria-hidden="true">🐞</span>오류 신고</button>
+        <button type="button" class="chip" style="--c:var(--p-blue)" data-cat="etc" role="radio" aria-pressed="false" aria-checked="false"><span class="em" aria-hidden="true">💬</span>그냥 한마디</button>
+      </div>
+      <div class="box">
+        <div class="cell-f">
+          <label for="fbMsg">내용</label>
+          <textarea id="fbMsg" maxlength="2000" placeholder="예: 러닝 거리(km)도 기록하고 싶어요" style="min-height:110px"></textarea>
+        </div>
+        <div class="cell-f" style="border-top:1px solid var(--line)">
+          <label for="fbContact">답장 받을 연락처 (선택)</label>
+          <input type="text" id="fbContact" maxlength="200" placeholder="이메일이나 인스타 아이디" autocomplete="email">
+        </div>
+      </div>
+      <div class="err" id="fbErr" role="alert"></div>
+      <button type="submit" class="btn primary" id="fbSend">보내기</button>
+    </form>
+    <div class="fb-done" id="fbDone" hidden>
+      <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="2" y="13" width="9" height="22" rx="4.5" fill="var(--p-purple)"/><rect x="37" y="13" width="9" height="22" rx="4.5" fill="var(--p-purple)"/><rect x="9" y="21" width="30" height="6" rx="3" fill="var(--muted)"/><circle cx="24" cy="24" r="12" fill="var(--accent)"/><circle cx="19.8" cy="22.5" r="1.8" fill="#fff"/><circle cx="28.2" cy="22.5" r="1.8" fill="#fff"/><path d="M20.5 27.2q3.5 3 7 0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="16.6" cy="26.6" r="1.6" fill="#FFC2CF" opacity=".9"/><circle cx="31.4" cy="26.6" r="1.6" fill="#FFC2CF" opacity=".9"/></svg>
+      <h3>고마워요! 잘 받았어요 💌</h3>
+      <p>보내주신 의견은 꼼꼼히 읽어볼게요.</p>
+      <button type="button" class="btn sm" id="fbAgain">하나 더 보내기</button>
+    </div>
+  </div>
+</dialog>
 
 <div class="login" id="login" hidden>
   <div class="login-card" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
@@ -905,6 +966,45 @@ function renderAccount(){
     $('#loginOpen').addEventListener('click', showLogin);
   }
 }
+/* --- help center: anyone can send feedback; only the admin reads it (Supabase dashboard) --- */
+const fbDlg = $('#fbDlg');
+let fbCat = 'idea';
+function fbReset(){
+  $('#fbForm').hidden = false; $('#fbDone').hidden = true; $('#fbErr').textContent = '';
+  if (!$('#fbContact').value && user && user.email) $('#fbContact').value = user.email;
+}
+$('#fbOpen').addEventListener('click', () => { fbReset(); try { fbDlg.showModal(); } catch(e){ fbDlg.setAttribute('open',''); } });
+$('#fbClose').addEventListener('click', () => fbDlg.close());
+fbDlg.addEventListener('click', e => { if (e.target === fbDlg) fbDlg.close(); });
+$('#fbAgain').addEventListener('click', fbReset);
+$('#fbMsg').addEventListener('input', () => { $('#fbErr').textContent = ''; });
+$('#fbCats').addEventListener('click', e => {
+  const b = e.target.closest('[data-cat]'); if (!b) return;
+  fbCat = b.dataset.cat;
+  $('#fbCats').querySelectorAll('[data-cat]').forEach(x => { const on = x === b; x.setAttribute('aria-pressed', on); x.setAttribute('aria-checked', on); });
+});
+$('#fbForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const err = $('#fbErr'); err.textContent = '';
+  const message = $('#fbMsg').value.trim();
+  const contact = $('#fbContact').value.trim();
+  if (!message){ err.textContent = '내용을 적어 주세요.'; return; }
+  if (!sb){ err.textContent = '지금은 보낼 수 없어요. 인터넷 연결을 확인하고 새로고침해 주세요.'; return; }
+  const last = Number(lsGet('chalklog.fbAt') || 0);
+  if (Date.now() - last < 30000){ err.textContent = '방금 보내주셨어요. 잠시 뒤에 다시 보내주세요.'; return; }
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || !!navigator.standalone;
+  const row = {category:fbCat, message, contact: contact || null, app_info:`mode=${S.mode}; homescreen=${standalone ? 'y' : 'n'}; width=${window.innerWidth}`};
+  if (user && S.mode === 'cloud') row.user_id = user.id;
+  const btn = $('#fbSend'); btn.disabled = true; btn.textContent = '보내는 중…';
+  let error = null;
+  try { error = (await sb.from('feedback').insert(row)).error; } catch(ex){ error = ex; }
+  btn.disabled = false; btn.textContent = '보내기';
+  if (error){ err.textContent = '보내지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.'; return; }
+  lsSet('chalklog.fbAt', String(Date.now()));
+  $('#fbMsg').value = '';
+  $('#fbForm').hidden = true; $('#fbDone').hidden = false;
+});
+
 /* delete every record this account has on the server (and this device's copy) */
 async function wipeAccount(){
   $('#wipeErr').textContent = '';
