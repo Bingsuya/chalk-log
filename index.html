@@ -852,7 +852,10 @@ async function boot(){
   if (!ok){
     // no connection and no cached library: keep using the last account's copy on this device
     const last = readJSON('chalklog.lastUser');
-    if (last) startCloud(last); else startLocal();
+    if (last){ startCloud(last); return; }
+    startLocal();
+    if (lsGet('chalklog.guest') !== '1') showLogin();
+    toast('로그인 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.');
     return;
   }
   sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, {auth:{flowType:'pkce', persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}});
