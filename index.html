@@ -279,6 +279,21 @@ input[type=date]::-webkit-calendar-picker-indicator{margin-left:auto;opacity:.6}
 @keyframes fall{to{transform:translate(var(--dx),105vh) rotate(var(--rot));opacity:.9}}
 @media (prefers-reduced-motion:no-preference){.chip,.cell .d,.btn,.tabs a{transition:background-color .15s,border-color .15s,box-shadow .15s,transform .1s}}
 
+/* login screen + account line */
+.login{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow-y:auto}
+.login-card{width:min(400px,100%);background:var(--surface);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:32px 28px 24px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.login-card .m{width:84px;height:84px}
+.login-card h2{font-family:var(--f-d);font-weight:400;font-size:30px;color:var(--accent);margin:-6px 0 0}
+.login-card p{margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.6}
+.login-card .fine{font-size:12px;color:var(--muted)}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:8px;padding:13px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:15px;cursor:pointer;color:var(--ink);box-shadow:var(--shadow-sm)}
+.gbtn:hover{background:var(--soft)}
+.gbtn svg{width:18px;height:18px;flex:none}
+.acct{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;justify-content:center;font-size:13px;color:var(--muted);margin-bottom:6px}
+.sync{font-size:12px;padding:2px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);white-space:nowrap}
+.sync.saving{color:var(--muted)}
+.sync.offline,.sync.error{border-color:color-mix(in srgb,var(--p-yellow) 60%,var(--line));color:var(--ink)}
+
 /* ---------- cute layer: rounded display face, mascot, emoji, pastel tints ---------- */
 .brand b,.sec-title,.pr-head h1,.day-head h2,.cal-head h2,.group h3,.blk-title,.bk-sec h3,.dlg .t h2,.dlg-bar .bt,.recent-pr .sec-title{font-family:var(--f-d);font-weight:400;letter-spacing:0}
 .brand svg{width:36px;height:36px}
@@ -454,10 +469,25 @@ html{-webkit-text-size-adjust:100%}
     </section>
 
     <div class="foot">
+      <div class="acct" id="acct" hidden></div>
       <p class="banner" id="banner" hidden></p>
       <button type="button" class="linkish" id="backupOpen">백업 · 기록 옮기기</button>
     </div>
   </main>
+</div>
+
+<div class="login" id="login" hidden>
+  <div class="login-card" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <svg class="m" viewBox="0 0 48 48" aria-hidden="true"><rect x="2" y="13" width="9" height="22" rx="4.5" fill="var(--p-purple)"/><rect x="37" y="13" width="9" height="22" rx="4.5" fill="var(--p-purple)"/><rect x="9" y="21" width="30" height="6" rx="3" fill="var(--muted)"/><circle cx="24" cy="24" r="12" fill="var(--accent)"/><circle cx="19.8" cy="22.5" r="1.8" fill="#fff"/><circle cx="28.2" cy="22.5" r="1.8" fill="#fff"/><path d="M20.5 27.2q3.5 3 7 0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="16.6" cy="26.6" r="1.6" fill="#FFC2CF" opacity=".9"/><circle cx="31.4" cy="26.6" r="1.6" fill="#FFC2CF" opacity=".9"/></svg>
+    <h2 id="loginTitle">chalk log</h2>
+    <p>로그인하면 기록이 계정에 안전하게 저장돼요.<br>휴대폰·PC 어디서 열어도 같은 기록이 보여요.</p>
+    <button type="button" class="gbtn" id="googleBtn">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Google로 계속하기
+    </button>
+    <button type="button" class="linkish" id="guestBtn">로그인 없이 이 기기에서만 쓰기</button>
+    <p class="fine">이 기기에 있던 기록도 자동으로 옮겨져요.<br>내 기록은 나만 볼 수 있어요.</p>
+  </div>
 </div>
 
 <dialog id="liftDlg" aria-labelledby="dlgName">
@@ -541,6 +571,7 @@ html{-webkit-text-size-adjust:100%}
 
 <div class="toast" id="toast" role="status" hidden></div>
 
+<script src="config.js"></script>
 <script>
 (function(){
 const $ = s => document.querySelector(s);
@@ -654,30 +685,225 @@ function writeErr(e){
 /* ---------- storage: this browser ---------- */
 const MSG_LOCAL = (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) ? '기록은 이 기기의 Chalk Log 앱에 저장돼요. 다른 기기로 옮길 때는 아래 백업을 써 주세요.' : '기록은 이 브라우저에 저장돼요. 홈 화면에 추가하면 앱처럼 쓸 수 있어요. (홈 화면 앱은 브라우저와 기록을 따로 보관해요. 옮길 땐 백업을 써 주세요)';
 const MSG_NOSTORE = '이 브라우저는 저장을 막고 있어서 창을 닫으면 기록이 사라져요. 일반 창(시크릿 모드 아님)에서 열어 주세요.';
-function startLocal(){
-  const KEY = 'chalklog.data.v1';
-  let saved = null;
-  try { saved = JSON.parse(lsGet(KEY) || 'null'); } catch(e){}
-  S.workouts = (saved && saved.workouts) || {}; S.lifts = (saved && saved.lifts) || {}; S.settings = (saved && saved.settings) || {customTypes:[]};
-  const canStore = lsSet('chalklog.probe', '1');
-  const persist = () => lsSet(KEY, JSON.stringify({workouts:S.workouts, lifts:S.lifts, settings:S.settings}));
-  const done = () => { persist(); refresh(); return Promise.resolve(); };
-  backend = {
-    saveWorkout: (date, data) => { S.workouts = {...S.workouts, [date]:data}; return done(); },
-    deleteWorkout: date => { const o = {...S.workouts}; delete o[date]; S.workouts = o; return done(); },
-    saveLift: (id, data) => { S.lifts = {...S.lifts, [id]:data}; return done(); },
-    deleteLift: id => { const o = {...S.lifts}; delete o[id]; S.lifts = o; return done(); },
-    saveSettings: data => { S.settings = data; return done(); },
-    replaceAll: d => { S.workouts = d.workouts; S.lifts = d.lifts; S.settings = d.settings; S.formDirty = false; return done(); },
+const MSG_GUEST = '로그인 없이 쓰는 중이라 기록이 이 기기에만 저장돼요. 로그인하면 계정에 안전하게 보관되고, 지금 기록도 자동으로 옮겨져요.';
+const ANON_KEY = 'chalklog.data.v1';
+const CFG = window.CHALK_CONFIG || {};
+const CLOUD_ON = !!(CFG.supabaseUrl && CFG.supabaseAnonKey);
+const SUPABASE_SRC = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
+
+function readJSON(k){ try { return JSON.parse(lsGet(k) || 'null'); } catch(e){ return null; } }
+function emptyData(){ return {workouts:{}, lifts:{}, settings:{customTypes:[]}}; }
+function setData(d){ d = d || emptyData(); S.workouts = d.workouts || {}; S.lifts = d.lifts || {}; S.settings = d.settings || {customTypes:[]}; }
+function curData(){ return {workouts:S.workouts, lifts:S.lifts, settings:S.settings}; }
+function hasAny(d){ return !!d && (Object.keys(d.workouts || {}).length + Object.keys(d.lifts || {}).length + ((d.settings && d.settings.customTypes) || []).length) > 0; }
+
+/* every change becomes a list of ops: {kind:'workout'|'lift'|'settings', key, data|null (null = delete)} */
+function makeBackend(apply){
+  return {
+    saveWorkout: (date, data) => { S.workouts = {...S.workouts, [date]:data}; return apply([{kind:'workout', key:date, data}]); },
+    deleteWorkout: date => { const o = {...S.workouts}; delete o[date]; S.workouts = o; return apply([{kind:'workout', key:date, data:null}]); },
+    saveLift: (id, data) => { S.lifts = {...S.lifts, [id]:data}; return apply([{kind:'lift', key:id, data}]); },
+    deleteLift: id => { const o = {...S.lifts}; delete o[id]; S.lifts = o; return apply([{kind:'lift', key:id, data:null}]); },
+    saveSettings: data => { S.settings = data; return apply([{kind:'settings', key:'settings', data}]); },
+    replaceAll: d => { const ops = diffOps(curData(), d); setData(d); S.formDirty = false; return apply(ops); },
   };
+}
+function diffOps(a, b){
+  const ops = [], same = (x, y) => JSON.stringify(x) === JSON.stringify(y);
+  [['workout','workouts'],['lift','lifts']].forEach(([kind, k]) => {
+    Object.keys(a[k] || {}).forEach(key => { if (!(key in (b[k] || {}))) ops.push({kind, key, data:null}); });
+    Object.keys(b[k] || {}).forEach(key => { if (!same(a[k] && a[k][key], b[k][key])) ops.push({kind, key, data:b[k][key]}); });
+  });
+  if (!same(a.settings, b.settings)) ops.push({kind:'settings', key:'settings', data:b.settings});
+  return ops;
+}
+
+/* --- mode 1: this device only --- */
+function startLocal(){
+  setData(readJSON(ANON_KEY));
+  const canStore = lsSet('chalklog.probe', '1');
+  backend = makeBackend(() => { lsSet(ANON_KEY, JSON.stringify(curData())); refresh(); return Promise.resolve(); });
   S.mode = 'local';
-  banner(canStore ? MSG_LOCAL : MSG_NOSTORE);
+  banner(!canStore ? MSG_NOSTORE : CLOUD_ON ? MSG_GUEST : MSG_LOCAL);
+  renderAccount();
   refresh();
 }
-/* every viewer keeps their log in their own browser; no sign-in needed */
-function boot(){
+
+/* --- mode 2: signed in, saved to the account (Supabase) ---
+   The page keeps a per-account copy on this device and a queue of unsent changes,
+   so it works offline and sends the queue once the connection is back. */
+let sb = null, user = null, queue = [], flushing = false, syncState = 'ok', pulled = false;
+const qKey = () => 'chalklog.queue.' + user.id;
+const cKey = () => 'chalklog.cloud.' + user.id;
+function saveCache(){ lsSet(cKey(), JSON.stringify(curData())); lsSet(qKey(), JSON.stringify(queue)); }
+function rowsToData(rows){
+  const d = emptyData();
+  (rows || []).forEach(r => {
+    if (r.kind === 'workout') d.workouts[r.key] = r.data;
+    else if (r.kind === 'lift') d.lifts[r.key] = r.data;
+    else if (r.kind === 'settings' && r.data) d.settings = r.data;
+  });
+  return d;
+}
+function applyOp(d, op){
+  if (op.kind === 'settings'){ if (op.data) d.settings = op.data; return; }
+  const b = op.kind === 'workout' ? 'workouts' : 'lifts';
+  if (op.data == null) delete d[b][op.key]; else d[b][op.key] = op.data;
+}
+function enqueue(ops){
+  ops.forEach(op => { queue = queue.filter(q => !(q.kind === op.kind && q.key === op.key)); queue.push(op); });
+  saveCache(); refresh();
+  flush();
+  return Promise.resolve();
+}
+const SYNC_TEXT = {ok:'☁️ 계정에 저장됨', saving:'저장 중…', offline:'오프라인 · 연결되면 저장돼요', error:'저장 대기 중 · 잠시 후 다시 시도해요'};
+function setSync(s){
+  syncState = s;
+  const el = $('#syncChip'); if (!el) return;
+  el.textContent = SYNC_TEXT[s] || ''; el.className = 'sync ' + s;
+}
+async function flush(){
+  if (!sb || !user || flushing) return;
+  if (!queue.length){ setSync('ok'); return; }
+  if (navigator.onLine === false){ setSync('offline'); return; }
+  flushing = true; setSync('saving');
+  try {
+    while (queue.length){
+      const head = queue[0];
+      let batch, res;
+      if (head.data == null){
+        batch = [head];
+        res = await sb.from('entries').delete().match({user_id:user.id, kind:head.kind, key:head.key});
+      } else {
+        batch = [];
+        for (const op of queue){ if (op.data == null || batch.length >= 200) break; batch.push(op); }
+        const now = new Date().toISOString();
+        res = await sb.from('entries').upsert(batch.map(op => ({user_id:user.id, kind:op.kind, key:op.key, data:op.data, updated_at:now})), {onConflict:'user_id,kind,key'});
+      }
+      if (res.error) throw res.error;
+      queue = queue.filter(q => !batch.includes(q));
+      lsSet(qKey(), JSON.stringify(queue));
+    }
+    setSync('ok');
+  } catch(e){
+    setSync(navigator.onLine === false ? 'offline' : 'error');
+  } finally { flushing = false; }
+}
+async function pull(){
+  const {data, error} = await sb.from('entries').select('kind,key,data');
+  if (error) throw error;
+  const d = rowsToData(data);
+  queue.forEach(op => applyOp(d, op));   // unsent changes from this device stay on top
+  setData(d); saveCache(); refresh();
+  pulled = true;
+}
+/* records made on this device before signing in move into the account once */
+function migrateAnon(){
+  const anon = readJSON(ANON_KEY);
+  if (!hasAny(anon)) return;
+  const merged = mergeData(curData(), anon);
+  const ops = diffOps(curData(), merged);
+  lsSet(ANON_KEY + '.moved', JSON.stringify(anon));
+  try { localStorage.removeItem(ANON_KEY); } catch(e){}
+  if (!ops.length) return;
+  setData(merged);
+  enqueue(ops);
+  toast(`이 기기에 있던 기록을 계정으로 옮겼어요 · ${countText(merged.workouts, merged.lifts)}`);
+}
+async function startCloud(u){
+  user = {id:u.id, email:u.email || ''};
+  lsSet('chalklog.lastUser', JSON.stringify(user));
+  lsSet('chalklog.guest', '');
+  queue = readJSON(qKey()) || [];
+  const cached = readJSON(cKey());
+  setData(cached);
+  backend = makeBackend(enqueue);
+  S.mode = 'cloud';
+  banner(null); hideLogin(); renderAccount(); refresh();
+  if (!sb){ setSync(queue.length ? 'offline' : 'ok'); return; }
+  try { await pull(); migrateAnon(); }
+  catch(e){
+    setSync('offline');
+    if (!cached) banner('서버에 연결하지 못했어요. 인터넷 연결을 확인해 주세요. 지금 쓰는 기록은 연결되면 저장돼요.');
+  }
+  flush();
+}
+function loadSupabase(){
+  if (window.supabase && window.supabase.createClient) return Promise.resolve(true);
+  return new Promise(res => {
+    const s = document.createElement('script');
+    s.src = SUPABASE_SRC; s.async = true;
+    s.onload = () => res(!!(window.supabase && window.supabase.createClient));
+    s.onerror = () => res(false);
+    document.head.appendChild(s);
+    setTimeout(() => res(!!(window.supabase && window.supabase.createClient)), 10000);
+  });
+}
+async function boot(){
   refresh();
+  if (!CLOUD_ON){ startLocal(); return; }
+  const ok = await loadSupabase();
+  if (!ok){
+    // no connection and no cached library: keep using the last account's copy on this device
+    const last = readJSON('chalklog.lastUser');
+    if (last) startCloud(last); else startLocal();
+    return;
+  }
+  sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, {auth:{flowType:'pkce', persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}});
+  const params = new URLSearchParams(location.search);
+  const authErr = params.get('error_description') || params.get('error');
+  let session = null;
+  try { session = (await sb.auth.getSession()).data.session; } catch(e){}
+  if (params.has('code') || authErr) history.replaceState(null, '', location.pathname + location.hash);
+  sb.auth.onAuthStateChange((ev, s) => {
+    if (ev === 'SIGNED_IN' && s && s.user && (!user || user.id !== s.user.id)) startCloud(s.user);
+  });
+  if (session && session.user){ startCloud(session.user); return; }
+  const last = readJSON('chalklog.lastUser');
+  if (last && navigator.onLine === false){ startCloud(last); return; }
   startLocal();
+  if (authErr) toast('로그인하지 못했어요. 다시 시도해 주세요.');
+  if (lsGet('chalklog.guest') !== '1') showLogin();
+}
+window.addEventListener('online', () => flush());
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && S.mode === 'cloud' && sb && !flushing){
+    (queue.length ? flush() : Promise.resolve()).then(() => { if (!queue.length) pull().catch(() => {}); });
+  }
+});
+setInterval(() => { if (S.mode === 'cloud' && queue.length) flush(); }, 30000);
+
+/* --- login screen & account line --- */
+function showLogin(){ $('#login').hidden = false; }
+function hideLogin(){ $('#login').hidden = true; }
+$('#googleBtn').addEventListener('click', async () => {
+  if (!sb){ toast('인터넷에 연결된 뒤 다시 시도해 주세요.'); return; }
+  const {error} = await sb.auth.signInWithOAuth({provider:'google', options:{redirectTo: location.origin + location.pathname}});
+  if (error) toast('로그인하지 못했어요. 다시 시도해 주세요.');
+});
+$('#guestBtn').addEventListener('click', () => { lsSet('chalklog.guest', '1'); hideLogin(); });
+function renderAccount(){
+  const el = $('#acct');
+  if (!CLOUD_ON){ el.hidden = true; return; }
+  el.hidden = false;
+  if (S.mode === 'cloud'){
+    el.innerHTML = `<span class="who"></span><span class="sync" id="syncChip"></span><button type="button" class="linkish" id="logoutBtn">로그아웃</button>`;
+    el.querySelector('.who').textContent = user.email ? `${user.email} 로그인됨` : '로그인됨';
+    setSync(syncState);
+    $('#logoutBtn').addEventListener('click', e => arm(e.currentTarget, '로그아웃', logout, '한 번 더 누르면 로그아웃'));
+  } else {
+    el.innerHTML = `<button type="button" class="btn sm" id="loginOpen">로그인하고 기록 지키기</button>`;
+    $('#loginOpen').addEventListener('click', showLogin);
+  }
+}
+async function logout(){
+  if (queue.length){ toast('아직 계정에 저장 안 된 기록이 있어요. 인터넷 연결 후 다시 시도해 주세요.'); flush(); return; }
+  try { if (sb) await sb.auth.signOut(); } catch(e){}
+  try { localStorage.removeItem(cKey()); localStorage.removeItem(qKey()); localStorage.removeItem('chalklog.lastUser'); } catch(e){}
+  user = null; queue = []; pulled = false;
+  startLocal();
+  showLogin();
+  toast('로그아웃했어요');
 }
 
 /* ---------- routing ---------- */
