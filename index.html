@@ -467,8 +467,8 @@ html{-webkit-text-size-adjust:100%}
           <div class="sub">동작별 1RM과 기록 추이</div>
         </div>
         <div class="seg" role="group" aria-label="단위">
-          <button type="button" id="unitKg">kg</button>
           <button type="button" id="unitLb">lb</button>
+          <button type="button" id="unitKg">kg</button>
         </div>
         <button type="button" class="btn sm" id="liftAddToggle">동작 추가</button>
       </div>
@@ -681,7 +681,7 @@ const LIFT_GROUPS = [
 const now = new Date();
 const S = {
   mode:'loading', workouts:{}, lifts:{}, settings:{customTypes:[]},
-  unit: lsGet('chalklog.unit') === 'lb' ? 'lb' : 'kg',
+  unit: lsGet('chalklog.unit') === 'kg' ? 'kg' : 'lb',   // lb by default; a viewer's own choice is remembered
   month: new Date(now.getFullYear(), now.getMonth(), 1),
   sel: todayStr(), formTypes: new Set(), formDirty:false, openLift:null,
 };
