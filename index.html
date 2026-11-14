@@ -16,7 +16,7 @@
 <title>Chalk Log</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700;800&family=Orbitron:wght@700;900&display=swap">
 <style>
 /* Layout: calm travel-app feel — white canvas, generous whitespace, hairline borders, soft lifted shadows on interactive cards, one coral accent; the day form reads like a booking card, the calendar like a date picker. */
 :root{
@@ -155,7 +155,7 @@ form.day{background:var(--surface);border:1px solid var(--line);border-radius:va
 .lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:56px;align-items:start;border-top:1px solid var(--hair);padding-top:40px}
 @media (max-width:900px){.lower{grid-template-columns:minmax(0,1fr);gap:40px}}
 .bars{display:flex;flex-direction:column;gap:14px;margin-top:18px}
-.bar{display:grid;grid-template-columns:76px minmax(0,1fr) 28px;gap:12px;align-items:center;font-size:14px}
+.bar{display:grid;grid-template-columns:minmax(76px,auto) minmax(0,1fr) 28px;gap:12px;align-items:center;font-size:14px}
 .bar .track{height:6px;border-radius:999px;background:var(--soft);overflow:hidden}
 .bar .fill{height:100%;background:var(--c);border-radius:999px}
 .bar .n{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
@@ -294,6 +294,24 @@ input[type=date]::-webkit-calendar-picker-indicator{margin-left:auto;opacity:.6}
 .sync.saving{color:var(--muted)}
 .sync.offline,.sync.error{border-color:color-mix(in srgb,var(--p-yellow) 60%,var(--line));color:var(--ink)}
 
+/* running fields */
+.box .hms{display:flex;align-items:center;gap:2px}
+.box .hms input{width:2.4em;flex:none;text-align:center}
+.box .hms span{color:var(--muted)}
+.pace-line{padding:10px 12px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted);background:var(--soft)}
+.pace-line b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
+
+/* share card */
+#shDlg{width:min(720px,calc(100% - 24px))}
+.sh-wrap{display:grid;grid-template-columns:minmax(0,270px) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:620px){.sh-wrap{grid-template-columns:minmax(0,1fr);gap:18px}}
+.sh-preview{display:flex;justify-content:center;background:var(--soft);border-radius:18px;padding:14px}
+.sh-preview canvas{display:block;width:100%;max-width:240px;height:auto;border-radius:12px;box-shadow:var(--shadow);background:#1b1b1b}
+@media (max-width:620px){.sh-preview canvas{max-width:min(58vw,240px)}}
+.sh-ctrl{display:flex;flex-direction:column;gap:16px;min-width:0}
+.sh-ctrl .btns{align-items:center}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;opacity:0}
+
 /* help center */
 .faq{display:flex;flex-direction:column}
 .faq details{border-top:1px solid var(--hair);padding:12px 0}
@@ -421,6 +439,25 @@ html{-webkit-text-size-adjust:100%}
               <button type="button" class="btn sm" id="newTypeAdd">추가</button>
             </div>
           </div>
+          <div class="box" id="runBox" hidden>
+            <div class="row" style="border-top:0">
+              <div class="cell-f">
+                <label for="runKm">러닝 거리 (km)</label>
+                <input type="number" id="runKm" min="0" max="500" step="0.01" inputmode="decimal" placeholder="5.0">
+              </div>
+              <div class="cell-f">
+                <label for="runM" id="runTimeLab">기록 (시 : 분 : 초)</label>
+                <div class="hms" role="group" aria-labelledby="runTimeLab">
+                  <input type="number" id="runH" min="0" max="99" inputmode="numeric" placeholder="0" aria-label="시간">
+                  <span aria-hidden="true">:</span>
+                  <input type="number" id="runM" min="0" max="59" inputmode="numeric" placeholder="28" aria-label="분">
+                  <span aria-hidden="true">:</span>
+                  <input type="number" id="runS" min="0" max="59" inputmode="numeric" placeholder="30" aria-label="초">
+                </div>
+              </div>
+            </div>
+            <div class="pace-line" id="paceLine" aria-live="polite">거리와 기록을 넣으면 페이스가 계산돼요</div>
+          </div>
           <div class="box">
             <div class="cell-f">
               <label for="dayDate">날짜</label>
@@ -443,7 +480,7 @@ html{-webkit-text-size-adjust:100%}
           </div>
           <div class="err" id="dayErr" role="alert"></div>
           <button type="submit" class="btn primary" id="daySave">기록 저장</button>
-          <div class="btns" style="justify-content:center"><button type="button" class="btn ghost-danger sm" id="dayDel" hidden>이 날 기록 삭제</button></div>
+          <div class="btns" style="justify-content:center"><button type="button" class="btn sm" id="dayShare" hidden>📸 공유 카드 만들기</button><button type="button" class="btn ghost-danger sm" id="dayDel" hidden>이 날 기록 삭제</button></div>
         </form>
       </div>
 
@@ -537,6 +574,45 @@ html{-webkit-text-size-adjust:100%}
   </div>
 </dialog>
 
+<dialog id="shDlg" aria-labelledby="shTitle">
+  <div class="dlg-bar">
+    <button type="button" class="icon-btn" id="shClose" aria-label="닫기"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 3 10 10M13 3 3 13"/></svg></button>
+    <span class="bt" id="shTitle">공유 카드 만들기</span>
+  </div>
+  <div class="dlg">
+    <div class="sh-wrap">
+      <div class="sh-preview"><canvas id="shCanvas" width="1080" height="1920" role="img" aria-label="공유 카드 미리보기"></canvas></div>
+      <div class="sh-ctrl">
+        <div class="field">
+          <span class="lab" id="shTplLab">스타일</span>
+          <div class="chips" id="shTpl" role="radiogroup" aria-labelledby="shTplLab">
+            <button type="button" class="chip" style="--c:var(--p-green)" data-tpl="neon" aria-pressed="true"><span class="em" aria-hidden="true">🟢</span>네온 기록판</button>
+            <button type="button" class="chip" style="--c:var(--accent)" data-tpl="sticker" aria-pressed="false"><span class="em" aria-hidden="true">🧸</span>스티커</button>
+            <button type="button" class="chip" style="--c:var(--p-grey)" data-tpl="minimal" aria-pressed="false"><span class="em" aria-hidden="true">⬜</span>미니멀</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="lab">사진</span>
+          <div class="btns">
+            <label class="btn sm" for="shFile">📷 사진 찍기 · 고르기</label>
+            <input type="file" id="shFile" accept="image/*" class="vh">
+            <button type="button" class="btn sm ghost" id="shNoPhoto" hidden>사진 빼기</button>
+          </div>
+        </div>
+        <div class="box">
+          <div class="cell-f">
+            <label for="shCaption">한 줄 문구 (선택)</label>
+            <input type="text" id="shCaption" maxlength="24" placeholder="예: 첫 하프 끝!!">
+          </div>
+        </div>
+        <button type="button" class="btn primary" id="shShare">공유하기</button>
+        <button type="button" class="btn sm ghost" id="shSave">이미지로 저장</button>
+        <p class="sub" style="margin:0;font-size:12.5px">공유하기 → 인스타그램 → 스토리를 고르면 돼요. 사진은 이 기기 안에서만 합쳐지고 어디에도 올라가지 않아요.</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
 <div class="login" id="login" hidden>
   <div class="login-card" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
     <svg class="m" viewBox="0 0 48 48" aria-hidden="true"><rect x="2" y="13" width="9" height="22" rx="4.5" fill="var(--p-purple)"/><rect x="37" y="13" width="9" height="22" rx="4.5" fill="var(--p-purple)"/><rect x="9" y="21" width="30" height="6" rx="3" fill="var(--muted)"/><circle cx="24" cy="24" r="12" fill="var(--accent)"/><circle cx="19.8" cy="22.5" r="1.8" fill="#fff"/><circle cx="28.2" cy="22.5" r="1.8" fill="#fff"/><path d="M20.5 27.2q3.5 3 7 0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="16.6" cy="26.6" r="1.6" fill="#FFC2CF" opacity=".9"/><circle cx="31.4" cy="26.6" r="1.6" fill="#FFC2CF" opacity=".9"/></svg>
@@ -566,6 +642,7 @@ html{-webkit-text-size-adjust:100%}
         <div class="sub">현재 1RM</div>
         <div class="big" id="dlgBest">—</div>
         <div class="sub" id="dlgBestMeta" style="margin-top:4px"></div>
+        <button type="button" class="btn sm" id="dlgShare" hidden style="margin-top:10px">📸 PR 공유</button>
       </div>
     </div>
     <div id="trendBlock">
@@ -1070,6 +1147,7 @@ function loadForm(){
   $('#dayMin').value = w && w.minutes != null ? w.minutes : '';
   $('#dayFeel').value = w && w.feel != null ? w.feel : '';
   $('#dayNote').value = (w && w.note) || '';
+  fillRun(w && w.run);
   $('#dayErr').textContent = '';
   S.formDirty = false;
   disarm($('#dayDel'), '이 날 기록 삭제');
@@ -1082,7 +1160,9 @@ function renderFormMeta(){
   $('#savedPill').hidden = !w;
   $('#dayDel').hidden = !w;
   $('#daySave').textContent = w ? '기록 수정' : '기록 저장';
+  $('#dayShare').hidden = !w;
   renderChips();
+  toggleRunBox();
 }
 function renderChips(){
   const types = allTypes();
@@ -1098,6 +1178,7 @@ $('#typeChips').addEventListener('click', e => {
   if (S.formTypes.has(id)) S.formTypes.delete(id); else S.formTypes.add(id);
   S.formDirty = true; $('#dayErr').textContent = '';
   b.setAttribute('aria-pressed', S.formTypes.has(id));
+  toggleRunBox();
 });
 async function addType(){
   const name = $('#newType').value.trim();
@@ -1115,6 +1196,7 @@ async function addType(){
 $('#newTypeAdd').addEventListener('click', addType);
 $('#newType').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); addType(); } if (e.key === 'Escape'){ $('#newTypeRow').hidden = true; } });
 ['#dayMin','#dayFeel','#dayNote'].forEach(s => $(s).addEventListener('input', () => S.formDirty = true));
+['#runKm','#runH','#runM','#runS'].forEach(s => $(s).addEventListener('input', () => { S.formDirty = true; $('#dayErr').textContent = ''; updatePace(); }));
 $('#dayDate').addEventListener('change', e => { if (e.target.value) select(e.target.value, false); });
 
 function select(date, scroll){
@@ -1132,7 +1214,9 @@ $('#dayForm').addEventListener('submit', async e => {
   const min = $('#dayMin').value === '' ? null : Math.max(0, Math.round(Number($('#dayMin').value)));
   const feel = $('#dayFeel').value === '' ? null : Math.round(Number($('#dayFeel').value));
   if (feel != null && (feel < 1 || feel > 5)){ $('#dayErr').textContent = '컨디션은 1에서 5 사이 숫자로 적어 주세요.'; return; }
-  const data = {date:S.sel, types:[...S.formTypes], minutes:min, feel, note:$('#dayNote').value.trim(), updatedAt:Date.now()};
+  let run = null;
+  if (hasRun()){ const r = readRun(); if (r.err){ $('#dayErr').textContent = r.err; return; } run = r.run; }
+  const data = {date:S.sel, types:[...S.formTypes], minutes:min, feel, note:$('#dayNote').value.trim(), run, updatedAt:Date.now()};
   const date = S.sel;
   const isNew = !S.workouts[date];
   try { await backend.saveWorkout(date, data); S.formDirty = false; toast(isNew ? `${fmtDay(date)} 기록 완료! 수고했어요 👏` : `${fmtDay(date)} 기록을 고쳤어요`); renderFormMeta(); }
@@ -1189,7 +1273,8 @@ function renderBars(){
   const rows = Object.entries(counts).sort((a,b) => b[1] - a[1]);
   if (!rows.length){ $('#bars').innerHTML = `<div class="empty">${m.getMonth()+1}월에는 아직 기록이 없어요.</div>`; return; }
   const max = rows[0][1];
-  $('#bars').innerHTML = rows.map(([id,n]) => { const t = typeOf(id); return `<div class="bar" style="${cvar(t.c)}"><span>${t.em} ${esc(t.name)}</span><div class="track"><div class="fill" style="width:${Math.max(4, n/max*100)}%"></div></div><span class="n">${n}</span></div>`; }).join('');
+  const km = Math.round(Object.keys(S.workouts).filter(d => d.startsWith(key)).reduce((a,d) => a + ((S.workouts[d].run && Number(S.workouts[d].run.km)) || 0), 0) * 10) / 10;
+  $('#bars').innerHTML = rows.map(([id,n]) => { const t = typeOf(id); return `<div class="bar" style="${cvar(t.c)}"><span>${t.em} ${esc(t.name)}${id === 'running' && km ? ` <small style="color:var(--muted)">${km}km</small>` : ''}</span><div class="track"><div class="fill" style="width:${Math.max(4, n/max*100)}%"></div></div><span class="n">${n}</span></div>`; }).join('');
 }
 function renderRecent(){
   const days = Object.keys(S.workouts).sort().reverse().slice(0, 8);
@@ -1197,7 +1282,7 @@ function renderRecent(){
   $('#recent').innerHTML = days.map(d => {
     const w = S.workouts[d];
     const tags = (w.types || []).map(id => { const t = typeOf(id); return `<span class="te">${t.em} ${esc(t.name)}</span>`; }).join('');
-    const extra = [w.minutes ? `${w.minutes}분` : '', w.feel ? `컨디션 ${w.feel}/5` : '', w.note || ''].filter(Boolean).join(' · ');
+    const extra = [runSummary(w.run), w.minutes ? `${w.minutes}분` : '', w.feel ? `컨디션 ${w.feel}/5` : '', w.note || ''].filter(Boolean).join(' · ');
     return `<li><button type="button" data-date="${d}"><span class="when">${fmtDay(d)}</span><span class="what"><span class="tags">${tags}</span>${extra ? `<span class="note">${esc(extra)}</span>` : ''}</span><span class="chev" aria-hidden="true">›</span></button></li>`;
   }).join('');
 }
@@ -1344,6 +1429,7 @@ function renderDlg(){
   $('#dlgBest').innerHTML = b ? `${fmtW(b.kg)}<small>${u}</small>` : `<span style="font-size:18px;font-weight:500;color:var(--muted)">기록 없음</span>`;
   $('#dlgBestMeta').textContent = b ? `${fmtDot(b.date)} 달성 · ` + (S.unit === 'kg' ? `${Math.round(b.kg * LB)} lb` : `${Math.round(b.kg*10)/10} kg`) : '';
   $('#pctWrap').hidden = !b;
+  $('#dlgShare').hidden = !b;
   if (b){
     const ps = [50,55,60,65,70,75,80,85,90,95,100];
     $('#pct').innerHTML = ps.map(p => `<div class="${p >= 85 ? 'hi' : ''}"><span>${p}%</span><b>${fmtPlate(b.kg * p / 100)}</b></div>`).join('');
@@ -1446,6 +1532,219 @@ $('#bkImport').addEventListener('click', () => {
   if (mode === 'replace') arm(btn, '불러오기', () => doImport(d, mode), '한 번 더 누르면 덮어쓰기');
   else doImport(d, mode);
 });
+
+/* ---------- running: distance, time, pace ---------- */
+const RUN_TYPES = ['running'];
+function hasRun(){ return RUN_TYPES.some(t => S.formTypes.has(t)); }
+function toggleRunBox(){ const on = hasRun(); $('#runBox').hidden = !on; if (on) updatePace(); }
+function fillRun(r){
+  const sec = r && r.sec ? r.sec : 0;
+  $('#runKm').value = r && r.km ? r.km : '';
+  $('#runH').value = sec >= 3600 ? Math.floor(sec / 3600) : '';
+  $('#runM').value = sec ? Math.floor(sec % 3600 / 60) : '';
+  $('#runS').value = sec ? sec % 60 : '';
+  updatePace();
+}
+function readRun(){
+  const kmRaw = $('#runKm').value, hR = $('#runH').value, mR = $('#runM').value, sR = $('#runS').value;
+  const km = kmRaw === '' ? null : Number(kmRaw);
+  if (km != null && !(km > 0 && km <= 500)) return {err:'거리는 0보다 큰 숫자로 적어 주세요. (예: 5.2)'};
+  const anyTime = (hR + mR + sR) !== '';
+  const h = Number(hR || 0), m = Number(mR || 0), s = Number(sR || 0);
+  if (anyTime && ([h, m, s].some(v => !Number.isInteger(v) || v < 0) || m > 59 || s > 59)) return {err:'기록은 시·분·초를 정수로 적어 주세요. 분과 초는 0~59예요.'};
+  const sec = anyTime ? h * 3600 + m * 60 + s : 0;
+  if (km == null && !sec) return {run:null};
+  return {run:{km: km != null ? Math.round(km * 100) / 100 : null, sec: sec || null}};
+}
+function fmtDur(sec){ const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = Math.round(sec % 60); return h ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`; }
+function paceOf(r){
+  if (!r || !r.km || !r.sec) return null;
+  const p = Math.round(r.sec / r.km);
+  return {pace:`${Math.floor(p / 60)}'${pad(p % 60)}"`, speed:(r.km / (r.sec / 3600)).toFixed(1)};
+}
+function runSummary(r){
+  if (!r) return '';
+  const pc = paceOf(r);
+  return [r.km ? `${r.km}km` : '', r.sec ? fmtDur(r.sec) : '', pc ? `${pc.pace}/km` : ''].filter(Boolean).join(' · ');
+}
+function updatePace(){
+  const r = readRun(), el = $('#paceLine');
+  if (r.err){ el.textContent = r.err; return; }
+  const pc = paceOf(r.run);
+  el.innerHTML = pc ? `페이스 <b>${pc.pace}</b>/km · 속도 <b>${pc.speed}</b> km/h` : '거리와 기록을 넣으면 페이스가 계산돼요';
+}
+function streakAt(ds){ const d = parse(ds); let n = 0; while (S.workouts[ymd(d)]){ n++; d.setDate(d.getDate() - 1); } return n; }
+
+/* ---------- share card: a 1080×1920 (Instagram story) image, drawn on this device only ---------- */
+const CW = 1080, CH = 1920;
+const shDlg = $('#shDlg'), shCv = $('#shCanvas'), shCtx = shCv.getContext('2d');
+const SH = {card:null, tpl:(['neon','sticker','minimal'].includes(lsGet('chalklog.shareTpl')) ? lsGet('chalklog.shareTpl') : 'neon'), img:null, file:null, seq:0};
+let fontsReady = null;
+function loadFonts(){
+  if (!fontsReady){
+    const want = ['900 100px Orbitron', '700 100px Orbitron', '800 100px "Noto Sans KR"', '500 100px "Noto Sans KR"', '400 100px Jua'];
+    fontsReady = document.fonts ? Promise.all(want.map(f => document.fonts.load(f, '0123456789:가나다 abc').catch(() => null))).then(() => {}) : Promise.resolve();
+  }
+  return fontsReady;
+}
+function dayCard(date){
+  const w = S.workouts[date]; if (!w) return null;
+  const title = (w.types || []).map(typeOf).map(t => `${t.em} ${t.name}`).join('  ');
+  const run = w.run && (w.run.km || w.run.sec) ? w.run : null;
+  const pc = paceOf(run), st = streakAt(date);
+  let big, unit = '', kicker, rows = [];
+  if (run && run.sec){ big = fmtDur(run.sec); kicker = run.km ? `${run.km} km` : 'RUN'; if (pc) rows = [['Pace', '페이스', pc.pace, '/km'], ['Speed', '속도', pc.speed, 'km/h']]; }
+  else if (run && run.km){ big = String(run.km); unit = 'km'; kicker = 'RUN'; }
+  else if (w.minutes){ big = String(w.minutes); unit = 'min'; kicker = 'WORKOUT'; }
+  else { big = String(st); unit = st > 1 ? 'days' : 'day'; kicker = 'STREAK'; }
+  if (kicker !== 'STREAK' && st >= 2 && rows.length < 2) rows.push(['Streak', '연속', String(st), '일']);
+  const note = (w.note || '').split('\n')[0].trim();
+  return {kind:'day', title, date:fmtDot(date), big, unit, kicker, rows, caption: note.length <= 24 ? note : ''};
+}
+function prCard(it){
+  const c = chronPR(it.history), b = bestOf(it.history); if (!b) return null;
+  const e = [...c].reverse().find(x => x.pr) || {gain:0};
+  const rows = [];
+  if (e.gain > 0) rows.push(['Up', '향상', `+${fmtW(e.gain)}`, S.unit]);
+  if (e.gain > 0) rows.push(['Prev', '이전', fmtW(b.kg - e.gain), S.unit]);
+  return {kind:'pr', title: it.name, date:fmtDot(b.date), big: fmtW(b.kg), unit: S.unit, kicker: e.gain > 0 ? 'NEW PR' : '1RM', rows, caption:''};
+}
+/* drawing helpers */
+function rr(c, x, y, w, h, r){ c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+function fit(c, text, font, size, maxW, min){ let s = size; c.font = font(s); while (s > (min || 12) && c.measureText(text).width > maxW){ s -= 4; c.font = font(s); } return s; }
+function cover(c, img){ const k = Math.max(CW / img.width, CH / img.height), w = img.width * k, h = img.height * k; c.drawImage(img, (CW - w) / 2, (CH - h) / 2, w, h); }
+function bgFill(c, stops, angle){ const g = angle ? c.createLinearGradient(0, 0, CW, CH) : c.createLinearGradient(0, 0, 0, CH); stops.forEach(([o, col]) => g.addColorStop(o, col)); c.fillStyle = g; c.fillRect(0, 0, CW, CH); }
+function shade(c, from, to, a0, a1){ const g = c.createLinearGradient(0, from, 0, to); g.addColorStop(0, `rgba(0,0,0,${a0})`); g.addColorStop(1, `rgba(0,0,0,${a1})`); c.fillStyle = g; c.fillRect(0, Math.min(from, to), CW, Math.abs(to - from)); }
+function mascot(c, cx, cy, size){
+  const k = size / 48; c.save(); c.translate(cx - 24 * k, cy - 24 * k); c.scale(k, k);
+  c.fillStyle = '#8257E6'; rr(c, 2, 13, 9, 22, 4.5); c.fill(); rr(c, 37, 13, 9, 22, 4.5); c.fill();
+  c.fillStyle = '#6A6A6A'; rr(c, 9, 21, 30, 6, 3); c.fill();
+  c.fillStyle = '#F0435E'; c.beginPath(); c.arc(24, 24, 12, 0, Math.PI * 2); c.fill();
+  c.fillStyle = '#fff'; c.beginPath(); c.arc(19.8, 22.5, 1.8, 0, Math.PI * 2); c.arc(28.2, 22.5, 1.8, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = '#fff'; c.lineWidth = 1.8; c.lineCap = 'round'; c.beginPath(); c.moveTo(20.5, 27.2); c.quadraticCurveTo(24, 30.2, 27.5, 27.2); c.stroke();
+  c.fillStyle = 'rgba(255,194,207,.9)'; c.beginPath(); c.arc(16.6, 26.6, 1.6, 0, Math.PI * 2); c.arc(31.4, 26.6, 1.6, 0, Math.PI * 2); c.fill();
+  c.restore();
+}
+/* style 1: neon scoreboard (race-result look) */
+function drawNeon(c, card){
+  const NEON = '#3BFF4A', R = CW - 72;
+  if (SH.img) cover(c, SH.img); else { bgFill(c, [[0, '#0F1724'], [1, '#05080D']]); c.strokeStyle = 'rgba(59,255,74,.06)'; c.lineWidth = 2; for (let x = 0; x < CW; x += 60){ c.beginPath(); c.moveTo(x, 0); c.lineTo(x, CH); c.stroke(); } }
+  shade(c, CH * 0.42, CH, 0, 0.82);
+  if (card.caption){ c.font = '800 64px "Noto Sans KR"'; const w = Math.min(c.measureText(card.caption).width, CW - 220); c.fillStyle = '#000'; rr(c, 72, 180, w + 72, 116, 18); c.fill(); c.fillStyle = '#fff'; c.textAlign = 'left'; c.textBaseline = 'middle'; fit(c, card.caption, s => `800 ${s}px "Noto Sans KR"`, 64, CW - 220, 36); c.fillText(card.caption, 108, 240); }
+  c.textBaseline = 'alphabetic'; c.textAlign = 'right';
+  c.font = '500 34px "Noto Sans KR"'; c.fillStyle = 'rgba(255,255,255,.85)'; c.fillText(`${card.date} · chalk log`, R, CH - 96);
+  let y = CH - 180;
+  [...card.rows].reverse().forEach(([en, , val, unit]) => {
+    c.textAlign = 'left'; c.font = '700 54px Orbitron, "Noto Sans KR"'; c.fillStyle = '#fff'; c.fillText(en, R - 660, y);
+    c.textAlign = 'right'; c.font = '700 60px Orbitron, "Noto Sans KR"'; c.fillStyle = NEON; c.fillText(val, R - 210, y);
+    c.font = '700 46px Orbitron, "Noto Sans KR"'; c.fillStyle = '#fff'; c.fillText(unit, R, y);
+    y -= 92;
+  });
+  y -= 18;
+  let uw = 0;
+  if (card.unit){ c.font = '700 72px Orbitron, "Noto Sans KR"'; uw = c.measureText(card.unit).width + 20; c.fillStyle = '#fff'; c.fillText(card.unit, R, y); }
+  const bs = fit(c, card.big, s => `900 ${s}px Orbitron, "Noto Sans KR"`, 250, CW - 144 - uw, 90);
+  c.save(); c.shadowColor = 'rgba(59,255,74,.75)'; c.shadowBlur = 36; c.fillStyle = NEON; c.fillText(card.big, R - uw, y); c.restore();
+  y -= bs * 0.95;
+  c.font = '700 64px Orbitron, "Noto Sans KR"'; c.fillStyle = NEON; c.fillText(card.kicker, R, y);
+  y -= 96;
+  c.fillStyle = '#fff'; fit(c, card.title, s => `800 ${s}px "Noto Sans KR"`, 66, CW - 144, 36); c.fillText(card.title, R, y);
+}
+/* style 2: cute sticker card */
+function drawSticker(c, card){
+  if (SH.img) cover(c, SH.img); else bgFill(c, [[0, '#FFE1EA'], [1, '#E6DEFF']]);
+  c.textBaseline = 'middle'; c.textAlign = 'center';
+  if (card.caption){ const fs = fit(c, card.caption, s => `400 ${s}px Jua`, 68, CW - 260, 36); const w = c.measureText(card.caption).width; c.save(); c.shadowColor = 'rgba(0,0,0,.18)'; c.shadowBlur = 24; c.shadowOffsetY = 8; c.fillStyle = '#fff'; rr(c, (CW - w) / 2 - 48, 200, w + 96, fs + 64, (fs + 64) / 2); c.fill(); c.restore(); c.fillStyle = '#222'; c.fillText(card.caption, CW / 2, 200 + (fs + 64) / 2 + 4); }
+  const rows = card.rows.length ? 1 : 0, x = 64, w = CW - 128, h = 520 + rows * 70, y = CH - 110 - h;
+  c.save(); c.shadowColor = 'rgba(0,0,0,.18)'; c.shadowBlur = 40; c.shadowOffsetY = 12; c.fillStyle = '#fff'; rr(c, x, y, w, h, 56); c.fill(); c.restore();
+  mascot(c, x + w - 130, y + 8, 200);
+  c.textBaseline = 'alphabetic'; c.textAlign = 'left';
+  c.fillStyle = '#222'; fit(c, card.title, s => `400 ${s}px Jua`, 60, w - 340, 34); c.fillText(card.title, x + 60, y + 120);
+  c.fillStyle = '#F0435E'; c.font = '800 38px "Noto Sans KR"'; c.fillText(card.kicker, x + 60, y + 180);
+  const bs = fit(c, card.big + (card.unit ? '  ' + card.unit : ''), s => `400 ${s}px Jua`, 210, w - 120, 90);
+  c.font = `400 ${bs}px Jua`; c.fillText(card.big, x + 60, y + 190 + bs * 0.95);
+  if (card.unit){ const bw = c.measureText(card.big).width; c.fillStyle = '#6A6A6A'; c.font = `400 ${Math.round(bs * 0.38)}px Jua`; c.fillText(card.unit, x + 60 + bw + 18, y + 190 + bs * 0.95); }
+  if (rows){ c.fillStyle = '#484848'; fit(c, card.rows.map(r => `${r[1]} ${r[2]}${r[3]}`).join('  ·  '), s => `500 ${s}px "Noto Sans KR"`, 42, w - 120, 26); c.fillText(card.rows.map(r => `${r[1]} ${r[2]}${r[3]}`).join('  ·  '), x + 60, y + h - 110); }
+  c.fillStyle = '#9A94AE'; c.font = '500 32px "Noto Sans KR"'; c.fillText(card.date, x + 60, y + h - 48);
+  c.textAlign = 'right'; c.fillStyle = '#F0435E'; c.font = '400 42px Jua'; c.fillText('chalk log', x + w - 60, y + h - 46);
+}
+/* style 3: minimal */
+function drawMinimal(c, card){
+  if (SH.img) cover(c, SH.img); else bgFill(c, [[0, '#F0435E'], [1, '#FF9A62']], true);
+  shade(c, 0, 420, 0.35, 0); shade(c, CH * 0.5, CH, 0, 0.55);
+  c.textAlign = 'left'; c.textBaseline = 'alphabetic'; c.fillStyle = '#fff';
+  c.font = '500 40px "Noto Sans KR"'; c.fillText(card.date, 80, 170);
+  if (card.caption){ fit(c, card.caption, s => `800 ${s}px "Noto Sans KR"`, 76, CW - 160, 36); c.fillText(card.caption, 80, 262); }
+  const rowsTxt = card.rows.map(r => `${r[1]} ${r[2]}${r[3]}`).join('    ');
+  let y = CH - 200;
+  if (rowsTxt){ fit(c, rowsTxt, s => `500 ${s}px "Noto Sans KR"`, 46, CW - 160, 26); c.fillText(rowsTxt, 80, y); y -= 70; }
+  const bs = fit(c, card.big + (card.unit ? ' ' + card.unit : ''), s => `800 ${s}px "Noto Sans KR"`, 250, CW - 160, 90);
+  c.save(); c.shadowColor = 'rgba(0,0,0,.25)'; c.shadowBlur = 30; c.font = `800 ${bs}px "Noto Sans KR"`; c.fillText(card.big, 80, y);
+  if (card.unit){ const bw = c.measureText(card.big).width; c.font = `500 ${Math.round(bs * 0.32)}px "Noto Sans KR"`; c.fillText(card.unit, 80 + bw + 16, y); }
+  c.restore();
+  y -= bs * 0.95;
+  fit(c, `${card.kicker}  ·  ${card.title}`, s => `700 ${s}px "Noto Sans KR"`, 50, CW - 160, 28); c.fillText(`${card.kicker}  ·  ${card.title}`, 80, y);
+  c.textAlign = 'right'; c.font = '400 44px Jua'; c.fillText('chalk log', CW - 80, CH - 96);
+}
+const DRAW = {neon:drawNeon, sticker:drawSticker, minimal:drawMinimal};
+async function shRender(){
+  const seq = ++SH.seq;
+  SH.file = null;
+  await loadFonts();
+  if (seq !== SH.seq || !SH.card) return;
+  const card = {...SH.card, caption: $('#shCaption').value.trim()};
+  shCtx.save(); shCtx.clearRect(0, 0, CW, CH); DRAW[SH.tpl](shCtx, card); shCtx.restore();
+  shCv.toBlob(blob => {
+    if (seq !== SH.seq || !blob) return;
+    SH.file = new File([blob], `chalklog-${card.date.replace(/\./g, '')}.jpg`, {type:'image/jpeg'});
+  }, 'image/jpeg', 0.9);
+}
+function setTplButtons(){ $('#shTpl').querySelectorAll('[data-tpl]').forEach(x => x.setAttribute('aria-pressed', x.dataset.tpl === SH.tpl)); }
+function openShare(card){
+  if (!card) return;
+  SH.card = card; SH.img = null;
+  $('#shNoPhoto').hidden = true; $('#shCaption').value = card.caption || '';
+  setTplButtons();
+  try { shDlg.showModal(); } catch(e){ shDlg.setAttribute('open', ''); }
+  shRender();
+}
+async function loadImg(f){
+  if (window.createImageBitmap){ try { return await createImageBitmap(f, {imageOrientation:'from-image'}); } catch(e){} }
+  return new Promise((res, rej) => { const u = URL.createObjectURL(f), i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = u; });
+}
+function saveImage(){
+  if (!SH.file) return false;
+  const url = URL.createObjectURL(SH.file), a = document.createElement('a');
+  a.href = url; a.download = SH.file.name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+  return true;
+}
+$('#dayShare').addEventListener('click', () => {
+  if (S.formDirty){ toast('바꾼 내용을 먼저 저장해 주세요'); return; }
+  openShare(dayCard(S.sel));
+});
+$('#dlgShare').addEventListener('click', () => { const it = getLift(S.openLift); if (it) openShare(prCard(it)); });
+$('#shClose').addEventListener('click', () => shDlg.close());
+shDlg.addEventListener('click', e => { if (e.target === shDlg) shDlg.close(); });
+$('#shTpl').addEventListener('click', e => { const b = e.target.closest('[data-tpl]'); if (!b) return; SH.tpl = b.dataset.tpl; lsSet('chalklog.shareTpl', SH.tpl); setTplButtons(); shRender(); });
+let capT;
+$('#shCaption').addEventListener('input', () => { clearTimeout(capT); capT = setTimeout(shRender, 180); });
+$('#shFile').addEventListener('change', async e => {
+  const f = e.target.files && e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  try { SH.img = await loadImg(f); $('#shNoPhoto').hidden = false; shRender(); }
+  catch(err){ toast('사진을 불러오지 못했어요. 다른 사진으로 해 주세요'); }
+});
+$('#shNoPhoto').addEventListener('click', () => { SH.img = null; $('#shNoPhoto').hidden = true; shRender(); });
+$('#shShare').addEventListener('click', async () => {
+  if (!SH.file){ toast('카드를 만드는 중이에요. 잠시 후 다시 눌러 주세요'); return; }
+  const data = {files:[SH.file]};
+  if (navigator.canShare && navigator.canShare(data)){
+    try { await navigator.share(data); }
+    catch(e){ if (!e || e.name !== 'AbortError'){ saveImage(); toast('공유가 안 돼서 이미지로 저장했어요'); } }
+  } else if (saveImage()) toast('이 브라우저는 바로 공유가 안 돼서 이미지로 저장했어요. 인스타에서 불러와 주세요');
+});
+$('#shSave').addEventListener('click', () => { if (saveImage()) toast('이미지를 저장했어요'); else toast('카드를 만드는 중이에요. 잠시 후 다시 눌러 주세요'); });
 
 /* ---------- refresh ---------- */
 function refresh(){
