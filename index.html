@@ -1579,13 +1579,13 @@ function streakAt(ds){ const d = parse(ds); let n = 0; while (S.workouts[ymd(d)]
 const CW = 1080, CH = 1920;
 const shDlg = $('#shDlg'), shCv = $('#shCanvas'), shCtx = shCv.getContext('2d');
 const SH = {card:null, tpl:(['neon','sticker','minimal'].includes(lsGet('chalklog.shareTpl')) ? lsGet('chalklog.shareTpl') : 'neon'), img:null, file:null, seq:0};
-let fontsReady = null;
-function loadFonts(){
-  if (!fontsReady){
-    const want = ['900 100px Orbitron', '700 100px Orbitron', '800 100px "Noto Sans KR"', '500 100px "Noto Sans KR"', '400 100px Jua'];
-    fontsReady = document.fonts ? Promise.all(want.map(f => document.fonts.load(f, '0123456789:가나다 abc').catch(() => null))).then(() => {}) : Promise.resolve();
-  }
-  return fontsReady;
+/* Korean web fonts arrive in pieces, so load the exact letters each card uses before drawing */
+const CARD_FONTS = ['900 100px Orbitron', '700 100px Orbitron', '800 100px "Noto Sans KR"', '700 100px "Noto Sans KR"', '500 100px "Noto Sans KR"', '400 100px Jua'];
+function loadFonts(text){
+  if (!document.fonts) return Promise.resolve();
+  const t = (text || '') + ' 0123456789:+-.·\'" abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ /km 페이스 속도 연속 향상 이전 일 chalk log';
+  const all = Promise.all(CARD_FONTS.map(f => document.fonts.load(f, t).catch(() => null)));
+  return Promise.race([all, new Promise(r => setTimeout(r, 4000))]).then(() => {});
 }
 function dayCard(date){
   const w = S.workouts[date]; if (!w) return null;
@@ -1690,9 +1690,10 @@ const DRAW = {neon:drawNeon, sticker:drawSticker, minimal:drawMinimal};
 async function shRender(){
   const seq = ++SH.seq;
   SH.file = null;
-  await loadFonts();
-  if (seq !== SH.seq || !SH.card) return;
+  if (!SH.card) return;
   const card = {...SH.card, caption: $('#shCaption').value.trim()};
+  await loadFonts([card.title, card.caption, card.kicker, card.big, card.unit, card.date, card.rows.map(r => r.join(' ')).join(' ')].join(' '));
+  if (seq !== SH.seq) return;
   shCtx.save(); shCtx.clearRect(0, 0, CW, CH); DRAW[SH.tpl](shCtx, card); shCtx.restore();
   shCv.toBlob(blob => {
     if (seq !== SH.seq || !blob) return;
