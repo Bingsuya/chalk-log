@@ -1,5 +1,5 @@
 // Offline support: keep the app shell cached; always try the network first for the page and its settings so updates arrive.
-const VERSION = 'chalklog-v4';
+const VERSION = 'chalklog-v5';
 const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest', './icons/icon-180.png', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -20,6 +20,7 @@ self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
+  if (url.pathname.includes('/preview/')) return;   // the test page is never cached by the real app
   if (req.mode === 'navigate') { e.respondWith(networkFirst(req, './index.html')); return; }
   if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com' || url.hostname === 'cdn.jsdelivr.net') { e.respondWith(staleWhileRevalidate(req)); return; }
   if (url.origin === location.origin) {
