@@ -302,6 +302,13 @@ input[type=date]::-webkit-calendar-picker-indicator{margin-left:auto;opacity:.6}
 .pace-line b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
 
 /* weekly goal */
+.months{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;max-width:560px}
+.mon{display:flex;flex-direction:column;gap:1px;padding:10px 12px;border-radius:14px;border:1px solid var(--hair);background:var(--surface);min-width:0;word-break:keep-all}
+.mon b{font-family:var(--f-d);font-weight:400;font-size:16px}
+.mon span{font-size:13.5px;color:var(--ink)}
+.mon small{font-size:11.5px;color:var(--muted)}
+.mon.cur{border-color:var(--ink)}
+.mon.perfect{background:color-mix(in srgb,var(--p-yellow) 14%,var(--surface));border-color:color-mix(in srgb,var(--p-yellow) 45%,var(--line))}
 .goal{border:1px solid var(--line);border-radius:22px;padding:20px 22px;display:flex;flex-direction:column;gap:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 8%,var(--surface)),var(--surface) 60%)}
 .goal h2{font-family:var(--f-d);font-weight:400;font-size:22px;margin:0}
 .goal h2 .num{color:var(--accent);margin-left:4px}
@@ -1636,6 +1643,27 @@ function weekStreak(ws){
   }
   return n;
 }
+/* monthly summary: a week belongs to the month its Thursday falls in; made-up weeks count as achieved */
+function monthSummary(wks){
+  const by = {};
+  wks.forEach(w => {
+    if (!w.goal) return;
+    const th = parse(addDays(w.ws, 3)), key = `${th.getFullYear()}-${pad(th.getMonth() + 1)}`;
+    const b = by[key] || (by[key] = {key, m: th.getMonth() + 1, total: 0, ok: 0, rec: 0, miss: 0, saving: 0, open: 0});
+    b.total++;
+    if (w.status === 'done') b.ok++;
+    else if (w.status === 'recovered'){ b.ok++; b.rec++; }
+    else if (w.status === 'missed') b.miss++;
+    else if (w.status === 'recoverable') b.saving++;
+    else b.open++;
+  });
+  return Object.values(by).sort((a, b) => a.key < b.key ? -1 : 1);
+}
+function monthText(b, isCur){
+  const extra = [b.rec ? `만회 ${b.rec}주 포함` : '', b.saving ? `만회 중 ${b.saving}주` : '', b.open ? `진행 중 ${b.open}주` : ''].filter(Boolean).join(' · ');
+  if (!isCur && b.ok === b.total) return {main: `${b.total}주 모두 달성`, extra: b.rec ? `만회 ${b.rec}주 포함` : '', perfect: true};
+  return {main: `${isCur ? '지금까지 ' : ''}${b.total}주 중 ${b.ok}주 달성`, extra, perfect: false};
+}
 function goalSnap(){
   const w = goalWeeks(), cur = w[w.length - 1], last = w[w.length - 2];
   return {cur: cur && cur.status, last: last && last.status, streak: weekStreak(w), goal: cur ? cur.goal : 0, count: cur ? cur.count : 0, ws: cur && cur.ws};
@@ -1680,7 +1708,15 @@ function renderGoal(){
     <div class="week-dots" aria-label="이번 주 운동한 날">${dots}</div>
     <div class="goal-bar" role="progressbar" aria-valuemin="0" aria-valuemax="${cur.goal}" aria-valuenow="${Math.min(cur.count, cur.goal)}"><b style="width:${Math.min(100, cur.count / cur.goal * 100)}%"></b></div>
     <p class="goal-msg">${msg}</p>
-    <div class="weeks" aria-label="최근 주간 기록">${hist}</div>`;
+    <div class="weeks" aria-label="최근 주간 기록">${hist}</div>
+    <div class="months" aria-label="월간 요약">${monthsHtml(wks)}</div>`;
+}
+function monthsHtml(wks){
+  const ms = monthSummary(wks), curKey = (() => { const th = parse(addDays(mondayOf(todayStr()), 3)); return `${th.getFullYear()}-${pad(th.getMonth() + 1)}`; })();
+  return ms.slice(-3).reverse().map(b => {
+    const isCur = b.key === curKey, t = monthText(b, isCur);
+    return `<div class="mon${isCur ? ' cur' : ''}${t.perfect ? ' perfect' : ''}"><b>${b.m}월${t.perfect ? ' 🏅' : ''}</b><span>${t.main}</span>${t.extra ? `<small>${t.extra}</small>` : ''}</div>`;
+  }).join('');
 }
 $('#goalCard').addEventListener('click', e => { if (e.target.closest('[data-goal-edit]')) openGoalDlg(); });
 
