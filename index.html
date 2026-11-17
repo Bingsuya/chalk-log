@@ -636,6 +636,14 @@ html{-webkit-text-size-adjust:100%}
       <h2 class="sec-title" id="goalQ">일주일에 몇 번 운동할까요?</h2>
       <p class="sub" style="margin:4px 0 0" id="goalSub">월요일부터 일요일까지, 운동한 날의 수로 세요.</p>
     </div>
+    <div class="field" id="goalStartWrap" hidden>
+      <span class="lab" id="goalStartLab">언제부터 셀까요?</span>
+      <div class="chips" id="goalStart" role="radiogroup" aria-labelledby="goalStartLab">
+        <button type="button" class="chip" data-from="month" aria-pressed="false"><span class="em" aria-hidden="true">📅</span><span class="t"></span></button>
+        <button type="button" class="chip" data-from="week" aria-pressed="false"><span class="em" aria-hidden="true">🌱</span><span class="t"></span></button>
+      </div>
+      <p class="sub" style="margin:0;font-size:13px">이번 달 초부터 기록해 왔다면 첫 주부터, 이제 막 시작했다면 이번 주부터를 골라 주세요.</p>
+    </div>
     <div class="goal-pick" id="goalPick" role="radiogroup" aria-label="주간 목표 횟수">
       <button type="button" data-n="1" aria-pressed="false">1</button><button type="button" data-n="2" aria-pressed="false">2</button><button type="button" data-n="3" aria-pressed="true">3</button><button type="button" data-n="4" aria-pressed="false">4</button><button type="button" data-n="5" aria-pressed="false">5</button><button type="button" data-n="6" aria-pressed="false">6</button><button type="button" data-n="7" aria-pressed="false">7</button>
     </div>
@@ -1905,12 +1913,19 @@ const monthNum = key => Number(key.slice(5));
 const mdOf = ds => { const d = parse(ds); return `${d.getMonth() + 1}/${d.getDate()}`; };
 function monthStartWeek(key){ const [y, m] = key.split('-').map(Number); const d = new Date(y, m - 1, 1); d.setDate(d.getDate() + (4 - d.getDay() + 7) % 7 - 3); return ymd(d); }
 /* ask to confirm this month's goal when it is only carried over from an earlier month or from a week-based goal */
+/* where a month's goal should start counting: from the month's first week if this month already has
+   records before this week, otherwise from this week (so people who just started don't get empty weeks) */
+function suggestedFrom(key){
+  const ms = monthStartWeek(key), cw = mondayOf(todayStr());
+  if (cw <= ms) return ms;
+  return Object.keys(S.workouts).some(d => d >= ms && d < cw) ? ms : cw;
+}
 function monthPrompt(){
   const key = curMonthKey(), gl = goalList();
   if (gl.some(g => g.month === key)) return null;
   const n = goalFor(mondayOf(todayStr()));
   if (!n) return null;
-  return {key, n, from: monthStartWeek(key), newMonth: gl.some(g => g.month && g.month < key)};
+  return {key, n, from: suggestedFrom(key), newMonth: gl.some(g => g.month && g.month < key)};
 }
 const WEEK_ICON = {done:['✅', '달성'], recovered:['🔁', '만회'], recoverable:['🔸', '만회 중'], missed:['🌙', '쉬어감'], open:['⏳', '진행 중'], none:['·', '목표 없음']};
 function renderGoal(){
@@ -1968,12 +1983,12 @@ function promptHtml(){
   const m = monthNum(pr.key);
   const text = pr.newMonth
     ? `${m}월이 시작됐어요! 이번 달도 <strong>주 ${pr.n}회</strong>로 갈까요?`
-    : `이제 달마다 목표를 정해요. <strong>${m}월 목표</strong>로 정하면 ${m}월 첫 주(${mdOf(pr.from)}~)부터 계산해 드려요.`;
+    : `이제 달마다 목표를 정해요. <strong>${m}월 목표</strong>로 정하면 ${pr.from === monthStartWeek(pr.key) ? `${m}월 첫 주(${mdOf(pr.from)}~)부터` : `이번 주(${mdOf(pr.from)}~)부터`} 계산해 드려요.`;
   return `<div class="goal-ask"><p>📅 ${text}</p><div class="btns"><button type="button" class="btn sm primary" data-goal-keep="${pr.n}">주 ${pr.n}회로 ${pr.newMonth ? '그대로 갈게요' : `${m}월 시작`}</button><button type="button" class="btn sm ghost" data-goal-edit>다르게 정하기</button></div></div>`;
 }
 $('#goalCard').addEventListener('click', e => {
   const keep = e.target.closest('[data-goal-keep]');
-  if (keep){ saveGoal(Number(keep.dataset.goalKeep)); return; }
+  if (keep){ saveGoal(Number(keep.dataset.goalKeep), suggestedFrom(curMonthKey())); return; }
   if (e.target.closest('[data-goal-edit]')) openGoalDlg();
 });
 
@@ -1987,22 +2002,36 @@ function openGoalDlg(){
   goalPickN = g || 3;
   $('#goalTitle').textContent = `${m}월 목표`;
   $('#goalQ').textContent = `${m}월엔 일주일에 몇 번 운동할까요?`;
-  $('#goalSub').textContent = `${m}월 첫 주(${mdOf(from)}~)부터 계산해요. 월요일부터 일요일까지, 운동한 날의 수로 세요.`;
+  const cw = mondayOf(todayStr()), mine = goalList().find(x => x.month === key);
+  goalFromPick = mine ? (mine.from > from ? 'week' : 'month') : (suggestedFrom(key) === from ? 'month' : 'week');
+  $('#goalStartWrap').hidden = cw <= from;
+  $('#goalStart [data-from="month"] .t').textContent = `${m}월 첫 주부터 (${mdOf(from)}~)`;
+  $('#goalStart [data-from="week"] .t').textContent = `이번 주부터 (${mdOf(cw)}~)`;
+  renderGoalStart();
   $('#goalOff').hidden = !g;
   $('#goalSave').textContent = has ? `${m}월 목표 바꾸기` : `${m}월 목표로 시작하기`;
   renderGoalPick();
   try { goalDlg.showModal(); } catch(e){ goalDlg.setAttribute('open', ''); }
 }
+let goalFromPick = 'month';
+function goalFromDate(){ const key = curMonthKey(), ms = monthStartWeek(key), cw = mondayOf(todayStr()); return goalFromPick === 'week' && cw > ms ? cw : ms; }
+function renderGoalStart(){
+  $('#goalStart').querySelectorAll('[data-from]').forEach(b => b.setAttribute('aria-pressed', b.dataset.from === goalFromPick));
+  const key = curMonthKey(), f = goalFromDate();
+  $('#goalSub').textContent = `${f === monthStartWeek(key) ? `${monthNum(key)}월 첫 주(${mdOf(f)}~)부터` : `이번 주(${mdOf(f)}~)부터`} 계산해요. 월요일부터 일요일까지, 운동한 날의 수로 세요.`;
+}
+$('#goalStart').addEventListener('click', e => { const b = e.target.closest('[data-from]'); if (b){ goalFromPick = b.dataset.from; renderGoalStart(); } });
 $('#goalPick').addEventListener('click', e => { const b = e.target.closest('[data-n]'); if (b){ goalPickN = Number(b.dataset.n); renderGoalPick(); } });
-async function saveGoal(n){
+async function saveGoal(n, fromArg){
   if (!backend){ toast('아직 기록을 불러오는 중이에요.'); return; }
-  const key = curMonthKey(), from = monthStartWeek(key), m = monthNum(key);
-  const goals = goalList().filter(g => g.month !== key && g.from < from).concat([{from, perWeek: n, month: key}]);
-  try { await backend.saveSettings({...S.settings, goals}); if (goalDlg.open) goalDlg.close(); toast(n ? `${m}월 목표 주 ${n}회! ${m}월 첫 주부터 계산했어요 💪` : `${m}월 목표를 껐어요`); }
+  const key = curMonthKey(), ms = monthStartWeek(key), m = monthNum(key);
+  const from = fromArg && fromArg >= ms ? fromArg : ms;
+  const goals = goalList().filter(g => g.month !== key && g.from < ms).concat([{from, perWeek: n, month: key}]);
+  try { await backend.saveSettings({...S.settings, goals}); if (goalDlg.open) goalDlg.close(); toast(n ? `${m}월 목표 주 ${n}회! ${from === ms ? `${m}월 첫 주부터` : '이번 주부터'} 계산했어요 💪` : `${m}월 목표를 껐어요`); }
   catch(e){ toast(writeErr(e)); }
 }
-$('#goalSave').addEventListener('click', () => saveGoal(goalPickN));
-$('#goalOff').addEventListener('click', e => arm(e.currentTarget, '이번 달 목표 끄기', () => saveGoal(0), '한 번 더 누르면 꺼져요'));
+$('#goalSave').addEventListener('click', () => saveGoal(goalPickN, goalFromDate()));
+$('#goalOff').addEventListener('click', e => arm(e.currentTarget, '이번 달 목표 끄기', () => saveGoal(0, monthStartWeek(curMonthKey())), '한 번 더 누르면 꺼져요'));
 $('#goalClose').addEventListener('click', () => goalDlg.close());
 goalDlg.addEventListener('click', e => { if (e.target === goalDlg) goalDlg.close(); });
 
