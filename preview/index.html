@@ -1905,7 +1905,8 @@ function goalWeeks(){
     if (w.cur){ w.status = 'open'; return; }
     const deficit = w.goal - w.count, next = res[i + 1];
     w.deficit = deficit;
-    if (next && next.goal && next.extra >= deficit){ w.status = 'recovered'; next.extra -= deficit; return; }
+    // workouts in the following week can make this week up even if that week has no goal of its own
+    if (next && next.extra >= deficit){ w.status = 'recovered'; next.extra -= deficit; return; }
     w.status = next && next.cur ? 'recoverable' : 'missed';
   });
   return res;
@@ -1994,7 +1995,7 @@ function renderGoal(){
     else msg = '이번 주는 조금 빠듯해도 괜찮아요. 못 채운 만큼 다음 주에 만회할 수 있어요 🌱';
     if (last && last.status === 'missed' && cur.count === 0) msg = '지난주는 쉬어갔어요. 괜찮아요, 이번 주 새로 시작해요 🌱 목표는 <strong>' + cur.goal + '회</strong>예요.';
   }
-  const hist = wks.slice(-6).map(w => {
+  const hist = wks.filter(w => w.goal).slice(-6).map(w => {
     const [ic, txt] = WEEK_ICON[w.status] || WEEK_ICON.none, d = parse(w.ws);
     return `<div class="wk${w.cur ? ' cur' : ''}" title="${esc(`${d.getMonth() + 1}/${d.getDate()} 주 · ${w.count}/${w.goal}회 · ${txt}`)}"><b aria-hidden="true">${ic}</b><span>${d.getMonth() + 1}/${d.getDate()}</span><span class="wk-t">${txt}</span></div>`;
   }).join('');
@@ -2041,7 +2042,7 @@ function openGoalDlg(){
   goalPickN = g || 3;
   $('#goalTitle').textContent = `${m}월 목표`;
   $('#goalQ').textContent = `${m}월엔 일주일에 몇 번 운동할까요?`;
-  const cw = mondayOf(todayStr()), mine = goalList().find(x => x.month === key);
+  const cw = mondayOf(todayStr()), mine = goalList().filter(x => x.month === key && x.perWeek).pop();
   goalFromPick = mine ? (mine.from > from ? 'week' : 'month') : (suggestedFrom(key) === from ? 'month' : 'week');
   $('#goalStartWrap').hidden = cw <= from;
   $('#goalStart [data-from="month"] .t').textContent = `${m}월 첫 주부터 (${mdOf(from)}~)`;
@@ -2065,7 +2066,9 @@ async function saveGoal(n, fromArg){
   if (!backend){ toast('아직 기록을 불러오는 중이에요.'); return; }
   const key = curMonthKey(), ms = monthStartWeek(key), m = monthNum(key);
   const from = fromArg && fromArg >= ms ? fromArg : ms;
-  const goals = goalList().filter(g => g.month !== key && g.from < ms).concat([{from, perWeek: n, month: key}]);
+  const goals = goalList().filter(g => g.month !== key && g.from < ms)
+    .concat(from > ms ? [{from: ms, perWeek: 0, month: key}] : [])
+    .concat([{from, perWeek: n, month: key}]);
   try { await backend.saveSettings({...S.settings, goals}); if (goalDlg.open) goalDlg.close(); toast(n ? `${m}월 목표 주 ${n}회! ${from === ms ? `${m}월 첫 주부터` : '이번 주부터'} 계산했어요 💪` : `${m}월 목표를 껐어요`); }
   catch(e){ toast(writeErr(e)); }
 }
