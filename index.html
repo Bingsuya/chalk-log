@@ -335,11 +335,21 @@ input[type=date]::-webkit-calendar-picker-indicator{margin-left:auto;opacity:.6}
 .goal-msg{font-size:14.5px;color:var(--ink-2);margin:0;line-height:1.6}
 .goal-msg strong{color:var(--ink)}
 .goal-msg .muted{color:var(--muted);font-size:13px}
-.weeks{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;max-width:460px}
-.wk{display:flex;flex-direction:column;align-items:center;min-width:0;padding:6px 2px;border-radius:12px;background:var(--soft);font-size:11px;color:var(--muted);line-height:1.35;text-align:center}
-.wk b{font-size:18px;line-height:1.3}
-.wk .wk-t{font-size:10.5px}
-.wk.cur{box-shadow:inset 0 0 0 2px var(--ink)}
+.weeks{display:flex;flex-direction:column;gap:6px;max-width:460px}
+.weeks-h{font-size:13px;font-weight:700;color:var(--ink)}
+.weeks-h small{font-weight:500;color:var(--muted);margin-left:4px}
+.wlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.wrow{--s:var(--p-grey);display:grid;grid-template-columns:24px minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:7px 10px;border-radius:12px;background:var(--soft);font-size:13px}
+.wrow .ic{font-size:16px;text-align:center}
+.wrow .wl{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 8px;min-width:0}
+.wrow .wl b{font-weight:700;white-space:nowrap}
+.wrow .wl small{color:var(--muted);font-size:12px;white-space:nowrap}
+.wrow .wc{font-variant-numeric:tabular-nums;color:var(--ink-2);white-space:nowrap}
+.wrow .wst{font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;background:color-mix(in srgb,var(--s) 16%,var(--surface));color:var(--ink)}
+.wrow.st-done,.wrow.st-recovered{--s:var(--p-green)}
+.wrow.st-recoverable{--s:var(--p-yellow)}
+.wrow.st-open{--s:var(--p-blue)}
+.wrow.cur{box-shadow:inset 0 0 0 1.5px var(--ink)}
 .goal-empty{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .goal-empty svg{width:56px;height:56px;flex:none}
 .goal-pick{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
@@ -1933,7 +1943,9 @@ function renderGoal(){
   const since = active ? mondayOf(active.from) : cur.ws;
   const hist = wks.filter(w => w.ws >= since).slice(-6).map(w => {
     const [ic, txt] = WEEK_ICON[w.status] || WEEK_ICON.none, d = parse(w.ws);
-    return `<div class="wk${w.cur ? ' cur' : ''}" title="${esc(`${d.getMonth() + 1}/${d.getDate()} 주 · ${w.count}/${w.goal}회 · ${txt}`)}"><b aria-hidden="true">${ic}</b><span>${d.getMonth() + 1}/${d.getDate()}</span><span class="wk-t">${txt}</span></div>`;
+    const key = monthKeyOfWeek(w.ws), nth = Math.round((parse(w.ws) - parse(monthStartWeek(key))) / 604800000) + 1;
+    const range = w.cur ? '이번 주' : `${mdOf(w.ws)}~${mdOf(addDays(w.ws, 6))}`;
+    return `<li class="wrow st-${w.status}${w.cur ? ' cur' : ''}" title="${esc(`${d.getMonth() + 1}/${d.getDate()} 주 · ${w.count}/${w.goal}회 · ${txt}`)}"><span class="ic" aria-hidden="true">${ic}</span><span class="wl"><b>${monthNum(key)}월 ${nth}주차</b><small>${range}</small></span><span class="wc">${w.count}/${w.goal}회</span><span class="wst">${txt}</span></li>`;
   }).join('');
   el.innerHTML = `
     ${promptHtml()}
@@ -1944,7 +1956,7 @@ function renderGoal(){
     <div class="week-dots" aria-label="이번 주 운동한 날">${dots}</div>
     <div class="goal-bar" role="progressbar" aria-valuemin="0" aria-valuemax="${cur.goal}" aria-valuenow="${Math.min(cur.count, cur.goal)}"><b style="width:${Math.min(100, cur.count / cur.goal * 100)}%"></b></div>
     <p class="goal-msg">${msg}</p>
-    <div class="weeks" aria-label="최근 주간 기록">${hist}</div>`;
+    <div class="weeks"><div class="weeks-h">주별 기록 <small>월~일 한 주 단위</small></div><ul class="wlist">${hist}</ul></div>`;
 }
 function promptHtml(){
   const pr = monthPrompt(); if (!pr) return '';
