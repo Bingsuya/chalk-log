@@ -1967,10 +1967,10 @@ function renderGoal(){
     else msg = '이번 주는 조금 빠듯해도 괜찮아요. 못 채운 만큼 다음 주에 만회할 수 있어요 🌱';
     if (last && last.status === 'missed' && cur.count === 0) msg = '지난주는 쉬어갔어요. 괜찮아요, 이번 주 새로 시작해요 🌱 목표는 <strong>' + cur.goal + '회</strong>예요.';
   }
-  // only the weeks since the current goal started (the unbroken run of weeks that have a goal)
-  let runStart = wks.length - 1;
-  while (runStart > 0 && wks[runStart - 1].goal) runStart--;
-  const hist = wks.slice(runStart).slice(-6).map(w => {
+  // only the weeks since the goal that applies now started (this month's goal, or the one carried over)
+  const active = goalList().filter(g => g.from <= cur.ws && g.perWeek).pop();
+  const since = active ? mondayOf(active.from) : cur.ws;
+  const hist = wks.filter(w => w.ws >= since).slice(-6).map(w => {
     const [ic, txt] = WEEK_ICON[w.status] || WEEK_ICON.none, d = parse(w.ws);
     return `<div class="wk${w.cur ? ' cur' : ''}" title="${esc(`${d.getMonth() + 1}/${d.getDate()} 주 · ${w.count}/${w.goal}회 · ${txt}`)}"><b aria-hidden="true">${ic}</b><span>${d.getMonth() + 1}/${d.getDate()}</span><span class="wk-t">${txt}</span></div>`;
   }).join('');
