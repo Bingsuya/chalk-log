@@ -312,6 +312,46 @@ input[type=date]::-webkit-calendar-picker-indicator{margin-left:auto;opacity:.6}
 .sh-ctrl .btns{align-items:center}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;opacity:0}
 
+/* weekly goal */
+.goal{border:1px solid var(--line);border-radius:22px;padding:20px 22px;display:flex;flex-direction:column;gap:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 8%,var(--surface)),var(--surface) 60%)}
+.goal h2{font-family:var(--f-d);font-weight:400;font-size:22px;margin:0}
+.goal h2 .num{color:var(--accent);margin-left:4px}
+.goal-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.goal-streak{font-family:var(--f-d);font-size:15px;padding:5px 12px;border-radius:999px;background:color-mix(in srgb,var(--p-orange) 16%,var(--surface));white-space:nowrap}
+.week-dots{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;max-width:460px}
+.wdot{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--muted)}
+.wdot i{width:40px;height:40px;max-width:100%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-style:normal;font-size:18px;border:2px solid transparent;box-sizing:border-box}
+.wdot.on i{background:color-mix(in srgb,var(--accent) 18%,var(--surface))}
+.wdot.today i{border-color:var(--ink)}
+.wdot.today span{color:var(--ink);font-weight:700}
+.wdot.future i{background:transparent;border:2px dashed var(--line)}
+.goal-bar{height:10px;border-radius:999px;background:var(--soft);overflow:hidden;max-width:460px}
+.goal-bar b{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--p-orange))}
+@media (prefers-reduced-motion:no-preference){.goal-bar b{transition:width .5s cubic-bezier(.2,.8,.2,1)}}
+.goal-msg{font-size:14.5px;color:var(--ink-2);margin:0;line-height:1.6}
+.goal-msg strong{color:var(--ink)}
+.goal-msg .muted{color:var(--muted);font-size:13px}
+.weeks{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;max-width:460px}
+.wk{display:flex;flex-direction:column;align-items:center;min-width:0;padding:6px 2px;border-radius:12px;background:var(--soft);font-size:11px;color:var(--muted);line-height:1.35;text-align:center}
+.wk b{font-size:18px;line-height:1.3}
+.wk .wk-t{font-size:10.5px}
+.wk.cur{box-shadow:inset 0 0 0 2px var(--ink)}
+.goal-empty{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.goal-empty svg{width:56px;height:56px;flex:none}
+.goal-pick{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.goal-pick button{aspect-ratio:1;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-family:var(--f-d);font-size:20px;cursor:pointer;color:var(--ink);padding:0}
+.goal-pick button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.rules{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:14px;color:var(--ink-2)}
+.rules li{display:flex;gap:8px}
+.celebrate{position:fixed;inset:0;z-index:35;display:grid;place-items:center;background:rgba(0,0,0,.45);padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.cel-card{width:min(360px,100%);background:var(--surface);border-radius:28px;padding:28px 24px 22px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center;box-shadow:var(--shadow)}
+.cel-card svg{width:104px;height:104px}
+.cel-card h2{font-family:var(--f-d);font-weight:400;font-size:28px;margin:0}
+.cel-big{font-family:var(--f-d);font-size:58px;color:var(--accent);line-height:1}
+@media (prefers-reduced-motion:no-preference){.cel-card{animation:celpop .5s cubic-bezier(.2,1.4,.4,1)}#celArt svg{animation:hop .6s ease-in-out infinite alternate}}
+@keyframes celpop{from{transform:scale(.6);opacity:0}}
+@keyframes hop{to{transform:translateY(-10px) rotate(-4deg)}}
+
 /* help center */
 .faq{display:flex;flex-direction:column}
 .faq details{border-top:1px solid var(--hair);padding:12px 0}
@@ -410,6 +450,7 @@ html{-webkit-text-size-adjust:100%}
     <!-- 운동 일지 -->
     <section class="view" id="view-log">
       <div class="stats" id="stats"></div>
+      <section class="goal" id="goalCard" aria-label="주간 목표"></section>
 
       <div class="log-grid">
         <div class="cal-col">
@@ -573,6 +614,42 @@ html{-webkit-text-size-adjust:100%}
     </div>
   </div>
 </dialog>
+
+<dialog id="goalDlg" aria-labelledby="goalTitle">
+  <div class="dlg-bar">
+    <button type="button" class="icon-btn" id="goalClose" aria-label="닫기"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 3 10 10M13 3 3 13"/></svg></button>
+    <span class="bt" id="goalTitle">주간 목표</span>
+  </div>
+  <div class="dlg">
+    <div>
+      <h2 class="sec-title">일주일에 몇 번 운동할까요?</h2>
+      <p class="sub" style="margin:4px 0 0">월요일부터 일요일까지, 운동한 날의 수로 세요.</p>
+    </div>
+    <div class="goal-pick" id="goalPick" role="radiogroup" aria-label="주간 목표 횟수">
+      <button type="button" data-n="1" aria-pressed="false">1</button><button type="button" data-n="2" aria-pressed="false">2</button><button type="button" data-n="3" aria-pressed="true">3</button><button type="button" data-n="4" aria-pressed="false">4</button><button type="button" data-n="5" aria-pressed="false">5</button><button type="button" data-n="6" aria-pressed="false">6</button><button type="button" data-n="7" aria-pressed="false">7</button>
+    </div>
+    <div class="bk-sec">
+      <h3>이렇게 챙겨드려요</h3>
+      <ul class="rules">
+        <li><span aria-hidden="true">🎉</span>목표를 채우면 축하해 드려요.</li>
+        <li><span aria-hidden="true">🔁</span>한 주를 못 채워도 괜찮아요. 다음 주에 모자란 만큼 더 하면 지난주도 달성으로 바꿔드려요.</li>
+        <li><span aria-hidden="true">🔥</span>달성한 주가 이어지면 연속 기록이 쌓여요.</li>
+      </ul>
+    </div>
+    <button type="button" class="btn primary" id="goalSave">이 목표로 시작하기</button>
+    <div class="btns" style="justify-content:center"><button type="button" class="btn sm ghost-danger" id="goalOff" hidden>목표 끄기</button></div>
+  </div>
+</dialog>
+
+<div class="celebrate" id="celebrate" hidden>
+  <div class="cel-card" role="dialog" aria-modal="true" aria-labelledby="celTitle">
+    <div id="celArt" aria-hidden="true"></div>
+    <div class="cel-big" id="celBig"></div>
+    <h2 id="celTitle"></h2>
+    <p class="sub" id="celSub" style="margin:0"></p>
+    <div class="btns" style="justify-content:center;margin-top:6px"><button type="button" class="btn sm" id="celShare">📸 자랑하기</button><button type="button" class="btn primary sm" id="celOk">좋아요!</button></div>
+  </div>
+</div>
 
 <dialog id="shDlg" aria-labelledby="shTitle">
   <div class="dlg-bar">
@@ -1219,7 +1296,8 @@ $('#dayForm').addEventListener('submit', async e => {
   const data = {date:S.sel, types:[...S.formTypes], minutes:min, feel, note:$('#dayNote').value.trim(), run, updatedAt:Date.now()};
   const date = S.sel;
   const isNew = !S.workouts[date];
-  try { await backend.saveWorkout(date, data); S.formDirty = false; toast(isNew ? `${fmtDay(date)} 기록 완료! 수고했어요 👏` : `${fmtDay(date)} 기록을 고쳤어요`); renderFormMeta(); }
+  const gBefore = goalSnap();
+  try { await backend.saveWorkout(date, data); S.formDirty = false; toast(isNew ? `${fmtDay(date)} 기록 완료! 수고했어요 👏` : `${fmtDay(date)} 기록을 고쳤어요`); renderFormMeta(); celebrateGoal(gBefore, goalSnap()); }
   catch(err){ $('#dayErr').textContent = writeErr(err); }
 });
 
@@ -1514,7 +1592,7 @@ function mergeData(a, b){
   });
   const types = [...(a.settings.customTypes || [])];
   (b.settings.customTypes || []).forEach(t => { if (!types.some(x => x.id === t.id)) types.push(t); });
-  return {workouts, lifts, settings:{...a.settings, customTypes:types}};
+  return {workouts, lifts, settings:{...a.settings, customTypes:types, goals: (a.settings.goals && a.settings.goals.length) ? a.settings.goals : (b.settings.goals || [])}};
 }
 async function doImport(d, mode){
   const next = mode === 'replace' ? d : mergeData({workouts:S.workouts, lifts:S.lifts, settings:S.settings}, d);
@@ -1747,9 +1825,144 @@ $('#shShare').addEventListener('click', async () => {
 });
 $('#shSave').addEventListener('click', () => { if (saveImage()) toast('이미지를 저장했어요'); else toast('카드를 만드는 중이에요. 잠시 후 다시 눌러 주세요'); });
 
+/* ---------- weekly goal (Mon–Sun), with a next-week make-up ---------- */
+const addDays = (ds, n) => { const d = parse(ds); d.setDate(d.getDate() + n); return ymd(d); };
+const mondayOf = ds => { const d = parse(ds); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return ymd(d); };
+function goalList(){ return (S.settings.goals || []).filter(g => g && g.from).slice().sort((a, b) => a.from < b.from ? -1 : a.from > b.from ? 1 : 0); }
+function goalFor(ws){ let n = 0; goalList().forEach(g => { if (g.from <= ws) n = Number(g.perWeek) || 0; }); return n; }
+function weekCount(ws){ let n = 0; for (let i = 0; i < 7; i++) if (S.workouts[addDays(ws, i)]) n++; return n; }
+/* status per week: done · recovered (made up next week) · recoverable (last week, can still be made up) · missed · open (this week) · none (no goal) */
+function goalWeeks(){
+  const gl = goalList(); if (!gl.length) return [];
+  const cur = mondayOf(todayStr());
+  const res = [];
+  for (let ws = mondayOf(gl[0].from), k = 0; ws <= cur && k < 600; ws = addDays(ws, 7), k++){
+    const goal = goalFor(ws), count = weekCount(ws);
+    res.push({ws, goal, count, extra: Math.max(0, count - goal), cur: ws === cur});
+  }
+  res.forEach((w, i) => {
+    if (!w.goal){ w.status = 'none'; return; }
+    if (w.count >= w.goal){ w.status = 'done'; return; }
+    if (w.cur){ w.status = 'open'; return; }
+    const deficit = w.goal - w.count, next = res[i + 1];
+    w.deficit = deficit;
+    if (next && next.goal && next.extra >= deficit){ w.status = 'recovered'; next.extra -= deficit; return; }
+    w.status = next && next.cur ? 'recoverable' : 'missed';
+  });
+  return res;
+}
+function weekStreak(ws){
+  let n = 0;
+  for (let i = ws.length - 1; i >= 0; i--){
+    const s = ws[i].status;
+    if (s === 'done' || s === 'recovered') n++;
+    else if ((s === 'open' && i === ws.length - 1) || (s === 'recoverable' && i === ws.length - 2)) continue;
+    else break;
+  }
+  return n;
+}
+function goalSnap(){
+  const w = goalWeeks(), cur = w[w.length - 1], last = w[w.length - 2];
+  return {cur: cur && cur.status, last: last && last.status, streak: weekStreak(w), goal: cur ? cur.goal : 0, count: cur ? cur.count : 0, ws: cur && cur.ws};
+}
+const WEEK_ICON = {done:['✅', '달성'], recovered:['🔁', '만회'], recoverable:['🔸', '만회 중'], missed:['🌙', '쉬어감'], open:['⏳', '진행 중'], none:['·', '목표 없음']};
+function renderGoal(){
+  const el = $('#goalCard');
+  const wks = goalWeeks(), cur = wks[wks.length - 1];
+  if (!cur || !cur.goal){
+    el.innerHTML = `<div class="goal-empty">${MASCOT}<div style="flex:1;min-width:190px"><h2>주간 목표를 세워볼까요?</h2><p class="goal-msg">일주일에 몇 번 운동할지 정하면 매주 챙겨드려요. 못 채운 주도 다음 주에 만회할 수 있어요.</p></div><button type="button" class="btn primary" data-goal-edit>목표 정하기</button></div>`;
+    return;
+  }
+  const last = wks[wks.length - 2], streakN = weekStreak(wks), today = todayStr();
+  const dots = WD.slice(1).concat(WD[0]).map((label, i) => {
+    const ds = addDays(cur.ws, i), w = S.workouts[ds];
+    const em = w && w.types && w.types.length ? typeOf(w.types[0]).em : '';
+    return `<div class="wdot${w ? ' on' : ''}${ds === today ? ' today' : ''}${ds > today ? ' future' : ''}"><i aria-hidden="true">${em}</i><span>${label}</span></div>`;
+  }).join('');
+  let msg;
+  if (last && last.status === 'recoverable'){
+    const need = cur.goal + last.deficit;
+    msg = `지난주는 ${last.count}/${last.goal}회였어요. 괜찮아요! 이번 주에 <strong>${need}회</strong>까지 하면 지난주도 달성으로 바꿔드려요 💪 <span class="muted">(지금 ${cur.count}회)</span>`;
+  } else if (cur.status === 'done'){
+    if (last && last.status === 'recovered') msg = '이번 주 목표 달성! 🎉 더 한 만큼 지난주도 만회했어요 ✅';
+    else msg = cur.count > cur.goal ? `이번 주 목표 달성! 🎉 보너스로 <strong>${cur.count - cur.goal}회</strong> 더 했어요.` : '이번 주 목표 달성! 🎉 남은 날은 보너스예요.';
+  } else {
+    const r = cur.goal - cur.count, daysLeft = 7 - (parse(today).getDay() + 6) % 7;
+    if (!cur.count) msg = `이번 주 첫 운동을 기다리고 있어요 🙌 목표는 <strong>${cur.goal}회</strong>예요.`;
+    else if (r <= daysLeft) msg = `<strong>${r}번</strong> 더 하면 이번 주 목표 달성이에요!`;
+    else msg = '이번 주는 조금 빠듯해도 괜찮아요. 못 채운 만큼 다음 주에 만회할 수 있어요 🌱';
+    if (last && last.status === 'missed' && cur.count === 0) msg = '지난주는 쉬어갔어요. 괜찮아요, 이번 주 새로 시작해요 🌱 목표는 <strong>' + cur.goal + '회</strong>예요.';
+  }
+  const hist = wks.slice(-6).map(w => {
+    const [ic, txt] = WEEK_ICON[w.status] || WEEK_ICON.none, d = parse(w.ws);
+    return `<div class="wk${w.cur ? ' cur' : ''}" title="${esc(`${d.getMonth() + 1}/${d.getDate()} 주 · ${w.count}/${w.goal}회 · ${txt}`)}"><b aria-hidden="true">${ic}</b><span>${d.getMonth() + 1}/${d.getDate()}</span><span class="wk-t">${txt}</span></div>`;
+  }).join('');
+  el.innerHTML = `
+    <div class="goal-top">
+      <h2>이번 주 목표 <span class="num">${cur.count}/${cur.goal}</span></h2>
+      <div class="btns"><span class="goal-streak">${streakN ? `🔥 ${streakN}주 연속` : '🌱 새로운 시작'}</span><button type="button" class="btn sm ghost" data-goal-edit>목표 바꾸기</button></div>
+    </div>
+    <div class="week-dots" aria-label="이번 주 운동한 날">${dots}</div>
+    <div class="goal-bar" role="progressbar" aria-valuemin="0" aria-valuemax="${cur.goal}" aria-valuenow="${Math.min(cur.count, cur.goal)}"><b style="width:${Math.min(100, cur.count / cur.goal * 100)}%"></b></div>
+    <p class="goal-msg">${msg}</p>
+    <div class="weeks" aria-label="최근 주간 기록">${hist}</div>`;
+}
+$('#goalCard').addEventListener('click', e => { if (e.target.closest('[data-goal-edit]')) openGoalDlg(); });
+
+/* goal dialog */
+const goalDlg = $('#goalDlg');
+let goalPickN = 3;
+function renderGoalPick(){ $('#goalPick').querySelectorAll('[data-n]').forEach(b => b.setAttribute('aria-pressed', Number(b.dataset.n) === goalPickN)); }
+function openGoalDlg(){
+  const g = goalFor(mondayOf(todayStr()));
+  goalPickN = g || 3;
+  $('#goalOff').hidden = !g;
+  $('#goalSave').textContent = g ? '이 목표로 바꾸기' : '이 목표로 시작하기';
+  renderGoalPick();
+  try { goalDlg.showModal(); } catch(e){ goalDlg.setAttribute('open', ''); }
+}
+$('#goalPick').addEventListener('click', e => { const b = e.target.closest('[data-n]'); if (b){ goalPickN = Number(b.dataset.n); renderGoalPick(); } });
+async function saveGoal(n){
+  if (!backend){ toast('아직 기록을 불러오는 중이에요.'); return; }
+  const ws = mondayOf(todayStr());
+  const goals = goalList().filter(g => g.from !== ws).concat([{from: ws, perWeek: n}]);
+  try { await backend.saveSettings({...S.settings, goals}); goalDlg.close(); toast(n ? `주 ${n}회 목표로 시작해요! 💪` : '주간 목표를 껐어요'); }
+  catch(e){ toast(writeErr(e)); }
+}
+$('#goalSave').addEventListener('click', () => saveGoal(goalPickN));
+$('#goalOff').addEventListener('click', e => arm(e.currentTarget, '목표 끄기', () => saveGoal(0), '한 번 더 누르면 꺼져요'));
+$('#goalClose').addEventListener('click', () => goalDlg.close());
+goalDlg.addEventListener('click', e => { if (e.target === goalDlg) goalDlg.close(); });
+
+/* celebration */
+function showCelebrate(o){
+  $('#celArt').innerHTML = MASCOT;
+  $('#celBig').textContent = o.big; $('#celTitle').textContent = o.title; $('#celSub').textContent = o.sub;
+  $('#celebrate').hidden = false;
+  confetti(); setTimeout(confetti, 380);
+  setTimeout(() => $('#celOk').focus(), 50);
+}
+function celebrateGoal(before, after){
+  if (!after.goal) return;
+  if (before.last === 'recoverable' && after.last === 'recovered'){
+    showCelebrate({big:'✅', title:'지난주 목표 만회!', sub:`이번 주에 더 해서 지난주도 달성으로 바꿨어요.${after.streak >= 2 ? ` 🔥 ${after.streak}주 연속이에요!` : ''}`});
+    return;
+  }
+  if (before.cur !== 'done' && after.cur === 'done'){
+    showCelebrate({big:`${after.count}/${after.goal}`, title:'이번 주 목표 달성! 🎉', sub: after.streak >= 2 ? `🔥 ${after.streak}주 연속 달성 중이에요. 정말 멋져요!` : '남은 날은 보너스예요. 정말 멋져요!'});
+  }
+}
+$('#celOk').addEventListener('click', () => { $('#celebrate').hidden = true; });
+$('#celebrate').addEventListener('click', e => { if (e.target.id === 'celebrate') $('#celebrate').hidden = true; });
+$('#celShare').addEventListener('click', () => {
+  const g = goalSnap();
+  $('#celebrate').hidden = true;
+  openShare({kind:'goal', title:'이번 주 운동 목표', date: fmtDot(todayStr()), big: `${g.count}/${g.goal}`, unit:'', kicker:'WEEKLY GOAL', rows: g.streak >= 2 ? [['Streak', '연속', String(g.streak), '주']] : [], caption: g.last === 'recovered' && g.cur !== 'done' ? '지난주 목표 만회!' : '이번 주 목표 달성!'});
+});
+
 /* ---------- refresh ---------- */
 function refresh(){
-  renderStats(); renderCal(); renderBars(); renderRecent(); renderPR();
+  renderStats(); renderGoal(); renderCal(); renderBars(); renderRecent(); renderPR();
   if (!S.formDirty) loadForm(); else renderFormMeta();
 }
 
