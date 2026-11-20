@@ -1,0 +1,11 @@
+const {chromium,devices}=require('playwright');
+const wk = p => p.evaluate(()=>[...document.querySelectorAll('#goalCard .wrow')].map(e=>e.getAttribute('title').replace(' 주 · ',' ')).join(' | ')+'   [streak '+document.querySelector('.goal-streak').textContent+']');
+(async()=>{const b=await chromium.launch();const errs=[];
+const fresh = async () => { const p=await b.newPage({...devices['iPhone 13']}); p.on('pageerror',e=>errs.push(e.message)); await p.goto('http://localhost:8767/preview/'); await p.evaluate(()=>Object.keys(localStorage).forEach(k=>localStorage.removeItem(k))); await p.reload(); await p.waitForTimeout(900); return p; };
+let p = await fresh(); console.log('seed (Oct goal carried):', await wk(p));
+await p.click('#goalCard [data-goal-edit]'); await p.click('#goalStart [data-from="month"]'); await p.click('[data-n="4"]'); await p.click('#goalSave'); await p.waitForTimeout(300);
+console.log('Nov first week     :', await wk(p));
+p = await fresh(); await p.click('[data-goal-keep]'); await p.waitForTimeout(300); console.log('banner keep        :', await wk(p));
+p = await fresh(); await p.click('#goalCard [data-goal-edit]'); await p.click('#goalStart [data-from="week"]'); await p.click('[data-n="2"]'); await p.click('#goalSave'); await p.waitForTimeout(300);
+console.log('this week          :', await wk(p));
+console.log('errors', errs); await b.close();})();
