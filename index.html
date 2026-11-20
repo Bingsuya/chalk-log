@@ -220,6 +220,11 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .blk-title{font-size:18px;font-weight:700;margin-bottom:12px}
 .add-box{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 .add-box .cell-f+.cell-f{border-top:0;border-left:1px solid var(--line)}
+.add-box .cell-f.span2{grid-column:1/-1;border-left:0;border-top:1px solid var(--line)}
+.est{font-size:13px;color:var(--muted);line-height:1.5;margin-top:-4px}
+.est:empty{display:none}
+.est b{color:var(--accent);font-size:15px}
+.hist .est-tag{display:block;font-size:12px;color:var(--muted);font-weight:400}
 .pct{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
 .pct div{border:1px solid var(--hair);border-radius:10px;padding:8px 12px}
 .pct div b{display:block;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
@@ -758,10 +763,15 @@ html{-webkit-text-size-adjust:100%}
           <input type="number" id="dlgW" min="0" step="0.5" inputmode="decimal" placeholder="100">
         </div>
         <div class="cell-f">
+          <label for="dlgReps">횟수</label>
+          <input type="number" id="dlgReps" min="1" max="12" step="1" inputmode="numeric" value="1" aria-describedby="dlgEst">
+        </div>
+        <div class="cell-f span2">
           <label for="dlgDate">날짜</label>
           <input type="date" id="dlgDate">
         </div>
       </div>
+      <div class="est" id="dlgEst" aria-live="polite"></div>
       <div class="err" id="dlgErr" role="alert"></div>
       <button type="submit" class="btn primary">기록 추가</button>
     </form>
@@ -900,6 +910,9 @@ function chronPR(h){
     return out;
   });
 }
+/* estimated 1RM from a multi-rep set (Epley). 1 rep = the weight itself; beyond 12 reps it gets unreliable */
+const MAX_REPS = 12;
+function est1RM(w, reps){ return reps <= 1 ? w : w * (1 + reps / 30); }
 const toUnit = kg => S.unit === 'lb' ? kg * LB : kg;
 const fmtW = kg => S.unit === 'lb' ? String(Math.round(kg * LB)) : String(Math.round(kg * 10) / 10);
 const fmtPlate = kg => S.unit === 'lb' ? String(Math.round(kg * LB)) : String(Math.round(kg * 2) / 2);
@@ -1509,7 +1522,7 @@ $('#liftAddForm').addEventListener('submit', async e => {
 const dlg = $('#liftDlg');
 function openLift(id){
   S.openLift = id;
-  $('#dlgW').value = ''; $('#dlgDate').value = todayStr(); $('#dlgErr').textContent = '';
+  $('#dlgW').value = ''; $('#dlgReps').value = '1'; $('#dlgDate').value = todayStr(); $('#dlgErr').textContent = ''; $('#dlgEst').textContent = '';
   disarm($('#dlgDelLift'), '이 동작 삭제');
   if (!dlg.open){ try { dlg.showModal(); } catch(e){ dlg.setAttribute('open',''); } }
   renderDlg();
@@ -1538,7 +1551,7 @@ function renderDlg(){
   drawTrend(it);
   const hist = [...it.history].sort((a,c) => a.date < c.date ? 1 : a.date > c.date ? -1 : c.kg - a.kg);
   const prIds = new Set(chronPR(it.history).filter(e => e.pr).map(e => e.id));
-  $('#hist').innerHTML = hist.length ? hist.map(e => `<li><span>${fmtDot(e.date)}</span><span><span class="hw">${fmtW(e.kg)}</span> ${u}${prIds.has(e.id) ? '<span class="pr-badge">PR</span>' : ''}</span><button type="button" class="btn sm ghost-danger" data-del="${esc(e.id)}">삭제</button></li>`).join('')
+  $('#hist').innerHTML = hist.length ? hist.map(e => `<li><span>${fmtDot(e.date)}</span><span><span class="hw">${fmtW(e.kg)}</span> ${u}${prIds.has(e.id) ? '<span class="pr-badge">PR</span>' : ''}${e.reps > 1 && e.w ? `<span class="est-tag">${fmtW(e.w)}${u} × ${e.reps}회로 추정</span>` : ''}</span><button type="button" class="btn sm ghost-danger" data-del="${esc(e.id)}">삭제</button></li>`).join('')
     : `<li class="empty" style="display:block">기록을 추가하면 여기에 쌓여요.</li>`;
   $('#dlgCustomRow').hidden = !it.custom;
 }
@@ -1548,18 +1561,36 @@ $('#dlgForm').addEventListener('submit', async e => {
   const it = getLift(S.openLift); if (!it) return;
   if (!backend){ toast('아직 기록을 불러오는 중이에요.'); return; }
   const v = Number($('#dlgW').value);
+  const reps = $('#dlgReps').value === '' ? 1 : Number($('#dlgReps').value);
   const date = $('#dlgDate').value || todayStr();
   if (!$('#dlgW').value || !(v > 0) || v > 1000){ $('#dlgErr').textContent = '중량을 숫자로 입력해 주세요.'; return; }
-  const kg = Math.round(fromUnit(v) * 100) / 100;
+  if (!Number.isInteger(reps) || reps < 1 || reps > MAX_REPS){ $('#dlgErr').textContent = `횟수는 1~${MAX_REPS}회로 입력해 주세요.`; return; }
+  const w = Math.round(fromUnit(v) * 100) / 100;
+  const kg = Math.round(est1RM(w, reps) * 100) / 100;
   const prev = bestOf(it.history);
-  const history = [...it.history, {id:rid(), kg, date}];
+  const entry = reps > 1 ? {id:rid(), kg, date, w, reps} : {id:rid(), kg, date};
+  const history = [...it.history, entry];
+  const what = reps > 1 ? `예상 1RM ${fmtW(kg)}${S.unit}` : `${fmtW(kg)}${S.unit}`;
   try {
     await backend.saveLift(it.id, liftDoc(it, history));
-    $('#dlgW').value = ''; $('#dlgErr').textContent = '';
-    if (prev && kg > prev.kg){ confetti(); toast(`🎉 새 PR! ${it.name} ${fmtW(kg)}${S.unit}`); }
-    else toast(!prev ? `${it.name} 첫 기록 ${fmtW(kg)}${S.unit}을 저장했어요` : `${it.name} ${fmtW(kg)}${S.unit} 기록을 추가했어요`);
+    $('#dlgW').value = ''; $('#dlgReps').value = '1'; $('#dlgErr').textContent = ''; $('#dlgEst').textContent = '';
+    if (prev && kg > prev.kg){ confetti(); toast(`🎉 새 PR! ${it.name} ${what}`); }
+    else toast(!prev ? `${it.name} 첫 기록 ${what}을 저장했어요` : `${it.name} ${what} 기록을 추가했어요`);
   } catch(err){ $('#dlgErr').textContent = writeErr(err); }
 });
+function renderEst(){
+  const v = Number($('#dlgW').value), reps = Number($('#dlgReps').value);
+  const el = $('#dlgEst');
+  $('#dlgErr').textContent = '';
+  if (!(v > 0) || !Number.isInteger(reps) || reps < 2){ el.textContent = ''; return; }
+  if (reps > MAX_REPS){ el.textContent = `${MAX_REPS}회가 넘으면 1RM을 추정하기 어려워요. 무게를 올려서 적은 횟수로 적어 주세요.`; return; }
+  const est = est1RM(v, reps);
+  const it = getLift(S.openLift), b = it && bestOf(it.history);
+  const more = b && fromUnit(est) > b.kg ? ' · 새 PR이에요! 🎉' : '';
+  el.innerHTML = `${esc(fmtW(fromUnit(v)))}${S.unit} × ${reps}회 → 예상 1RM <b>${fmtW(fromUnit(est))}${S.unit}</b>${more}<br>예상 1RM으로 기록돼요.`;
+}
+$('#dlgW').addEventListener('input', renderEst);
+$('#dlgReps').addEventListener('input', renderEst);
 $('#hist').addEventListener('click', e => {
   const b = e.target.closest('[data-del]'); if (!b) return;
   arm(b, '삭제', async () => {
