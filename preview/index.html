@@ -225,10 +225,7 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .add-box{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 .add-box .cell-f+.cell-f{border-top:0;border-left:1px solid var(--line)}
 .add-box .cell-f.span2{grid-column:1/-1;border-left:0;border-top:1px solid var(--line)}
-.est{font-size:13px;color:var(--muted);line-height:1.5;margin-top:-4px}
-.est:empty{display:none}
-.est b{color:var(--accent);font-size:15px}
-.hist .est-tag{display:block;font-size:12px;color:var(--muted);font-weight:400}
+.reps-tag{font-size:.8em;font-weight:600;color:var(--ink-2);margin-left:4px;white-space:nowrap}
 .pct{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
 .pct div{border:1px solid var(--hair);border-radius:10px;padding:8px 12px}
 .pct div b{display:block;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
@@ -570,7 +567,7 @@ html{-webkit-text-size-adjust:100%}
       <div class="pr-head">
         <div class="t">
           <h1>PR 보드 🏆</h1>
-          <div class="sub">동작별 1RM과 기록 추이</div>
+          <div class="sub">동작별 최고 기록과 추이</div>
         </div>
         <div class="seg" role="group" aria-label="단위">
           <button type="button" id="unitLb">lb</button>
@@ -758,7 +755,7 @@ html{-webkit-text-size-adjust:100%}
         <h2 id="dlgName">—</h2>
       </div>
       <div style="text-align:right">
-        <div class="sub">현재 1RM</div>
+        <div class="sub">최고 기록</div>
         <div class="big" id="dlgBest">—</div>
         <div class="sub" id="dlgBestMeta" style="margin-top:4px"></div>
         <button type="button" class="btn sm" id="dlgShare" hidden style="margin-top:10px">📸 PR 공유</button>
@@ -778,14 +775,13 @@ html{-webkit-text-size-adjust:100%}
         </div>
         <div class="cell-f">
           <label for="dlgReps">연속 횟수</label>
-          <input type="number" id="dlgReps" min="1" max="12" step="1" inputmode="numeric" value="1" aria-describedby="dlgEst">
+          <input type="number" id="dlgReps" min="1" max="100" step="1" inputmode="numeric" value="1">
         </div>
         <div class="cell-f span2">
           <label for="dlgDate">날짜</label>
           <input type="date" id="dlgDate">
         </div>
       </div>
-      <div class="est" id="dlgEst" aria-live="polite"></div>
       <div class="err" id="dlgErr" role="alert"></div>
       <button type="submit" class="btn primary">기록 추가</button>
     </form>
@@ -935,9 +931,9 @@ const cvar = c => `--c:var(--p-${c})`;
 const MASCOT = '<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="2" y="13" width="9" height="22" rx="4.5" fill="var(--p-purple)"/><rect x="37" y="13" width="9" height="22" rx="4.5" fill="var(--p-purple)"/><rect x="9" y="21" width="30" height="6" rx="3" fill="var(--muted)"/><circle cx="24" cy="24" r="12" fill="var(--accent)"/><circle cx="19.8" cy="22.5" r="1.8" fill="#fff"/><circle cx="28.2" cy="22.5" r="1.8" fill="#fff"/><path d="M20.5 27.2q3.5 3 7 0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>';
 
 function liftList(){
-  const groups = LIFT_GROUPS.map(([g, items]) => ({g, items: items.map(([id,name,en]) => ({id, name, en, custom:false, history:(S.lifts[id] && S.lifts[id].history) || []}))}));
+  const groups = LIFT_GROUPS.map(([g, items]) => ({g, items: items.map(([id,name,en]) => ({id, name, en, custom:false, history:normHist(S.lifts[id] && S.lifts[id].history)}))}));
   const custom = Object.keys(S.lifts).filter(id => S.lifts[id].custom)
-    .map(id => ({id, name:S.lifts[id].name, en:'내 동작', custom:true, history:S.lifts[id].history || []}))
+    .map(id => ({id, name:S.lifts[id].name, en:'내 동작', custom:true, history:normHist(S.lifts[id].history)}))
     .sort((a,b) => a.name.localeCompare(b.name, 'ko'));
   if (custom.length) groups.push({g:'내 동작', items:custom});
   return groups;
@@ -954,7 +950,7 @@ async function toggleFav(id){
   refresh();
 }
 function getLift(id){ for (const g of liftList()) for (const it of g.items) if (it.id === id) return it; return null; }
-function bestOf(h){ return h.reduce((b,e) => (!b || e.kg > b.kg || (e.kg === b.kg && e.date < b.date)) ? e : b, null); }
+function bestOf(h){ return h.reduce((b,e) => (!b || e.kg > b.kg || (e.kg === b.kg && ((e.reps || 1) > (b.reps || 1) || ((e.reps || 1) === (b.reps || 1) && e.date < b.date)))) ? e : b, null); }
 function deltaOf(h){
   const b = bestOf(h); if (!b || h.length < 2) return 0;
   const before = h.filter(e => e !== b && e.date <= b.date);
@@ -973,9 +969,11 @@ function chronPR(h){
     return out;
   });
 }
-/* estimated 1RM from a multi-rep set (Epley). 1 rep = the weight itself; beyond 12 reps it gets unreliable */
-const MAX_REPS = 12;
-function est1RM(w, reps){ return reps <= 1 ? w : w * (1 + reps / 30); }
+/* a record is the weight lifted and how many reps in a row (1 = a single). No 1RM estimate: what you lifted is what's shown */
+const MAX_REPS = 100;
+const repsTxt = e => e && e.reps > 1 ? `<span class="reps-tag">× ${e.reps}회</span>` : '';
+/* records saved while the board estimated a 1RM ({kg: estimate, w: weight, reps}) show the weight actually lifted */
+const normHist = h => (h || []).map(e => e && e.w != null ? {id:e.id, kg:e.w, date:e.date, reps:e.reps} : e);
 const toUnit = kg => S.unit === 'lb' ? kg * LB : kg;
 const fmtW = kg => S.unit === 'lb' ? String(Math.round(kg * LB)) : String(Math.round(kg * 10) / 10);
 const fmtPlate = kg => S.unit === 'lb' ? String(Math.round(kg * LB)) : String(Math.round(kg * 2) / 2);
@@ -1473,7 +1471,7 @@ function renderPR(){
   const favs = favList(), favSet = new Set(favs);
   const card = it => {
     const b = bestOf(it.history); const dl = deltaOf(it.history);
-    const w = b ? `<div class="w">${fmtW(b.kg)}<small>${u}</small></div>` : `<div class="w none">눌러서 첫 기록하기 ✏️</div>`;
+    const w = b ? `<div class="w">${fmtW(b.kg)}<small>${u}</small>${repsTxt(b)}</div>` : `<div class="w none">눌러서 첫 기록하기 ✏️</div>`;
     const meta = b ? `<div class="meta"><span>${fmtDot(b.date)}</span>${dl > 0 ? `<span class="up">+${fmtW(dl)}${u}</span>` : ''}</div>` : `<div class="meta">기록 없음</div>`;
     return `<button type="button" class="lift" data-lift="${esc(it.id)}"><div class="nm"><b>${favSet.has(it.id) ? '<span class="star" aria-label="즐겨찾기">★</span>' : ''}${esc(it.name)}</b><span>${esc(it.en)}</span></div>${w}${sparkline(it.history)}${meta}</button>`;
   };
@@ -1503,7 +1501,7 @@ function renderRecentPR(){
   ev.sort((a,b) => a.date < b.date ? 1 : a.date > b.date ? -1 : b.kg - a.kg);
   const top = ev.slice(0, 6);
   $('#recentPr').hidden = !top.length;
-  $('#recentPrList').innerHTML = top.map(e => `<li><button type="button" data-lift="${esc(e.lift.id)}"><span class="rd">${shortDate(e.date)}</span><span class="rn">${esc(e.lift.name)}</span><span class="rw">${fmtW(e.kg)}<small>${S.unit}</small>${e.gain > 0 ? `<span class="up">+${fmtW(e.gain)}</span>` : e.first ? '<span class="up" style="color:var(--muted);font-weight:500">첫 기록</span>' : ''}</span></button></li>`).join('');
+  $('#recentPrList').innerHTML = top.map(e => `<li><button type="button" data-lift="${esc(e.lift.id)}"><span class="rd">${shortDate(e.date)}</span><span class="rn">${esc(e.lift.name)}</span><span class="rw">${fmtW(e.kg)}<small>${S.unit}</small>${repsTxt(e)}${e.gain > 0 ? `<span class="up">+${fmtW(e.gain)}</span>` : e.first ? '<span class="up" style="color:var(--muted);font-weight:500">첫 기록</span>' : ''}</span></button></li>`).join('');
 }
 $('#recentPrList').addEventListener('click', e => { const b = e.target.closest('[data-lift]'); if (b) openLift(b.dataset.lift); });
 
@@ -1590,7 +1588,7 @@ $('#liftAddForm').addEventListener('submit', async e => {
 const dlg = $('#liftDlg');
 function openLift(id){
   S.openLift = id;
-  $('#dlgW').value = ''; $('#dlgReps').value = '1'; $('#dlgDate').value = todayStr(); $('#dlgErr').textContent = ''; $('#dlgEst').textContent = '';
+  $('#dlgW').value = ''; $('#dlgReps').value = '1'; $('#dlgDate').value = todayStr(); $('#dlgErr').textContent = '';
   disarm($('#dlgDelLift'), '이 동작 삭제');
   if (!dlg.open){ try { dlg.showModal(); } catch(e){ dlg.setAttribute('open',''); } }
   renderDlg();
@@ -1612,18 +1610,19 @@ function renderDlg(){
   $('#dlgWLab').textContent = `중량 (${u})`;
   $('#dlgW').step = u === 'lb' ? '1' : '0.5';
   const b = bestOf(it.history);
-  $('#dlgBest').innerHTML = b ? `${fmtW(b.kg)}<small>${u}</small>` : `<span style="font-size:18px;font-weight:500;color:var(--muted)">기록 없음</span>`;
+  $('#dlgBest').innerHTML = b ? `${fmtW(b.kg)}<small>${u}</small>${repsTxt(b)}` : `<span style="font-size:18px;font-weight:500;color:var(--muted)">기록 없음</span>`;
   $('#dlgBestMeta').textContent = b ? `${fmtDot(b.date)} 달성 · ` + (S.unit === 'kg' ? `${Math.round(b.kg * LB)} lb` : `${Math.round(b.kg*10)/10} kg`) : '';
-  $('#pctWrap').hidden = !b;
+  const b1 = bestOf(it.history.filter(e => !(e.reps > 1)));   // % table is based on the best single
+  $('#pctWrap').hidden = !b1;
   $('#dlgShare').hidden = !b;
-  if (b){
+  if (b1){
     const ps = [50,55,60,65,70,75,80,85,90,95,100];
-    $('#pct').innerHTML = ps.map(p => `<div class="${p >= 85 ? 'hi' : ''}"><span>${p}%</span><b>${fmtPlate(b.kg * p / 100)}</b></div>`).join('');
+    $('#pct').innerHTML = ps.map(p => `<div class="${p >= 85 ? 'hi' : ''}"><span>${p}%</span><b>${fmtPlate(b1.kg * p / 100)}</b></div>`).join('');
   }
   drawTrend(it);
   const hist = [...it.history].sort((a,c) => a.date < c.date ? 1 : a.date > c.date ? -1 : c.kg - a.kg);
   const prIds = new Set(chronPR(it.history).filter(e => e.pr).map(e => e.id));
-  $('#hist').innerHTML = hist.length ? hist.map(e => `<li><span>${fmtDot(e.date)}</span><span><span class="hw">${fmtW(e.kg)}</span> ${u}${prIds.has(e.id) ? '<span class="pr-badge">PR</span>' : ''}${e.reps > 1 && e.w ? `<span class="est-tag">${fmtW(e.w)}${u} × ${e.reps}회 연속 · 예상 1RM</span>` : ''}</span><button type="button" class="btn sm ghost-danger" data-del="${esc(e.id)}">삭제</button></li>`).join('')
+  $('#hist').innerHTML = hist.length ? hist.map(e => `<li><span>${fmtDot(e.date)}</span><span><span class="hw">${fmtW(e.kg)}</span> ${u}${repsTxt(e)}${prIds.has(e.id) ? '<span class="pr-badge">PR</span>' : ''}</span><button type="button" class="btn sm ghost-danger" data-del="${esc(e.id)}">삭제</button></li>`).join('')
     : `<li class="empty" style="display:block">기록을 추가하면 여기에 쌓여요.</li>`;
   $('#dlgCustomRow').hidden = !it.custom;
 }
@@ -1636,33 +1635,19 @@ $('#dlgForm').addEventListener('submit', async e => {
   const reps = $('#dlgReps').value === '' ? 1 : Number($('#dlgReps').value);
   const date = $('#dlgDate').value || todayStr();
   if (!$('#dlgW').value || !(v > 0) || v > 1000){ $('#dlgErr').textContent = '중량을 숫자로 입력해 주세요.'; return; }
-  if (!Number.isInteger(reps) || reps < 1 || reps > MAX_REPS){ $('#dlgErr').textContent = `횟수는 1~${MAX_REPS}회로 입력해 주세요.`; return; }
-  const w = Math.round(fromUnit(v) * 100) / 100;
-  const kg = Math.round(est1RM(w, reps) * 100) / 100;
+  if (!Number.isInteger(reps) || reps < 1 || reps > MAX_REPS){ $('#dlgErr').textContent = `연속 횟수는 1~${MAX_REPS}회로 입력해 주세요.`; return; }
+  const kg = Math.round(fromUnit(v) * 100) / 100;
   const prev = bestOf(it.history);
-  const entry = reps > 1 ? {id:rid(), kg, date, w, reps} : {id:rid(), kg, date};
+  const entry = reps > 1 ? {id:rid(), kg, date, reps} : {id:rid(), kg, date};
   const history = [...it.history, entry];
-  const what = reps > 1 ? `예상 1RM ${fmtW(kg)}${S.unit}` : `${fmtW(kg)}${S.unit}`;
+  const what = `${fmtW(kg)}${S.unit}${reps > 1 ? ` × ${reps}회` : ''}`;
   try {
     await backend.saveLift(it.id, liftDoc(it, history));
-    $('#dlgW').value = ''; $('#dlgReps').value = '1'; $('#dlgErr').textContent = ''; $('#dlgEst').textContent = '';
+    $('#dlgW').value = ''; $('#dlgReps').value = '1'; $('#dlgErr').textContent = '';
     if (prev && kg > prev.kg){ confetti(); toast(`🎉 새 PR! ${it.name} ${what}`); }
     else toast(!prev ? `${it.name} 첫 기록 ${what}을 저장했어요` : `${it.name} ${what} 기록을 추가했어요`);
   } catch(err){ $('#dlgErr').textContent = writeErr(err); }
 });
-function renderEst(){
-  const v = Number($('#dlgW').value), reps = Number($('#dlgReps').value);
-  const el = $('#dlgEst');
-  $('#dlgErr').textContent = '';
-  if (!(v > 0) || !Number.isInteger(reps) || reps < 2){ el.textContent = ''; return; }
-  if (reps > MAX_REPS){ el.textContent = `${MAX_REPS}회가 넘으면 1RM을 추정하기 어려워요. 무게를 올려서 적은 횟수로 적어 주세요.`; return; }
-  const est = est1RM(v, reps);
-  const it = getLift(S.openLift), b = it && bestOf(it.history);
-  const more = b && fromUnit(est) > b.kg ? ' · 새 PR이에요! 🎉' : '';
-  el.innerHTML = `${esc(fmtW(fromUnit(v)))}${S.unit} × ${reps}회 → 예상 1RM <b>${fmtW(fromUnit(est))}${S.unit}</b>${more}<br>예상 1RM으로 기록돼요.`;
-}
-$('#dlgW').addEventListener('input', renderEst);
-$('#dlgReps').addEventListener('input', renderEst);
 $('#hist').addEventListener('click', e => {
   const b = e.target.closest('[data-del]'); if (!b) return;
   arm(b, '삭제', async () => {
@@ -1811,7 +1796,8 @@ function prCard(it){
   const rows = [];
   if (e.gain > 0) rows.push(['Up', '향상', `+${fmtW(e.gain)}`, S.unit]);
   if (e.gain > 0) rows.push(['Prev', '이전', fmtW(b.kg - e.gain), S.unit]);
-  return {kind:'pr', title: it.name, date:fmtDot(b.date), big: fmtW(b.kg), unit: S.unit, kicker: e.gain > 0 ? 'NEW PR' : '1RM', rows, caption:''};
+  if (b.reps > 1) rows.unshift(['Reps', '연속', String(b.reps), '회']);
+  return {kind:'pr', title: it.name, date:fmtDot(b.date), big: fmtW(b.kg), unit: S.unit, kicker: e.gain > 0 ? 'NEW PR' : (b.reps > 1 ? 'BEST' : '1RM'), rows, caption:''};
 }
 /* drawing helpers */
 function rr(c, x, y, w, h, r){ c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
