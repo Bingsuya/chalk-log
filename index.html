@@ -701,6 +701,7 @@ html{-webkit-text-size-adjust:100%}
         <div class="field">
           <span class="lab" id="shTplLab">스타일</span>
           <div class="chips" id="shTpl" role="radiogroup" aria-labelledby="shTplLab">
+            <button type="button" class="chip" style="--c:var(--p-purple)" data-tpl="calendar" aria-pressed="false" hidden><span class="em" aria-hidden="true">📅</span>달력</button>
             <button type="button" class="chip" style="--c:var(--accent)" data-tpl="sticker" aria-pressed="true"><span class="em" aria-hidden="true">🧸</span>스티커</button>
             <button type="button" class="chip" style="--c:var(--p-grey)" data-tpl="minimal" aria-pressed="false"><span class="em" aria-hidden="true">⬜</span>미니멀</button>
           </div>
@@ -1812,13 +1813,51 @@ function drawMinimal(c, card){
   fit(c, `${card.kicker}  ·  ${card.title}`, s => `700 ${s}px "Pretendard Variable"`, 50, CW - 160, 28); c.fillText(`${card.kicker}  ·  ${card.title}`, 80, y);
   c.textAlign = 'right'; c.font = '800 44px "Pretendard Variable"'; c.fillText('chalk log', CW - 80, CH - 96);
 }
-const DRAW = {sticker:drawSticker, minimal:drawMinimal};
+/* style for a finished month: the month's calendar with the days worked out */
+function monthCal(key){
+  const [y, m] = key.split('-').map(Number), n = new Date(y, m, 0).getDate(), days = {};
+  let count = 0;
+  for (let d = 1; d <= n; d++){
+    const w = S.workouts[`${key}-${pad(d)}`];
+    if (w){ count++; days[d] = ((w.types || [])[0] && typeOf(w.types[0]).em) || '💪'; }
+  }
+  return {y, m, n, first: new Date(y, m - 1, 1).getDay(), days, count};
+}
+function drawCalendar(c, card){
+  const cal = card.cal; if (!cal) return drawSticker(c, card);
+  if (SH.img){ cover(c, SH.img); c.fillStyle = 'rgba(0,0,0,.18)'; c.fillRect(0, 0, CW, CH); }
+  else bgFill(c, [[0, '#FFE1EA'], [1, '#E6DEFF']]);
+  c.textBaseline = 'middle'; c.textAlign = 'center';
+  let top = 150;
+  if (card.caption){ const fs = fit(c, card.caption, s => `800 ${s}px "Pretendard Variable"`, 68, CW - 260, 36); const w = c.measureText(card.caption).width; c.save(); c.shadowColor = 'rgba(0,0,0,.18)'; c.shadowBlur = 24; c.shadowOffsetY = 8; c.fillStyle = '#fff'; rr(c, (CW - w) / 2 - 48, top, w + 96, fs + 64, (fs + 64) / 2); c.fill(); c.restore(); c.fillStyle = '#222'; c.fillText(card.caption, CW / 2, top + (fs + 64) / 2 + 4); top += fs + 64; }
+  const weeks = Math.ceil((cal.first + cal.n) / 7), x = 56, w = CW - 112, cw = (w - 80) / 7, chh = 150;
+  const h = 250 + weeks * chh + 190, y = Math.max(top + 60, (CH - h) / 2 + 40);
+  c.save(); c.shadowColor = 'rgba(0,0,0,.18)'; c.shadowBlur = 40; c.shadowOffsetY = 12; c.fillStyle = '#fff'; rr(c, x, y, w, h, 56); c.fill(); c.restore();
+  mascot(c, x + w - 120, y + 20, 170);
+  c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+  c.fillStyle = '#222'; c.font = '800 64px "Pretendard Variable"'; c.fillText(`${cal.y}년 ${cal.m}월`, x + 56, y + 118);
+  const gx = x + 40, gy = y + 200;
+  c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = '600 32px "Pretendard Variable"';
+  WD.forEach((d, i) => { c.fillStyle = i === 0 ? '#E5484D' : '#8A8A8A'; c.fillText(d, gx + cw * i + cw / 2, gy); });
+  for (let d = 1; d <= cal.n; d++){
+    const k = cal.first + d - 1, cx = gx + cw * (k % 7) + cw / 2, cy = gy + 50 + Math.floor(k / 7) * chh + chh / 2;
+    const em = cal.days[d];
+    if (em){ c.fillStyle = '#FFE3E9'; rr(c, cx - cw / 2 + 8, cy - chh / 2 + 8, cw - 16, chh - 16, 28); c.fill(); }
+    c.fillStyle = em ? '#D9285A' : '#A3A3A3'; c.font = `${em ? 800 : 500} 32px "Pretendard Variable"`; c.fillText(String(d), cx, cy - 30);
+    if (em){ c.font = '52px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; c.fillText(em, cx, cy + 24); }
+  }
+  c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+  c.fillStyle = '#222'; fit(c, cal.line, s => `800 ${s}px "Pretendard Variable"`, 46, w - 112, 28); c.fillText(cal.line, x + 56, y + h - 104);
+  c.fillStyle = '#9A94AE'; c.font = '500 32px "Pretendard Variable"'; c.fillText(card.date, x + 56, y + h - 46);
+  c.textAlign = 'right'; c.fillStyle = '#F0435E'; c.font = '800 42px "Pretendard Variable"'; c.fillText('chalk log', x + w - 56, y + h - 44);
+}
+const DRAW = {sticker:drawSticker, minimal:drawMinimal, calendar:drawCalendar};
 async function shRender(){
   const seq = ++SH.seq;
   SH.file = null;
   if (!SH.card) return;
   const card = {...SH.card, caption: $('#shCaption').value.trim()};
-  await loadFonts([card.title, card.caption, card.kicker, card.big, card.unit, card.date, card.rows.map(r => r.join(' ')).join(' ')].join(' '));
+  await loadFonts([card.title, card.caption, card.kicker, card.big, card.unit, card.date, card.rows.map(r => r.join(' ')).join(' '), card.cal ? `${card.cal.y}년 ${card.cal.m}월 ${WD.join('')} ${card.cal.line}` : ''].join(' '));
   if (seq !== SH.seq) return;
   shCtx.save(); shCtx.clearRect(0, 0, CW, CH); DRAW[SH.tpl](shCtx, card); shCtx.restore();
   shCv.toBlob(blob => {
@@ -1826,8 +1865,13 @@ async function shRender(){
     SH.file = new File([blob], `chalklog-${card.date.replace(/\./g, '')}.jpg`, {type:'image/jpeg'});
   }, 'image/jpeg', 0.9);
 }
-function setTplButtons(){ $('#shTpl').querySelectorAll('[data-tpl]').forEach(x => x.setAttribute('aria-pressed', x.dataset.tpl === SH.tpl)); }
+function setTplButtons(){
+  const cal = !!(SH.card && SH.card.cal);
+  $('#shTpl [data-tpl="calendar"]').hidden = !cal;
+  $('#shTpl').querySelectorAll('[data-tpl]').forEach(x => x.setAttribute('aria-pressed', x.dataset.tpl === SH.tpl));
+}
 function openShare(card){
+  SH.tpl = card && card.cal ? 'calendar' : (['sticker','minimal'].includes(lsGet('chalklog.shareTpl')) ? lsGet('chalklog.shareTpl') : 'sticker');
   if (!card) return;
   SH.card = card; SH.img = null;
   $('#shNoPhoto').hidden = true; $('#shCaption').value = card.caption || '';
@@ -1853,7 +1897,7 @@ $('#dayShare').addEventListener('click', () => {
 $('#dlgShare').addEventListener('click', () => { const it = getLift(S.openLift); if (it) openShare(prCard(it)); });
 $('#shClose').addEventListener('click', () => shDlg.close());
 shDlg.addEventListener('click', e => { if (e.target === shDlg) shDlg.close(); });
-$('#shTpl').addEventListener('click', e => { const b = e.target.closest('[data-tpl]'); if (!b) return; SH.tpl = b.dataset.tpl; lsSet('chalklog.shareTpl', SH.tpl); setTplButtons(); shRender(); });
+$('#shTpl').addEventListener('click', e => { const b = e.target.closest('[data-tpl]'); if (!b) return; SH.tpl = b.dataset.tpl; if (SH.tpl !== 'calendar') lsSet('chalklog.shareTpl', SH.tpl); setTplButtons(); shRender(); });
 let capT;
 $('#shCaption').addEventListener('input', () => { clearTimeout(capT); capT = setTimeout(shRender, 180); });
 $('#shFile').addEventListener('change', async e => {
@@ -2092,8 +2136,10 @@ $('#celShare').addEventListener('click', () => {
   $('#celebrate').hidden = true;
   if (celWhat && celWhat.kind === 'month'){
     const m = monthNum(celWhat.key);
+    const cal = monthCal(celWhat.key);
     openShare({kind:'goal', title:`${m}월 운동 목표`, date: fmtDot(todayStr()), big: `${celWhat.weeks}/${celWhat.weeks}`, unit:'주', kicker:'MONTHLY GOAL',
-      rows: [['Workouts', '운동', String(celWhat.workouts), '회']], caption:`${m}월 목표 완주! 🏆`});
+      rows: [['Workouts', '운동', String(celWhat.workouts), '회']], caption:`${m}월 목표 완주! 🏆`,
+      cal: {...cal, line: `운동 ${cal.count}일 · ${celWhat.weeks}주 모두 목표 달성`}});
     return;
   }
   openShare({kind:'goal', title:'이번 주 운동 목표', date: fmtDot(todayStr()), big: `${g.count}/${g.goal}`, unit:'', kicker:'WEEKLY GOAL', rows: g.streak >= 2 ? [['Streak', '연속', String(g.streak), '주']] : [], caption: g.last === 'recovered' && g.cur !== 'done' ? '지난주 목표 만회!' : '이번 주 목표 달성!'});
