@@ -41,7 +41,7 @@ GitHub Pages가 `main` 브랜치 루트를 그대로 배포해요.
 - **Supabase 표 `entries`** (`supabase/schema.sql`): `user_id, kind, key, data(jsonb)`
   - `kind = 'workout'`, `key = 'YYYY-MM-DD'`: `{date, types[], minutes, feel, note, run:{km, sec}, updatedAt}`
   - `kind = 'lift'`, `key = 동작 id`: `{name, custom, history:[{id, kg, date}]}` (무게는 항상 kg로 저장)
-  - `kind = 'settings'`, `key = 'settings'`: `{customTypes:[{id,name}], goals:[{from:'월요일 날짜', perWeek, month:'YYYY-MM'}]}`
+  - `kind = 'settings'`, `key = 'settings'`: `{customTypes:[{id,name}], goals:[{from:'월요일 날짜', perWeek, month:'YYYY-MM'}], favLifts:['동작 id', … 최대 5개]}`
   - 각자 자기 줄만 읽고 쓸 수 있게 RLS로 막혀 있어요.
 - **Supabase 표 `feedback`** (`supabase/feedback.sql`): 누구나 보내기만, 읽기는 관리자(대시보드)만.
 - **관리자** (`supabase/admin.sql`): 표 `admins`(관리자 명단)와 함수 `is_admin()`, `admin_stats()`, `admin_feedback(p_limit)`.
@@ -96,5 +96,5 @@ node dev/tests/admin_test.js /tmp/out <통계.json>  # 관리자 페이지 (통�
 ## 화면·문구 원칙
 
 - 한국어, 해요체, 귀엽고 말랑한 말투. 실패를 탓하지 않는 문구 ("괜찮아요", "쉬어갔어요").
-- 흰 배경 + 코랄 포인트, 제목·큰 숫자는 Jua, 본문은 Noto Sans KR, 종목은 이모지.
+- 흰 배경 + 코랄 포인트, 글꼴은 전부 Pretendard(jsdelivr의 dynamic subset, 제목·큰 숫자는 굵기 800), 종목은 이모지.
 - 휴대폰 화면(390px)과 다크 모드에서 꼭 확인해요.

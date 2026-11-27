@@ -16,7 +16,7 @@ rep('href="privacy.html"', 'href="../privacy.html"')
 rep("if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));\n", '')
 rep('<title>Chalk Log</title>', '<title>Chalk Log 테스트</title>')
 bar = '''<div class="pv-bar" role="note">🧪 테스트 버전이에요 · 실제 앱·계정과 분리돼 있어요 <button type="button" id="pvReset">예시로 되돌리기</button></div>
-<style>.pv-bar{position:relative;z-index:6;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;justify-content:center;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));background:#FFF6D6;color:#5A4500;font:600 13px/1.4 "Noto Sans KR",system-ui,sans-serif;text-align:center}.pv-bar button{border:1px solid #C9A227;background:#fff;color:#5A4500;border-radius:999px;padding:3px 10px;font:inherit;cursor:pointer}</style>
+<style>.pv-bar{position:relative;z-index:6;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;justify-content:center;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));background:#FFF6D6;color:#5A4500;font:600 13px/1.4 "Pretendard Variable",Pretendard,system-ui,sans-serif;text-align:center}.pv-bar button{border:1px solid #C9A227;background:#fff;color:#5A4500;border-radius:999px;padding:3px 10px;font:inherit;cursor:pointer}</style>
 '''
 rep('<header class="top">', bar + '<header class="top">')
 seed = r'''<script>

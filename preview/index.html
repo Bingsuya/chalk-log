@@ -13,9 +13,8 @@
 <link rel="icon" type="image/png" href="../icons/icon-192.png">
 <link rel="apple-touch-icon" href="../icons/icon-180.png">
 <title>Chalk Log 테스트</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 /* Layout: calm travel-app feel — white canvas, generous whitespace, hairline borders, soft lifted shadows on interactive cards, one coral accent; the day form reads like a booking card, the calendar like a date picker. */
 :root{
@@ -24,8 +23,8 @@
   --shadow:0 6px 16px rgba(0,0,0,.12); --shadow-sm:0 1px 2px rgba(0,0,0,.08);
   --p-red:#E5484D; --p-blue:#3E7BFA; --p-green:#2A9D6E; --p-yellow:#D99A06; --p-teal:#0F9AA8; --p-orange:#EE7A2A; --p-purple:#8257E6; --p-grey:#8A8A8A;
   --ok:#008A05; --danger:#C13515;
-  --f:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
-  --f-d:"Jua","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-d:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   --r:20px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
@@ -180,17 +179,23 @@ form.day{background:var(--surface);border:1px solid var(--line);border-radius:va
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 .group{display:flex;flex-direction:column;gap:14px}
 .group h3{font-size:18px;font-weight:700}
-.lifts{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
-.lift{all:unset;box-sizing:border-box;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;cursor:pointer;display:flex;flex-direction:column;gap:8px;min-width:0;transition:box-shadow .2s}
+.lifts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.lift{all:unset;box-sizing:border-box;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:4px;min-width:0;transition:box-shadow .2s}
 .lift:hover{box-shadow:var(--shadow)}
 .lift:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 .lift .nm{display:flex;flex-direction:column;gap:1px;min-width:0}
-.lift .nm b{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lift .nm span{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lift .w{font-size:32px;font-weight:700;line-height:1.1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.lift .nm b{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lift .nm span{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lift .w{font-size:24px;font-weight:700;line-height:1.1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .lift .w small{font-size:15px;font-weight:500;color:var(--muted);margin-left:3px}
-.lift .w.none{font-size:14px;font-weight:500;color:var(--muted);line-height:1.4;min-height:35px;display:flex;align-items:center;gap:6px;letter-spacing:0}
-.lift .meta{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);min-height:20px}
+.lift .w.none{font-size:13px;font-weight:500;color:var(--muted);line-height:1.4;min-height:26px;display:flex;align-items:center;gap:6px;letter-spacing:0}
+.lift .meta{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);min-height:18px}
+.lift .spark{height:20px}
+.lift .star{color:var(--p-yellow);margin-right:3px}
+.fav-group h3 small{font-size:13px;font-weight:500;color:var(--muted);margin-left:6px;font-family:var(--f)}
+.fav-hint{margin:0;padding:12px 14px;border:1px dashed var(--line);border-radius:16px;font-size:13px;color:var(--muted)}
+.fav-btn{font-size:22px;color:var(--muted)}
+.fav-btn[aria-pressed="true"]{color:var(--p-yellow)}
 .up{font-weight:600;color:var(--ok);font-size:13px}
 .pr-badge{font-size:11px;font-weight:700;color:var(--accent);border:1px solid var(--accent);padding:0 6px;border-radius:4px;margin-left:8px;vertical-align:2px}
 .recent-pr{border:1px solid var(--line);border-radius:var(--r);padding:20px 24px}
@@ -209,7 +214,7 @@ form.day{background:var(--surface);border:1px solid var(--line);border-radius:va
 dialog{border:0;border-radius:var(--r);background:var(--surface);color:var(--ink);padding:0;width:min(600px,calc(100% - 24px));max-height:calc(100% - 32px);box-shadow:0 8px 28px rgba(0,0,0,.28)}
 dialog::backdrop{background:rgba(0,0,0,.5)}
 .dlg-bar{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--hair);background:var(--surface)}
-.dlg-bar .bt{flex:1;text-align:center;font-weight:700;font-size:16px;margin-right:34px}
+.dlg-bar .bt{flex:1;text-align:center;font-weight:700;font-size:16px}
 .dlg{padding:24px;display:flex;flex-direction:column;gap:24px}
 .dlg .t span{font-size:13px;color:var(--muted)}
 .dlg .t h2{font-size:26px;font-weight:700}
@@ -287,7 +292,7 @@ input[type=date]::-webkit-calendar-picker-indicator{margin-left:auto;opacity:.6}
 .login{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow-y:auto}
 .login-card{width:min(400px,100%);background:var(--surface);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:32px 28px 24px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
 .login-card .m{width:84px;height:84px}
-.login-card h2{font-family:var(--f-d);font-weight:400;font-size:30px;color:var(--accent);margin:-6px 0 0}
+.login-card h2{font-family:var(--f-d);font-weight:800;font-size:30px;color:var(--accent);margin:-6px 0 0}
 .login-card p{margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.6}
 .login-card .fine{font-size:12px;color:var(--muted)}
 .gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:8px;padding:13px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:15px;cursor:pointer;color:var(--ink);box-shadow:var(--shadow-sm)}
@@ -322,10 +327,10 @@ input[type=date]::-webkit-calendar-picker-indicator{margin-left:auto;opacity:.6}
 .goal-ask p{margin:0;font-size:14px;line-height:1.55;color:var(--ink-2);word-break:keep-all}
 .goal-ask strong{color:var(--ink)}
 .goal{border:1px solid var(--line);border-radius:22px;padding:20px 22px;display:flex;flex-direction:column;gap:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 8%,var(--surface)),var(--surface) 60%)}
-.goal h2{font-family:var(--f-d);font-weight:400;font-size:22px;margin:0}
+.goal h2{font-family:var(--f-d);font-weight:800;font-size:22px;margin:0}
 .goal h2 .num{color:var(--accent);margin-left:4px}
 .goal-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.goal-streak{font-family:var(--f-d);font-size:15px;padding:5px 12px;border-radius:999px;background:color-mix(in srgb,var(--p-orange) 16%,var(--surface));white-space:nowrap}
+.goal-streak{font-family:var(--f-d);font-weight:800;font-size:15px;padding:5px 12px;border-radius:999px;background:color-mix(in srgb,var(--p-orange) 16%,var(--surface));white-space:nowrap}
 .week-dots{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;max-width:460px}
 .wdot{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--muted)}
 .wdot i{width:40px;height:40px;max-width:100%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-style:normal;font-size:18px;border:2px solid transparent;box-sizing:border-box}
@@ -360,15 +365,15 @@ input[type=date]::-webkit-calendar-picker-indicator{margin-left:auto;opacity:.6}
 .goal-empty{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .goal-empty svg{width:56px;height:56px;flex:none}
 .goal-pick{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
-.goal-pick button{aspect-ratio:1;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-family:var(--f-d);font-size:20px;cursor:pointer;color:var(--ink);padding:0}
+.goal-pick button{aspect-ratio:1;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-family:var(--f-d);font-weight:800;font-size:20px;cursor:pointer;color:var(--ink);padding:0}
 .goal-pick button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 .rules{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:14px;color:var(--ink-2)}
 .rules li{display:flex;gap:8px}
 .celebrate{position:fixed;inset:0;z-index:35;display:grid;place-items:center;background:rgba(0,0,0,.45);padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
 .cel-card{width:min(360px,100%);background:var(--surface);border-radius:28px;padding:28px 24px 22px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center;box-shadow:var(--shadow)}
 .cel-card svg{width:104px;height:104px}
-.cel-card h2{font-family:var(--f-d);font-weight:400;font-size:28px;margin:0}
-.cel-big{font-family:var(--f-d);font-size:58px;color:var(--accent);line-height:1}
+.cel-card h2{font-family:var(--f-d);font-weight:800;font-size:28px;margin:0}
+.cel-big{font-family:var(--f-d);font-weight:800;font-size:58px;color:var(--accent);line-height:1}
 @media (prefers-reduced-motion:no-preference){.cel-card{animation:celpop .5s cubic-bezier(.2,1.4,.4,1)}#celArt svg{animation:hop .6s ease-in-out infinite alternate}}
 @keyframes celpop{from{transform:scale(.6);opacity:0}}
 @keyframes hop{to{transform:translateY(-10px) rotate(-4deg)}}
@@ -385,16 +390,16 @@ input[type=date]::-webkit-calendar-picker-indicator{margin-left:auto;opacity:.6}
 .bk-sec .box textarea,.bk-sec .box textarea:focus{border:0;border-radius:0;padding:2px 0 0;background:transparent;box-shadow:none;font-family:var(--f);font-size:15px}
 .fb-done{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:12px 0 4px}
 .fb-done svg{width:72px;height:72px}
-.fb-done h3{font-family:var(--f-d);font-weight:400;font-size:22px;margin:0}
+.fb-done h3{font-family:var(--f-d);font-weight:800;font-size:22px;margin:0}
 .fb-done p{margin:0;color:var(--muted);font-size:14px}
 
 /* ---------- cute layer: rounded display face, mascot, emoji, pastel tints ---------- */
-.brand b,.sec-title,.pr-head h1,.day-head h2,.cal-head h2,.group h3,.blk-title,.bk-sec h3,.dlg .t h2,.dlg-bar .bt,.recent-pr .sec-title{font-family:var(--f-d);font-weight:400;letter-spacing:0}
+.brand b,.sec-title,.pr-head h1,.day-head h2,.cal-head h2,.group h3,.blk-title,.bk-sec h3,.dlg .t h2,.dlg-bar .bt,.recent-pr .sec-title{font-family:var(--f-d);font-weight:800;letter-spacing:0}
 .brand svg{width:36px;height:36px}
 .brand b{font-size:24px}
 .brand small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
-.tabs a[aria-current="page"]{font-family:var(--f-d);font-weight:400;font-size:16px}
-.stat .v,.lift .w,.big,.recent-pr .rw,.hist .hw,.pct div b,.bar .n{font-family:var(--f-d);font-weight:400;letter-spacing:0}
+.tabs a[aria-current="page"]{font-family:var(--f-d);font-weight:800;font-size:16px}
+.stat .v,.lift .w,.big,.recent-pr .rw,.hist .hw,.pct div b,.bar .n{font-family:var(--f-d);font-weight:800;letter-spacing:0}
 .stats{border:0;gap:12px}
 .stat{--c:var(--p-purple);position:relative;border-radius:18px;background:color-mix(in srgb,var(--c) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 22%,var(--hair))!important}
 .stat .ic{position:absolute;top:14px;right:16px;font-size:20px}
@@ -418,8 +423,8 @@ form.day{border-radius:24px}
 .ems{font-size:13px;line-height:1;height:14px;display:flex;gap:1px;align-items:center}
 .ems em{font-style:normal;font-size:10px;color:var(--muted);margin-left:1px}
 .legend span{gap:4px}
-.lift{border-radius:20px}
-.lift .w{font-size:38px}
+.lift{border-radius:16px}
+.lift .w{font-size:26px}
 .lift .w.none{font-family:var(--f)}
 .recent-pr{border-radius:20px}
 .pct div{border-radius:14px}
@@ -444,7 +449,7 @@ html{-webkit-text-size-adjust:100%}
 <body>
 
 <div class="pv-bar" role="note">🧪 테스트 버전이에요 · 실제 앱·계정과 분리돼 있어요 <button type="button" id="pvReset">예시로 되돌리기</button></div>
-<style>.pv-bar{position:relative;z-index:6;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;justify-content:center;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));background:#FFF6D6;color:#5A4500;font:600 13px/1.4 "Noto Sans KR",system-ui,sans-serif;text-align:center}.pv-bar button{border:1px solid #C9A227;background:#fff;color:#5A4500;border-radius:999px;padding:3px 10px;font:inherit;cursor:pointer}</style>
+<style>.pv-bar{position:relative;z-index:6;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;justify-content:center;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));background:#FFF6D6;color:#5A4500;font:600 13px/1.4 "Pretendard Variable",Pretendard,system-ui,sans-serif;text-align:center}.pv-bar button{border:1px solid #C9A227;background:#fff;color:#5A4500;border-radius:999px;padding:3px 10px;font:inherit;cursor:pointer}</style>
 <header class="top">
   <div class="wrap">
     <div class="brand">
@@ -577,6 +582,11 @@ html{-webkit-text-size-adjust:100%}
         <input type="text" id="liftAddName" maxlength="30" placeholder="동작 이름 (예: 오버헤드 런지)" aria-label="새 동작 이름">
         <button type="submit" class="btn sm">추가</button>
       </form>
+      <div class="group fav-group" id="favGroup">
+        <h3>⭐ 즐겨찾는 자세<small id="favCount"></small></h3>
+        <div class="lifts" id="favLifts"></div>
+        <p class="fav-hint" id="favHint">자세를 눌러 위쪽 ☆을 누르면 여기에 모아 볼 수 있어요. (최대 5개)</p>
+      </div>
       <div class="recent-pr" id="recentPr" hidden>
         <h2 class="sec-title" style="font-size:19px">최근에 깬 PR 🎉</h2>
         <ul id="recentPrList"></ul>
@@ -739,6 +749,7 @@ html{-webkit-text-size-adjust:100%}
   <div class="dlg-bar">
     <button type="button" class="icon-btn" id="dlgClose" aria-label="닫기"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 3 10 10M13 3 3 13"/></svg></button>
     <span class="bt">기록 상세</span>
+    <button type="button" class="icon-btn fav-btn" id="dlgFav" aria-pressed="false" aria-label="즐겨찾기에 추가">☆</button>
   </div>
   <div class="dlg">
     <div class="best-box">
@@ -766,7 +777,7 @@ html{-webkit-text-size-adjust:100%}
           <input type="number" id="dlgW" min="0" step="0.5" inputmode="decimal" placeholder="100">
         </div>
         <div class="cell-f">
-          <label for="dlgReps">횟수</label>
+          <label for="dlgReps">연속 횟수</label>
           <input type="number" id="dlgReps" min="1" max="12" step="1" inputmode="numeric" value="1" aria-describedby="dlgEst">
         </div>
         <div class="cell-f span2">
@@ -930,6 +941,17 @@ function liftList(){
     .sort((a,b) => a.name.localeCompare(b.name, 'ko'));
   if (custom.length) groups.push({g:'내 동작', items:custom});
   return groups;
+}
+/* favourite lifts (up to 5), kept in settings so they follow the account */
+const FAV_MAX = 5;
+function favList(){ return (S.settings.favLifts || []).filter(id => getLift(id)).slice(0, FAV_MAX); }
+async function toggleFav(id){
+  const cur = favList(), on = cur.includes(id);
+  if (!on && cur.length >= FAV_MAX){ toast(`즐겨찾기는 ${FAV_MAX}개까지예요. 다른 자세를 먼저 빼 주세요`); return; }
+  const next = on ? cur.filter(x => x !== id) : cur.concat(id);
+  try { await backend.saveSettings({...S.settings, favLifts: next}); toast(on ? '즐겨찾기에서 뺐어요' : '즐겨찾기에 추가했어요 ⭐'); }
+  catch(e){ toast('저장하지 못했어요. 다시 시도해 주세요'); }
+  refresh();
 }
 function getLift(id){ for (const g of liftList()) for (const it of g.items) if (it.id === id) return it; return null; }
 function bestOf(h){ return h.reduce((b,e) => (!b || e.kg > b.kg || (e.kg === b.kg && e.date < b.date)) ? e : b, null); }
@@ -1448,12 +1470,17 @@ function renderPR(){
   $('#unitKg').setAttribute('aria-pressed', S.unit === 'kg');
   $('#unitLb').setAttribute('aria-pressed', S.unit === 'lb');
   const u = S.unit;
-  $('#groups').innerHTML = liftList().map(g => `<div class="group"><h3>${esc(g.g)}</h3><div class="lifts">${g.items.map(it => {
+  const favs = favList(), favSet = new Set(favs);
+  const card = it => {
     const b = bestOf(it.history); const dl = deltaOf(it.history);
     const w = b ? `<div class="w">${fmtW(b.kg)}<small>${u}</small></div>` : `<div class="w none">눌러서 첫 기록하기 ✏️</div>`;
     const meta = b ? `<div class="meta"><span>${fmtDot(b.date)}</span>${dl > 0 ? `<span class="up">+${fmtW(dl)}${u}</span>` : ''}</div>` : `<div class="meta">기록 없음</div>`;
-    return `<button type="button" class="lift" data-lift="${esc(it.id)}"><div class="nm"><b>${esc(it.name)}</b><span>${esc(it.en)}</span></div>${w}${sparkline(it.history)}${meta}</button>`;
-  }).join('')}</div></div>`).join('');
+    return `<button type="button" class="lift" data-lift="${esc(it.id)}"><div class="nm"><b>${favSet.has(it.id) ? '<span class="star" aria-label="즐겨찾기">★</span>' : ''}${esc(it.name)}</b><span>${esc(it.en)}</span></div>${w}${sparkline(it.history)}${meta}</button>`;
+  };
+  $('#favLifts').innerHTML = favs.map(id => card(getLift(id))).join('');
+  $('#favLifts').hidden = !favs.length; $('#favHint').hidden = !!favs.length;
+  $('#favCount').textContent = favs.length ? `${favs.length}/${FAV_MAX}` : '';
+  $('#groups').innerHTML = liftList().map(g => `<div class="group"><h3>${esc(g.g)}</h3><div class="lifts">${g.items.map(card).join('')}</div></div>`).join('');
   renderRecentPR();
   if (S.openLift) renderDlg();
 }
@@ -1549,7 +1576,7 @@ window.addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(()
 function setUnit(u){ S.unit = u; lsSet('chalklog-preview.unit', u); renderPR(); }
 $('#unitKg').addEventListener('click', () => setUnit('kg'));
 $('#unitLb').addEventListener('click', () => setUnit('lb'));
-$('#groups').addEventListener('click', e => { const b = e.target.closest('[data-lift]'); if (b) openLift(b.dataset.lift); });
+['#groups', '#favLifts'].forEach(sel => $(sel).addEventListener('click', e => { const b = e.target.closest('[data-lift]'); if (b) openLift(b.dataset.lift); }));
 $('#liftAddToggle').addEventListener('click', () => { const f = $('#liftAddForm'); f.hidden = !f.hidden; if (!f.hidden) $('#liftAddName').focus(); });
 $('#liftAddForm').addEventListener('submit', async e => {
   e.preventDefault();
@@ -1571,6 +1598,7 @@ function openLift(id){
 }
 function closeLift(){ S.openLift = null; if (dlg.open) dlg.close(); }
 $('#dlgClose').addEventListener('click', closeLift);
+$('#dlgFav').addEventListener('click', () => { if (S.openLift) toggleFav(S.openLift); });
 dlg.addEventListener('close', () => { S.openLift = null; });
 dlg.addEventListener('click', e => { if (e.target === dlg) closeLift(); });
 
@@ -1578,6 +1606,9 @@ function renderDlg(){
   const it = getLift(S.openLift); if (!it){ closeLift(); return; }
   const u = S.unit;
   $('#dlgName').textContent = it.name; $('#dlgEn').textContent = it.en;
+  const fav = favList().includes(it.id);
+  $('#dlgFav').textContent = fav ? '★' : '☆'; $('#dlgFav').setAttribute('aria-pressed', String(fav));
+  $('#dlgFav').setAttribute('aria-label', fav ? '즐겨찾기에서 빼기' : '즐겨찾기에 추가');
   $('#dlgWLab').textContent = `중량 (${u})`;
   $('#dlgW').step = u === 'lb' ? '1' : '0.5';
   const b = bestOf(it.history);
@@ -1592,7 +1623,7 @@ function renderDlg(){
   drawTrend(it);
   const hist = [...it.history].sort((a,c) => a.date < c.date ? 1 : a.date > c.date ? -1 : c.kg - a.kg);
   const prIds = new Set(chronPR(it.history).filter(e => e.pr).map(e => e.id));
-  $('#hist').innerHTML = hist.length ? hist.map(e => `<li><span>${fmtDot(e.date)}</span><span><span class="hw">${fmtW(e.kg)}</span> ${u}${prIds.has(e.id) ? '<span class="pr-badge">PR</span>' : ''}${e.reps > 1 && e.w ? `<span class="est-tag">${fmtW(e.w)}${u} × ${e.reps}회로 추정</span>` : ''}</span><button type="button" class="btn sm ghost-danger" data-del="${esc(e.id)}">삭제</button></li>`).join('')
+  $('#hist').innerHTML = hist.length ? hist.map(e => `<li><span>${fmtDot(e.date)}</span><span><span class="hw">${fmtW(e.kg)}</span> ${u}${prIds.has(e.id) ? '<span class="pr-badge">PR</span>' : ''}${e.reps > 1 && e.w ? `<span class="est-tag">${fmtW(e.w)}${u} × ${e.reps}회 연속 · 예상 1RM</span>` : ''}</span><button type="button" class="btn sm ghost-danger" data-del="${esc(e.id)}">삭제</button></li>`).join('')
     : `<li class="empty" style="display:block">기록을 추가하면 여기에 쌓여요.</li>`;
   $('#dlgCustomRow').hidden = !it.custom;
 }
@@ -1753,7 +1784,7 @@ const CW = 1080, CH = 1920;
 const shDlg = $('#shDlg'), shCv = $('#shCanvas'), shCtx = shCv.getContext('2d');
 const SH = {card:null, tpl:(['sticker','minimal'].includes(lsGet('chalklog-preview.shareTpl')) ? lsGet('chalklog-preview.shareTpl') : 'sticker'), img:null, file:null, seq:0};
 /* Korean web fonts arrive in pieces, so load the exact letters each card uses before drawing */
-const CARD_FONTS = ['800 100px "Noto Sans KR"', '700 100px "Noto Sans KR"', '500 100px "Noto Sans KR"', '400 100px Jua'];
+const CARD_FONTS = ['800 100px "Pretendard Variable"', '700 100px "Pretendard Variable"', '500 100px "Pretendard Variable"', '800 100px "Pretendard Variable"'];
 function loadFonts(text){
   if (!document.fonts) return Promise.resolve();
   const t = (text || '') + ' 0123456789:+-.·\'" abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ /km 페이스 속도 연속 향상 이전 일 chalk log';
@@ -1802,37 +1833,37 @@ function mascot(c, cx, cy, size){
 function drawSticker(c, card){
   if (SH.img) cover(c, SH.img); else bgFill(c, [[0, '#FFE1EA'], [1, '#E6DEFF']]);
   c.textBaseline = 'middle'; c.textAlign = 'center';
-  if (card.caption){ const fs = fit(c, card.caption, s => `400 ${s}px Jua`, 68, CW - 260, 36); const w = c.measureText(card.caption).width; c.save(); c.shadowColor = 'rgba(0,0,0,.18)'; c.shadowBlur = 24; c.shadowOffsetY = 8; c.fillStyle = '#fff'; rr(c, (CW - w) / 2 - 48, 200, w + 96, fs + 64, (fs + 64) / 2); c.fill(); c.restore(); c.fillStyle = '#222'; c.fillText(card.caption, CW / 2, 200 + (fs + 64) / 2 + 4); }
+  if (card.caption){ const fs = fit(c, card.caption, s => `800 ${s}px "Pretendard Variable"`, 68, CW - 260, 36); const w = c.measureText(card.caption).width; c.save(); c.shadowColor = 'rgba(0,0,0,.18)'; c.shadowBlur = 24; c.shadowOffsetY = 8; c.fillStyle = '#fff'; rr(c, (CW - w) / 2 - 48, 200, w + 96, fs + 64, (fs + 64) / 2); c.fill(); c.restore(); c.fillStyle = '#222'; c.fillText(card.caption, CW / 2, 200 + (fs + 64) / 2 + 4); }
   const rows = card.rows.length ? 1 : 0, x = 64, w = CW - 128, h = 520 + rows * 70, y = CH - 110 - h;
   c.save(); c.shadowColor = 'rgba(0,0,0,.18)'; c.shadowBlur = 40; c.shadowOffsetY = 12; c.fillStyle = '#fff'; rr(c, x, y, w, h, 56); c.fill(); c.restore();
   mascot(c, x + w - 130, y + 8, 200);
   c.textBaseline = 'alphabetic'; c.textAlign = 'left';
-  c.fillStyle = '#222'; fit(c, card.title, s => `400 ${s}px Jua`, 60, w - 340, 34); c.fillText(card.title, x + 60, y + 120);
-  c.fillStyle = '#F0435E'; c.font = '800 38px "Noto Sans KR"'; c.fillText(card.kicker, x + 60, y + 180);
-  const bs = fit(c, card.big + (card.unit ? '  ' + card.unit : ''), s => `400 ${s}px Jua`, 210, w - 120, 90);
-  c.font = `400 ${bs}px Jua`; c.fillText(card.big, x + 60, y + 190 + bs * 0.95);
-  if (card.unit){ const bw = c.measureText(card.big).width; c.fillStyle = '#6A6A6A'; c.font = `400 ${Math.round(bs * 0.38)}px Jua`; c.fillText(card.unit, x + 60 + bw + 18, y + 190 + bs * 0.95); }
-  if (rows){ c.fillStyle = '#484848'; fit(c, card.rows.map(r => `${r[1]} ${r[2]}${r[3]}`).join('  ·  '), s => `500 ${s}px "Noto Sans KR"`, 42, w - 120, 26); c.fillText(card.rows.map(r => `${r[1]} ${r[2]}${r[3]}`).join('  ·  '), x + 60, y + h - 110); }
-  c.fillStyle = '#9A94AE'; c.font = '500 32px "Noto Sans KR"'; c.fillText(card.date, x + 60, y + h - 48);
-  c.textAlign = 'right'; c.fillStyle = '#F0435E'; c.font = '400 42px Jua'; c.fillText('chalk log', x + w - 60, y + h - 46);
+  c.fillStyle = '#222'; fit(c, card.title, s => `800 ${s}px "Pretendard Variable"`, 60, w - 340, 34); c.fillText(card.title, x + 60, y + 120);
+  c.fillStyle = '#F0435E'; c.font = '800 38px "Pretendard Variable"'; c.fillText(card.kicker, x + 60, y + 180);
+  const bs = fit(c, card.big + (card.unit ? '  ' + card.unit : ''), s => `800 ${s}px "Pretendard Variable"`, 210, w - 120, 90);
+  c.font = `800 ${bs}px "Pretendard Variable"`; c.fillText(card.big, x + 60, y + 190 + bs * 0.95);
+  if (card.unit){ const bw = c.measureText(card.big).width; c.fillStyle = '#6A6A6A'; c.font = `800 ${Math.round(bs * 0.38)}px "Pretendard Variable"`; c.fillText(card.unit, x + 60 + bw + 18, y + 190 + bs * 0.95); }
+  if (rows){ c.fillStyle = '#484848'; fit(c, card.rows.map(r => `${r[1]} ${r[2]}${r[3]}`).join('  ·  '), s => `500 ${s}px "Pretendard Variable"`, 42, w - 120, 26); c.fillText(card.rows.map(r => `${r[1]} ${r[2]}${r[3]}`).join('  ·  '), x + 60, y + h - 110); }
+  c.fillStyle = '#9A94AE'; c.font = '500 32px "Pretendard Variable"'; c.fillText(card.date, x + 60, y + h - 48);
+  c.textAlign = 'right'; c.fillStyle = '#F0435E'; c.font = '800 42px "Pretendard Variable"'; c.fillText('chalk log', x + w - 60, y + h - 46);
 }
 /* style 2: minimal */
 function drawMinimal(c, card){
   if (SH.img) cover(c, SH.img); else bgFill(c, [[0, '#F0435E'], [1, '#FF9A62']], true);
   shade(c, 0, 420, 0.35, 0); shade(c, CH * 0.5, CH, 0, 0.55);
   c.textAlign = 'left'; c.textBaseline = 'alphabetic'; c.fillStyle = '#fff';
-  c.font = '500 40px "Noto Sans KR"'; c.fillText(card.date, 80, 170);
-  if (card.caption){ fit(c, card.caption, s => `800 ${s}px "Noto Sans KR"`, 76, CW - 160, 36); c.fillText(card.caption, 80, 262); }
+  c.font = '500 40px "Pretendard Variable"'; c.fillText(card.date, 80, 170);
+  if (card.caption){ fit(c, card.caption, s => `800 ${s}px "Pretendard Variable"`, 76, CW - 160, 36); c.fillText(card.caption, 80, 262); }
   const rowsTxt = card.rows.map(r => `${r[1]} ${r[2]}${r[3]}`).join('    ');
   let y = CH - 200;
-  if (rowsTxt){ fit(c, rowsTxt, s => `500 ${s}px "Noto Sans KR"`, 46, CW - 160, 26); c.fillText(rowsTxt, 80, y); y -= 70; }
-  const bs = fit(c, card.big + (card.unit ? ' ' + card.unit : ''), s => `800 ${s}px "Noto Sans KR"`, 250, CW - 160, 90);
-  c.save(); c.shadowColor = 'rgba(0,0,0,.25)'; c.shadowBlur = 30; c.font = `800 ${bs}px "Noto Sans KR"`; c.fillText(card.big, 80, y);
-  if (card.unit){ const bw = c.measureText(card.big).width; c.font = `500 ${Math.round(bs * 0.32)}px "Noto Sans KR"`; c.fillText(card.unit, 80 + bw + 16, y); }
+  if (rowsTxt){ fit(c, rowsTxt, s => `500 ${s}px "Pretendard Variable"`, 46, CW - 160, 26); c.fillText(rowsTxt, 80, y); y -= 70; }
+  const bs = fit(c, card.big + (card.unit ? ' ' + card.unit : ''), s => `800 ${s}px "Pretendard Variable"`, 250, CW - 160, 90);
+  c.save(); c.shadowColor = 'rgba(0,0,0,.25)'; c.shadowBlur = 30; c.font = `800 ${bs}px "Pretendard Variable"`; c.fillText(card.big, 80, y);
+  if (card.unit){ const bw = c.measureText(card.big).width; c.font = `500 ${Math.round(bs * 0.32)}px "Pretendard Variable"`; c.fillText(card.unit, 80 + bw + 16, y); }
   c.restore();
   y -= bs * 0.95;
-  fit(c, `${card.kicker}  ·  ${card.title}`, s => `700 ${s}px "Noto Sans KR"`, 50, CW - 160, 28); c.fillText(`${card.kicker}  ·  ${card.title}`, 80, y);
-  c.textAlign = 'right'; c.font = '400 44px Jua'; c.fillText('chalk log', CW - 80, CH - 96);
+  fit(c, `${card.kicker}  ·  ${card.title}`, s => `700 ${s}px "Pretendard Variable"`, 50, CW - 160, 28); c.fillText(`${card.kicker}  ·  ${card.title}`, 80, y);
+  c.textAlign = 'right'; c.font = '800 44px "Pretendard Variable"'; c.fillText('chalk log', CW - 80, CH - 96);
 }
 const DRAW = {sticker:drawSticker, minimal:drawMinimal};
 async function shRender(){

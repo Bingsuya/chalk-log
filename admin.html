@@ -6,17 +6,16 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Chalk Log 관리자</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 :root{
   --bg:#F7F7F7; --surface:#FFFFFF; --soft:#F2F2F2; --ink:#222222; --ink-2:#484848; --muted:#6A6A6A; --line:#DDDDDD; --hair:#EBEBEB;
   --accent:#F0435E; --accent-2:#D9285A; --accent-soft:#FFF0F2; --on-accent:#FFFFFF;
   --grid:#EBEBEB; --shadow-sm:0 1px 2px rgba(0,0,0,.08);
   --ok:#008A05; --danger:#C13515;
-  --f:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
-  --f-d:"Jua","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-d:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   --r:18px; color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
@@ -38,7 +37,7 @@ html,body{margin:0}
 body{background:var(--bg); color:var(--ink); font-family:var(--f); font-size:15px; line-height:1.5; -webkit-text-size-adjust:100%}
 .wrap{max-width:960px; margin:0 auto; padding:16px 16px calc(40px + env(safe-area-inset-bottom))}
 header.top{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:4px 0 16px}
-header.top h1{font-family:var(--f-d); font-weight:400; font-size:24px; margin:0; flex:1 1 auto}
+header.top h1{font-family:var(--f-d);font-weight:800; font-weight:400; font-size:24px; margin:0; flex:1 1 auto}
 header.top h1 small{font-family:var(--f); font-size:13px; color:var(--muted); margin-left:6px}
 .btn{appearance:none; border:1px solid var(--line); background:var(--surface); color:var(--ink); font:inherit; font-size:14px; font-weight:500;
   padding:8px 14px; border-radius:999px; cursor:pointer; min-height:36px}
@@ -50,7 +49,7 @@ header.top h1 small{font-family:var(--f); font-size:13px; color:var(--muted); ma
 .meta{color:var(--muted); font-size:13px}
 .card{background:var(--surface); border:1px solid var(--hair); border-radius:var(--r); padding:16px; box-shadow:var(--shadow-sm)}
 .center{max-width:420px; margin:12vh auto 0; text-align:center}
-.center h2{font-family:var(--f-d); font-weight:400; font-size:22px; margin:6px 0 8px}
+.center h2{font-family:var(--f-d);font-weight:800; font-weight:400; font-size:22px; margin:6px 0 8px}
 .center p{color:var(--ink-2); margin:0 0 16px}
 .center .em{font-size:40px}
 code,.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; background:var(--soft); border-radius:8px; padding:2px 6px; word-break:break-all}
@@ -58,7 +57,7 @@ code,.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12
 
 .kpis{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:12px}
 .kpi .label{color:var(--ink-2); font-size:13px; font-weight:500}
-.kpi .num{font-family:var(--f-d); font-size:34px; line-height:1.15; margin:4px 0 2px; font-variant-numeric:tabular-nums}
+.kpi .num{font-family:var(--f-d);font-weight:800; font-size:34px; line-height:1.15; margin:4px 0 2px; font-variant-numeric:tabular-nums}
 .kpi .num small{font-family:var(--f); font-size:14px; color:var(--muted); margin-left:2px}
 .kpi .sub{color:var(--muted); font-size:12.5px}
 .kpi .sub b{color:var(--ink-2); font-weight:700}
