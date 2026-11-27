@@ -349,6 +349,9 @@ input[type=date]::-webkit-calendar-picker-indicator{margin-left:auto;opacity:.6}
 .wrow .wl b{font-weight:700;white-space:nowrap}
 .wrow .wl small{color:var(--muted);font-size:12px;white-space:nowrap}
 .wrow .wc{font-variant-numeric:tabular-nums;color:var(--ink-2);white-space:nowrap}
+.mrow{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;font-size:13px;font-weight:700;color:var(--ink);background:color-mix(in srgb,var(--p-yellow) 18%,var(--surface));border:1px solid color-mix(in srgb,var(--p-yellow) 40%,var(--surface))}
+.mrow .ic{font-size:16px}
+.mrow small{font-weight:500;color:var(--ink-2);margin-left:auto;white-space:nowrap}
 .wrow .wst{font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;background:color-mix(in srgb,var(--s) 16%,var(--surface));color:var(--ink)}
 .wrow.st-done,.wrow.st-recovered{--s:var(--p-green)}
 .wrow.st-recoverable{--s:var(--p-yellow)}
@@ -1957,7 +1960,20 @@ function weekStreak(ws){
 }
 function goalSnap(){
   const w = goalWeeks(), cur = w[w.length - 1], last = w[w.length - 2];
-  return {cur: cur && cur.status, last: last && last.status, streak: weekStreak(w), goal: cur ? cur.goal : 0, count: cur ? cur.count : 0, ws: cur && cur.ws};
+  return {cur: cur && cur.status, last: last && last.status, streak: weekStreak(w), goal: cur ? cur.goal : 0, count: cur ? cur.count : 0, ws: cur && cur.ws,
+          months: monthResults(w).filter(m => m.complete)};
+}
+/* month finished = every week of that month that has a goal is done or made up, up to and including its last week */
+function nextMonthKey(key){ const [y, m] = key.split('-').map(Number); return m === 12 ? `${y + 1}-01` : `${y}-${pad(m + 1)}`; }
+function monthResults(wks){
+  const by = {};
+  wks.forEach(w => { if (!w.goal) return; const k = monthKeyOfWeek(w.ws); (by[k] = by[k] || []).push(w); });
+  return Object.keys(by).sort().map(key => {
+    const ws = by[key], lastWs = addDays(monthStartWeek(nextMonthKey(key)), -7);
+    const complete = ws.some(w => w.ws === lastWs) && ws.every(w => w.status === 'done' || w.status === 'recovered');
+    return {key, weeks: ws.length, recovered: ws.filter(w => w.status === 'recovered').length,
+            workouts: ws.reduce((a, w) => a + w.count, 0), lastWs, complete};
+  });
 }
 /* monthly goals: a month's goal counts from its first week (the first Monday whose Thursday is in that month) */
 const monthKeyOfWeek = ws => { const th = parse(addDays(ws, 3)); return `${th.getFullYear()}-${pad(th.getMonth() + 1)}`; };
@@ -2011,11 +2027,13 @@ function renderGoal(){
   // only the weeks since the goal that applies now started (this month's goal, or the one carried over)
   const active = goalList().filter(g => g.from <= cur.ws && g.perWeek).pop();
   const since = active ? mondayOf(active.from) : cur.ws;
+  const doneMonths = {}; monthResults(wks).forEach(m => { if (m.complete) doneMonths[m.lastWs] = m; });
   const hist = wks.filter(w => w.ws >= since).slice(-6).map(w => {
     const [ic, txt] = WEEK_ICON[w.status] || WEEK_ICON.none, d = parse(w.ws);
     const key = monthKeyOfWeek(w.ws), nth = Math.round((parse(w.ws) - parse(monthStartWeek(key))) / 604800000) + 1;
     const range = w.cur ? '이번 주' : `${mdOf(w.ws)}~${mdOf(addDays(w.ws, 6))}`;
-    return `<li class="wrow st-${w.status}${w.cur ? ' cur' : ''}" title="${esc(`${d.getMonth() + 1}/${d.getDate()} 주 · ${w.count}/${w.goal}회 · ${txt}`)}"><span class="ic" aria-hidden="true">${ic}</span><span class="wl"><b>${monthNum(key)}월 ${nth}주차</b><small>${range}</small></span><span class="wc">${w.count}/${w.goal}회</span><span class="wst">${txt}</span></li>`;
+    return `<li class="wrow st-${w.status}${w.cur ? ' cur' : ''}" title="${esc(`${d.getMonth() + 1}/${d.getDate()} 주 · ${w.count}/${w.goal}회 · ${txt}`)}"><span class="ic" aria-hidden="true">${ic}</span><span class="wl"><b>${monthNum(key)}월 ${nth}주차</b><small>${range}</small></span><span class="wc">${w.count}/${w.goal}회</span><span class="wst">${txt}</span></li>`
+      + (doneMonths[w.ws] ? `<li class="mrow"><span class="ic" aria-hidden="true">🏆</span>${monthNum(key)}월 목표 완주!<small>${doneMonths[w.ws].weeks}주 모두 달성</small></li>` : '');
   }).join('');
   el.innerHTML = `
     ${promptHtml()}
@@ -2095,7 +2113,17 @@ function showCelebrate(o){
   confetti(); setTimeout(confetti, 380);
   setTimeout(() => $('#celOk').focus(), 50);
 }
+let celWhat = null;   // what the last celebration was about, for the share card
 function celebrateGoal(before, after){
+  const had = new Set((before.months || []).map(m => m.key));
+  const fin = (after.months || []).filter(m => !had.has(m.key)).pop();
+  if (fin){
+    const m = monthNum(fin.key);
+    celWhat = {kind:'month', ...fin};
+    showCelebrate({big:'🏆', title:`${m}월 목표 완주!`, sub:`${m}월 ${fin.weeks}주 모두 목표를 채웠어요${fin.recovered ? ` (만회한 ${fin.recovered}주 포함)` : ''}. 한 달 동안 ${fin.workouts}번 운동했어요. 정말 대단해요!`});
+    return;
+  }
+  celWhat = {kind:'week'};
   if (!after.goal) return;
   if (before.last === 'recoverable' && after.last === 'recovered'){
     showCelebrate({big:'✅', title:'지난주 목표 만회!', sub:`이번 주에 더 해서 지난주도 달성으로 바꿨어요.${after.streak >= 2 ? ` 🔥 ${after.streak}주 연속이에요!` : ''}`});
@@ -2110,6 +2138,12 @@ $('#celebrate').addEventListener('click', e => { if (e.target.id === 'celebrate'
 $('#celShare').addEventListener('click', () => {
   const g = goalSnap();
   $('#celebrate').hidden = true;
+  if (celWhat && celWhat.kind === 'month'){
+    const m = monthNum(celWhat.key);
+    openShare({kind:'goal', title:`${m}월 운동 목표`, date: fmtDot(todayStr()), big: `${celWhat.weeks}/${celWhat.weeks}`, unit:'주', kicker:'MONTHLY GOAL',
+      rows: [['Workouts', '운동', String(celWhat.workouts), '회']], caption:`${m}월 목표 완주! 🏆`});
+    return;
+  }
   openShare({kind:'goal', title:'이번 주 운동 목표', date: fmtDot(todayStr()), big: `${g.count}/${g.goal}`, unit:'', kicker:'WEEKLY GOAL', rows: g.streak >= 2 ? [['Streak', '연속', String(g.streak), '주']] : [], caption: g.last === 'recovered' && g.cur !== 'done' ? '지난주 목표 만회!' : '이번 주 목표 달성!'});
 });
 

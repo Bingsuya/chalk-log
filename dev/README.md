@@ -11,6 +11,7 @@
 | 작업 중 버전 (공유 카드 포함) | `feature/share-run` 브랜치의 `index.html` |
 | 데이터 (가입자·기록·의견) | Supabase 프로젝트 `cezzabgotzqymhjfzixc` |
 | 로그인 | Google OAuth (Supabase Auth의 Google provider) |
+| 관리자 페이지 | `main` 브랜치 `admin.html` → https://bingsuya.github.io/chalk-log/admin.html |
 
 앱은 빌드 도구 없이 `index.html` 한 파일(HTML·CSS·JS)로 되어 있어요.
 GitHub Pages가 `main` 브랜치 루트를 그대로 배포해요.
@@ -43,6 +44,10 @@ GitHub Pages가 `main` 브랜치 루트를 그대로 배포해요.
   - `kind = 'settings'`, `key = 'settings'`: `{customTypes:[{id,name}], goals:[{from:'월요일 날짜', perWeek, month:'YYYY-MM'}]}`
   - 각자 자기 줄만 읽고 쓸 수 있게 RLS로 막혀 있어요.
 - **Supabase 표 `feedback`** (`supabase/feedback.sql`): 누구나 보내기만, 읽기는 관리자(대시보드)만.
+- **관리자** (`supabase/admin.sql`): 표 `admins`(관리자 명단)와 함수 `is_admin()`, `admin_stats()`, `admin_feedback(p_limit)`.
+  - 함수는 `security definer`라 표를 직접 열지 않고, 안에서 `admins`에 있는 사람인지 먼저 확인해요. 아니면 `42501` 오류.
+  - 관리자도 다른 사람 기록을 한 줄씩 보지 않고, 숫자로 묶은 통계와 받은 의견만 봐요.
+  - `admin_stats()`는 `{totals, daily(30일), weekly(12주), types, depth}`를 돌려줘요. 날짜는 한국 시간, '운동한 날'은 기록의 날짜(`key`) 기준이에요.
 - **로그인 없이 쓰면** 브라우저 `localStorage`의 `chalklog.data.v1`에 같은 모양으로 저장돼요. 로그인하면 계정으로 자동 이동해요.
 - 로그인 상태에서는 기기에 사본(`chalklog.cloud.<id>`)과 보내지 못한 변경 목록(`chalklog.queue.<id>`)을 두고, 연결되면 보내요.
 
@@ -54,6 +59,10 @@ GitHub Pages가 `main` 브랜치 루트를 그대로 배포해요.
 - 못 채운 주는 **다음 주에 모자란 만큼 더** 하면 만회(달성으로 침). 다음 주에도 못 하면 쉬어감.
 - 상태: `done` 달성 · `recovered` 만회 · `recoverable` 만회 중 · `missed` 쉬어감 · `open` 진행 중 · `none` 목표 없음
 - 주별 기록은 지금 적용 중인 목표가 시작된 주부터만 보여줘요.
+- **한 달 완주**: 그 달에 속한 주(목표가 있는 주) 중 마지막 주까지 모두 `done` 또는 `recovered`면 완주예요.
+  - 운동을 저장해서 완주가 새로 생기면 🏆 "N월 목표 완주!" 축하와 공유 카드(MONTHLY GOAL)를 보여줘요. 다음 달 첫 주에 마지막 주를 만회해도 축하해요.
+  - 주별 기록 목록에서 그 달 마지막 주 아래에 🏆 줄이 붙어요.
+  - 쉬어간(`missed`) 주가 하나라도 있으면 완주가 아니에요.
 
 ## 동작 확인 (테스트)
 
@@ -71,6 +80,8 @@ node dev/tests/release_check.js          # 실제 앱: 예전 방식 목표 → 
 node dev/tests/goal_test.js /tmp/out     # 테스트 페이지: 달성·만회 축하
 node dev/tests/start_test.js /tmp/out    # 테스트 페이지: 언제부터 셀지 선택
 node dev/tests/hist_test.js              # 테스트 페이지: 주별 기록 표시 범위
+node dev/tests/month_test.js /tmp/out    # 테스트 페이지: 한 달 목표 완주 축하 (날짜를 2026-11/12로 고정)
+node dev/tests/admin_test.js /tmp/out <통계.json>  # 관리자 페이지 (통계 JSON 모양은 파일 맨 위 설명 참고)
 ```
 
 - 8766은 루트(실제 앱), 8767은 `/preview/`를 여는 테스트예요. 둘 다 이 폴더를 띄우면 돼요.
@@ -80,7 +91,6 @@ node dev/tests/hist_test.js              # 테스트 페이지: 주별 기록 �
 
 - 공유 카드 (인스타 스토리 9:16, 네온·스티커·미니멀) — `feature/share-run`에 완성돼 있고 실제 앱에서는 빠져 있음
 - 1RM 추정 (예: "60kg × 5회" → 1RM 계산)
-- 관리자 페이지 (가입자 수, 최근 활동, 받은 의견) — 관리자만 보게 하는 DB 권한 설계 필요
 - 카카오 로그인
 
 ## 화면·문구 원칙
