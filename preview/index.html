@@ -581,9 +581,9 @@ html{-webkit-text-size-adjust:100%}
         <button type="submit" class="btn sm">추가</button>
       </form>
       <div class="group fav-group" id="favGroup">
-        <h3>⭐ 즐겨찾는 자세<small id="favCount"></small></h3>
+        <h3>⭐ 즐겨찾는 동작<small id="favCount"></small></h3>
         <div class="lifts" id="favLifts"></div>
-        <p class="fav-hint" id="favHint">자세를 눌러 위쪽 ☆을 누르면 여기에 모아 볼 수 있어요. (최대 5개)</p>
+        <p class="fav-hint" id="favHint">동작을 눌러 위쪽 ☆을 누르면 여기에 모아 볼 수 있어요. (최대 5개)</p>
       </div>
       <div class="recent-pr" id="recentPr" hidden>
         <h2 class="sec-title" style="font-size:19px">최근에 깬 PR 🎉</h2>
@@ -945,7 +945,7 @@ const FAV_MAX = 5;
 function favList(){ return (S.settings.favLifts || []).filter(id => getLift(id)).slice(0, FAV_MAX); }
 async function toggleFav(id){
   const cur = favList(), on = cur.includes(id);
-  if (!on && cur.length >= FAV_MAX){ toast(`즐겨찾기는 ${FAV_MAX}개까지예요. 다른 자세를 먼저 빼 주세요`); return; }
+  if (!on && cur.length >= FAV_MAX){ toast(`즐겨찾기는 ${FAV_MAX}개까지예요. 다른 동작을 먼저 빼 주세요`); return; }
   const next = on ? cur.filter(x => x !== id) : cur.concat(id);
   try { await backend.saveSettings({...S.settings, favLifts: next}); toast(on ? '즐겨찾기에서 뺐어요' : '즐겨찾기에 추가했어요 ⭐'); }
   catch(e){ toast('저장하지 못했어요. 다시 시도해 주세요'); }
