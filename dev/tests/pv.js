@@ -15,11 +15,9 @@ console.log('bars running:', await p.$eval('#bars', e=>e.innerText.split('\n').s
 // share card
 await p.click('#dayShare'); await p.waitForTimeout(1500);
 const grab = async name => { await p.waitForTimeout(700); const d = await p.$eval('#shCanvas', c=>c.toDataURL('image/jpeg',0.85)); fs.writeFileSync(OUT+'/cards/'+name+'.jpg', Buffer.from(d.split(',')[1],'base64')); };
-await grab('day-neon');
-await p.click('[data-tpl=sticker]'); await grab('day-sticker');
+await grab('day-sticker');
 await p.click('[data-tpl=minimal]'); await grab('day-minimal');
 await p.setInputFiles('#shFile', PHOTO); await p.waitForTimeout(800);
-await p.click('[data-tpl=neon]'); await grab('day-neon-photo');
 await p.click('[data-tpl=sticker]'); await grab('day-sticker-photo');
 await p.click('[data-tpl=minimal]'); await grab('day-minimal-photo');
 await p.screenshot({path:OUT+'/pv-sharedlg.png'});
@@ -29,8 +27,8 @@ await p.click('#shClose');
 await p.evaluate(()=>location.hash='#pr'); await p.waitForTimeout(300);
 await p.click('[data-lift=back-squat]'); await p.waitForTimeout(300);
 console.log('PR share btn:', await p.isVisible('#dlgShare'));
-await p.click('#dlgShare'); await p.click('[data-tpl=neon]'); await grab('pr-neon');
-await p.click('[data-tpl=sticker]'); await grab('pr-sticker');
+await p.click('#dlgShare'); await p.click('[data-tpl=sticker]'); await grab('pr-sticker');
+await p.click('[data-tpl=minimal]'); await grab('pr-minimal');
 console.log('keys:', await p.evaluate(()=>Object.keys(localStorage).join(',')));
 console.log('errors:', errs);
 await b.close();})();

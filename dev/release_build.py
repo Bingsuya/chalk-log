@@ -9,7 +9,6 @@ def cut(start, end):
 def rep(a,b=''):
     global s
     assert s.count(a)==1,(s.count(a),a[:70]); s=s.replace(a,b)
-rep('&family=Orbitron:wght@700;900','')
 cut('/* share card */', '/* weekly goal */')
 rep('<button type="button" class="btn sm" id="dayShare" hidden>📸 공유 카드 만들기</button>')
 rep('\n        <button type="button" class="btn sm" id="dlgShare" hidden style="margin-top:10px">📸 PR 공유</button>')

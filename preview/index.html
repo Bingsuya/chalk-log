@@ -15,7 +15,7 @@
 <title>Chalk Log 테스트</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700;800&family=Orbitron:wght@700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap">
 <style>
 /* Layout: calm travel-app feel — white canvas, generous whitespace, hairline borders, soft lifted shadows on interactive cards, one coral accent; the day form reads like a booking card, the calendar like a date picker. */
 :root{
@@ -695,8 +695,7 @@ html{-webkit-text-size-adjust:100%}
         <div class="field">
           <span class="lab" id="shTplLab">스타일</span>
           <div class="chips" id="shTpl" role="radiogroup" aria-labelledby="shTplLab">
-            <button type="button" class="chip" style="--c:var(--p-green)" data-tpl="neon" aria-pressed="true"><span class="em" aria-hidden="true">🟢</span>네온 기록판</button>
-            <button type="button" class="chip" style="--c:var(--accent)" data-tpl="sticker" aria-pressed="false"><span class="em" aria-hidden="true">🧸</span>스티커</button>
+            <button type="button" class="chip" style="--c:var(--accent)" data-tpl="sticker" aria-pressed="true"><span class="em" aria-hidden="true">🧸</span>스티커</button>
             <button type="button" class="chip" style="--c:var(--p-grey)" data-tpl="minimal" aria-pressed="false"><span class="em" aria-hidden="true">⬜</span>미니멀</button>
           </div>
         </div>
@@ -1752,9 +1751,9 @@ function streakAt(ds){ const d = parse(ds); let n = 0; while (S.workouts[ymd(d)]
 /* ---------- share card: a 1080×1920 (Instagram story) image, drawn on this device only ---------- */
 const CW = 1080, CH = 1920;
 const shDlg = $('#shDlg'), shCv = $('#shCanvas'), shCtx = shCv.getContext('2d');
-const SH = {card:null, tpl:(['neon','sticker','minimal'].includes(lsGet('chalklog-preview.shareTpl')) ? lsGet('chalklog-preview.shareTpl') : 'neon'), img:null, file:null, seq:0};
+const SH = {card:null, tpl:(['sticker','minimal'].includes(lsGet('chalklog-preview.shareTpl')) ? lsGet('chalklog-preview.shareTpl') : 'sticker'), img:null, file:null, seq:0};
 /* Korean web fonts arrive in pieces, so load the exact letters each card uses before drawing */
-const CARD_FONTS = ['900 100px Orbitron', '700 100px Orbitron', '800 100px "Noto Sans KR"', '700 100px "Noto Sans KR"', '500 100px "Noto Sans KR"', '400 100px Jua'];
+const CARD_FONTS = ['800 100px "Noto Sans KR"', '700 100px "Noto Sans KR"', '500 100px "Noto Sans KR"', '400 100px Jua'];
 function loadFonts(text){
   if (!document.fonts) return Promise.resolve();
   const t = (text || '') + ' 0123456789:+-.·\'" abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ /km 페이스 속도 연속 향상 이전 일 chalk log';
@@ -1799,32 +1798,7 @@ function mascot(c, cx, cy, size){
   c.fillStyle = 'rgba(255,194,207,.9)'; c.beginPath(); c.arc(16.6, 26.6, 1.6, 0, Math.PI * 2); c.arc(31.4, 26.6, 1.6, 0, Math.PI * 2); c.fill();
   c.restore();
 }
-/* style 1: neon scoreboard (race-result look) */
-function drawNeon(c, card){
-  const NEON = '#3BFF4A', R = CW - 72;
-  if (SH.img) cover(c, SH.img); else { bgFill(c, [[0, '#0F1724'], [1, '#05080D']]); c.strokeStyle = 'rgba(59,255,74,.06)'; c.lineWidth = 2; for (let x = 0; x < CW; x += 60){ c.beginPath(); c.moveTo(x, 0); c.lineTo(x, CH); c.stroke(); } }
-  shade(c, CH * 0.42, CH, 0, 0.82);
-  if (card.caption){ c.font = '800 64px "Noto Sans KR"'; const w = Math.min(c.measureText(card.caption).width, CW - 220); c.fillStyle = '#000'; rr(c, 72, 180, w + 72, 116, 18); c.fill(); c.fillStyle = '#fff'; c.textAlign = 'left'; c.textBaseline = 'middle'; fit(c, card.caption, s => `800 ${s}px "Noto Sans KR"`, 64, CW - 220, 36); c.fillText(card.caption, 108, 240); }
-  c.textBaseline = 'alphabetic'; c.textAlign = 'right';
-  c.font = '500 34px "Noto Sans KR"'; c.fillStyle = 'rgba(255,255,255,.85)'; c.fillText(`${card.date} · chalk log`, R, CH - 96);
-  let y = CH - 180;
-  [...card.rows].reverse().forEach(([en, , val, unit]) => {
-    c.textAlign = 'left'; c.font = '700 54px Orbitron, "Noto Sans KR"'; c.fillStyle = '#fff'; c.fillText(en, R - 660, y);
-    c.textAlign = 'right'; c.font = '700 60px Orbitron, "Noto Sans KR"'; c.fillStyle = NEON; c.fillText(val, R - 210, y);
-    c.font = '700 46px Orbitron, "Noto Sans KR"'; c.fillStyle = '#fff'; c.fillText(unit, R, y);
-    y -= 92;
-  });
-  y -= 18;
-  let uw = 0;
-  if (card.unit){ c.font = '700 72px Orbitron, "Noto Sans KR"'; uw = c.measureText(card.unit).width + 20; c.fillStyle = '#fff'; c.fillText(card.unit, R, y); }
-  const bs = fit(c, card.big, s => `900 ${s}px Orbitron, "Noto Sans KR"`, 250, CW - 144 - uw, 90);
-  c.save(); c.shadowColor = 'rgba(59,255,74,.75)'; c.shadowBlur = 36; c.fillStyle = NEON; c.fillText(card.big, R - uw, y); c.restore();
-  y -= bs * 0.95;
-  c.font = '700 64px Orbitron, "Noto Sans KR"'; c.fillStyle = NEON; c.fillText(card.kicker, R, y);
-  y -= 96;
-  c.fillStyle = '#fff'; fit(c, card.title, s => `800 ${s}px "Noto Sans KR"`, 66, CW - 144, 36); c.fillText(card.title, R, y);
-}
-/* style 2: cute sticker card */
+/* style 1: cute sticker card */
 function drawSticker(c, card){
   if (SH.img) cover(c, SH.img); else bgFill(c, [[0, '#FFE1EA'], [1, '#E6DEFF']]);
   c.textBaseline = 'middle'; c.textAlign = 'center';
@@ -1842,7 +1816,7 @@ function drawSticker(c, card){
   c.fillStyle = '#9A94AE'; c.font = '500 32px "Noto Sans KR"'; c.fillText(card.date, x + 60, y + h - 48);
   c.textAlign = 'right'; c.fillStyle = '#F0435E'; c.font = '400 42px Jua'; c.fillText('chalk log', x + w - 60, y + h - 46);
 }
-/* style 3: minimal */
+/* style 2: minimal */
 function drawMinimal(c, card){
   if (SH.img) cover(c, SH.img); else bgFill(c, [[0, '#F0435E'], [1, '#FF9A62']], true);
   shade(c, 0, 420, 0.35, 0); shade(c, CH * 0.5, CH, 0, 0.55);
@@ -1860,7 +1834,7 @@ function drawMinimal(c, card){
   fit(c, `${card.kicker}  ·  ${card.title}`, s => `700 ${s}px "Noto Sans KR"`, 50, CW - 160, 28); c.fillText(`${card.kicker}  ·  ${card.title}`, 80, y);
   c.textAlign = 'right'; c.font = '400 44px Jua'; c.fillText('chalk log', CW - 80, CH - 96);
 }
-const DRAW = {neon:drawNeon, sticker:drawSticker, minimal:drawMinimal};
+const DRAW = {sticker:drawSticker, minimal:drawMinimal};
 async function shRender(){
   const seq = ++SH.seq;
   SH.file = null;

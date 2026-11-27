@@ -33,7 +33,7 @@ GitHub Pages가 `main` 브랜치 루트를 그대로 배포해요.
    # sw.js의 VERSION 숫자를 하나 올리기 (예: chalklog-v8 → chalklog-v9)
    git add index.html sw.js && git commit -m "..." && git push origin main
    ```
-   - `release_build.py`는 공유 카드(버튼·화면·코드·Orbitron 글꼴)를 빼고 `index.html`을 만들어요.
+   - `release_build.py`는 공유 카드(버튼·화면·코드)를 빼고 `index.html`을 만들어요.
    - `sw.js`의 `VERSION`을 올려야 홈 화면 앱이 새 버전을 받아요.
 
 ## 데이터 구조
@@ -89,7 +89,7 @@ node dev/tests/admin_test.js /tmp/out <통계.json>  # 관리자 페이지 (통�
 
 ## 남아 있는 아이디어
 
-- 공유 카드 (인스타 스토리 9:16, 네온·스티커·미니멀) — `feature/share-run`에 완성돼 있고 실제 앱에서는 빠져 있음
+- 공유 카드 (인스타 스토리 9:16, 스티커·미니멀) — `feature/share-run`에 완성돼 있고 실제 앱에서는 빠져 있음
 - 1RM 추정 (예: "60kg × 5회" → 1RM 계산)
 - 카카오 로그인
 
