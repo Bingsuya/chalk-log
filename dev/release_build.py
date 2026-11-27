@@ -1,8 +1,13 @@
-"""Make the real app (index.html on main) from the working version, leaving out the share card."""
-import sys
-# usage: python3 dev/release_build.py <working-version index.html> <main checkout dir>
-src=open(sys.argv[1],encoding='utf8').read()
+"""Make the real app (index.html on main) from the working version.
+The share card is included; pass --no-share to leave it out (the old way)."""
+import sys, os
+# usage: python3 dev/release_build.py <working-version index.html> <main checkout dir> [--no-share]
+args=[a for a in sys.argv[1:] if not a.startswith('--')]
+src=open(args[0],encoding='utf8').read()
 s=src
+if '--no-share' not in sys.argv:
+    open(os.path.join(args[1],'index.html'),'w',encoding='utf8').write(s)
+    print('release index built (with share card)', len(s)); sys.exit(0)
 def cut(start, end):
     global s
     i=s.index(start); j=s.index(end, i); s=s[:i]+s[j:]
@@ -20,6 +25,5 @@ rep("  $('#dayShare').hidden = !w;\n")
 rep("\n  $('#dlgShare').hidden = !b;")
 for k in ['shDlg','shCanvas','openShare','dayShare','dlgShare','celShare','Orbitron','drawNeon','monthsHtml']:
     assert k not in s, k
-import os
-open(os.path.join(sys.argv[2],'index.html'),'w',encoding='utf8').write(s)
+open(os.path.join(args[1],'index.html'),'w',encoding='utf8').write(s)
 print('release index built', len(s))

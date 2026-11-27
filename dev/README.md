@@ -8,7 +8,7 @@
 |---|---|
 | 실제 앱 | `main` 브랜치 루트 → https://bingsuya.github.io/chalk-log/ |
 | 테스트 페이지 | `main` 브랜치 `preview/` → https://bingsuya.github.io/chalk-log/preview/ |
-| 작업 중 버전 (공유 카드 포함) | `feature/share-run` 브랜치의 `index.html` |
+| 작업 원본 | `feature/share-run` 브랜치의 `index.html` |
 | 데이터 (가입자·기록·의견) | Supabase 프로젝트 `cezzabgotzqymhjfzixc` |
 | 로그인 | Google OAuth (Supabase Auth의 Google provider) |
 | 관리자 페이지 | `main` 브랜치 `admin.html` → https://bingsuya.github.io/chalk-log/admin.html |
@@ -18,7 +18,7 @@ GitHub Pages가 `main` 브랜치 루트를 그대로 배포해요.
 
 ## 작업 흐름
 
-1. **작업은 `feature/share-run`의 `index.html`에서** 해요. (공유 카드 코드가 여기에만 있어요)
+1. **작업은 `feature/share-run`의 `index.html`에서** 해요. (작업 원본)
 2. **테스트 페이지에 올리기**
    ```bash
    # main 브랜치 체크아웃 폴더에서
@@ -33,7 +33,7 @@ GitHub Pages가 `main` 브랜치 루트를 그대로 배포해요.
    # sw.js의 VERSION 숫자를 하나 올리기 (예: chalklog-v8 → chalklog-v9)
    git add index.html sw.js && git commit -m "..." && git push origin main
    ```
-   - `release_build.py`는 공유 카드(버튼·화면·코드)를 빼고 `index.html`을 만들어요.
+   - `release_build.py`는 작업 원본을 그대로 실제 앱 `index.html`로 만들어요. (공유 카드 포함. 빼려면 `--no-share`)
    - `sw.js`의 `VERSION`을 올려야 홈 화면 앱이 새 버전을 받아요.
 
 ## 데이터 구조
@@ -89,7 +89,6 @@ node dev/tests/admin_test.js /tmp/out <통계.json>  # 관리자 페이지 (통�
 
 ## 남아 있는 아이디어
 
-- 공유 카드 (인스타 스토리 9:16, 스티커·미니멀) — `feature/share-run`에 완성돼 있고 실제 앱에서는 빠져 있음
 - 1RM 추정 (예: "60kg × 5회" → 1RM 계산)
 - 카카오 로그인
 
