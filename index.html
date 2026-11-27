@@ -355,7 +355,8 @@ input[type=date]::-webkit-calendar-picker-indicator{margin-left:auto;opacity:.6}
 .mrow{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;font-size:13px;font-weight:700;color:var(--ink);background:color-mix(in srgb,var(--p-yellow) 18%,var(--surface));border:1px solid color-mix(in srgb,var(--p-yellow) 40%,var(--surface))}
 .mrow .ic{font-size:16px}
 .mrow small{font-weight:500;color:var(--ink-2);margin-left:auto;white-space:nowrap}
-.mrow .btn{margin-left:4px;flex:none}
+.mrow .mini-btn{margin-left:4px;flex:none;appearance:none;border:1px solid color-mix(in srgb,var(--p-yellow) 45%,var(--surface));background:var(--surface);color:var(--ink);font:inherit;font-size:11.5px;font-weight:600;line-height:1;padding:5px 9px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.mrow .mini-btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 .wrow .wst{font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;background:color-mix(in srgb,var(--s) 16%,var(--surface));color:var(--ink)}
 .wrow.st-done,.wrow.st-recovered{--s:var(--p-green)}
 .wrow.st-recoverable{--s:var(--p-yellow)}
@@ -686,7 +687,7 @@ html{-webkit-text-size-adjust:100%}
     <div class="cel-big" id="celBig"></div>
     <h2 id="celTitle"></h2>
     <p class="sub" id="celSub" style="margin:0"></p>
-    <div class="btns" style="justify-content:center;margin-top:6px"><button type="button" class="btn sm" id="celShare">📸 자랑하기</button><button type="button" class="btn primary sm" id="celOk">좋아요!</button></div>
+    <div class="btns" style="justify-content:center;margin-top:6px"><button type="button" class="btn sm" id="celShare">📸 공유하기</button><button type="button" class="btn primary sm" id="celOk">좋아요!</button></div>
   </div>
 </div>
 
@@ -2030,7 +2031,7 @@ function renderGoal(){
     const key = monthKeyOfWeek(w.ws), nth = Math.round((parse(w.ws) - parse(monthStartWeek(key))) / 604800000) + 1;
     const range = w.cur ? '이번 주' : `${mdOf(w.ws)}~${mdOf(addDays(w.ws, 6))}`;
     return `<li class="wrow st-${w.status}${w.cur ? ' cur' : ''}" title="${esc(`${d.getMonth() + 1}/${d.getDate()} 주 · ${w.count}/${w.goal}회 · ${txt}`)}"><span class="ic" aria-hidden="true">${ic}</span><span class="wl"><b>${monthNum(key)}월 ${nth}주차</b><small>${range}</small></span><span class="wc">${w.count}/${w.goal}회</span><span class="wst">${txt}</span></li>`
-      + (doneMonths[w.ws] ? `<li class="mrow"><span class="ic" aria-hidden="true">🏆</span>${monthNum(key)}월 목표 완주!<small>${doneMonths[w.ws].weeks}주 모두 달성</small><button type="button" class="btn sm" data-month-share="${doneMonths[w.ws].key}">📸 자랑하기</button></li>` : '');
+      + (doneMonths[w.ws] ? `<li class="mrow"><span class="ic" aria-hidden="true">🏆</span>${monthNum(key)}월 목표 완주!<small>${doneMonths[w.ws].weeks}주 모두 달성</small><button type="button" class="mini-btn" data-month-share="${doneMonths[w.ws].key}">📸 공유하기</button></li>` : '');
   }).join('');
   el.innerHTML = `
     ${promptHtml()}
