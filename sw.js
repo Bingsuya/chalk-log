@@ -1,5 +1,5 @@
 // Offline support: keep the app shell cached; always try the network first for the page and its settings so updates arrive.
-const VERSION = 'chalklog-v17';
+const VERSION = 'chalklog-v18';
 const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest', './icons/icon-180.png', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', e => {
