@@ -1337,7 +1337,7 @@ function renderFormMeta(){
   $('#savedPill').hidden = !w;
   $('#dayDel').hidden = !w;
   $('#daySave').textContent = w ? '기록 수정' : '기록 저장';
-  $('#dayShare').hidden = !w;
+  $('#dayShare').hidden = !(SHARE_RECORDS && w);
   renderChips();
   toggleRunBox();
 }
@@ -1617,7 +1617,7 @@ function renderDlg(){
   $('#dlgBestMeta').textContent = b ? `${fmtDot(b.date)} 달성 · ` + (S.unit === 'kg' ? `${Math.round(b.kg * LB)} lb` : `${Math.round(b.kg*10)/10} kg`) : '';
   const b1 = bestOf(it.history.filter(e => !(e.reps > 1)));   // % table is based on the best single
   $('#pctWrap').hidden = !b1;
-  $('#dlgShare').hidden = !b;
+  $('#dlgShare').hidden = !(SHARE_RECORDS && b);
   if (b1){
     const ps = [50,55,60,65,70,75,80,85,90,95,100];
     $('#pct').innerHTML = ps.map(p => `<div class="${p >= 85 ? 'hi' : ''}"><span>${p}%</span><b>${fmtPlate(b1.kg * p / 100)}</b></div>`).join('');
@@ -1770,6 +1770,8 @@ function streakAt(ds){ const d = parse(ds); let n = 0; while (S.workouts[ymd(d)]
 /* ---------- share card: a 1080×1920 (Instagram story) image, drawn on this device only ---------- */
 const CW = 1080, CH = 1920;
 const shDlg = $('#shDlg'), shCv = $('#shCanvas'), shCtx = shCv.getContext('2d');
+/* only the finished-month calendar is shared for now; true brings back the day / PR / weekly-goal cards */
+const SHARE_RECORDS = false;
 const SH = {card:null, tpl:(['sticker','minimal'].includes(lsGet('chalklog-preview.shareTpl')) ? lsGet('chalklog-preview.shareTpl') : 'sticker'), img:null, file:null, seq:0};
 /* Korean web fonts arrive in pieces, so load the exact letters each card uses before drawing */
 const CARD_FONTS = ['800 100px "Pretendard Variable"', '700 100px "Pretendard Variable"', '500 100px "Pretendard Variable"', '800 100px "Pretendard Variable"'];
@@ -1909,6 +1911,7 @@ async function shRender(){
 function setTplButtons(){
   const cal = !!(SH.card && SH.card.cal);
   $('#shTpl [data-tpl="calendar"]').hidden = !cal;
+  $('#shTpl').closest('.field').hidden = cal && !SHARE_RECORDS;   // the calendar is the only style for a month card
   $('#shTpl').querySelectorAll('[data-tpl]').forEach(x => x.setAttribute('aria-pressed', x.dataset.tpl === SH.tpl));
 }
 function openShare(card){
@@ -2145,6 +2148,7 @@ goalDlg.addEventListener('click', e => { if (e.target === goalDlg) goalDlg.close
 /* celebration */
 function showCelebrate(o){
   $('#celArt').innerHTML = MASCOT;
+  $('#celShare').hidden = !(SHARE_RECORDS || (celWhat && celWhat.kind === 'month'));
   $('#celBig').textContent = o.big; $('#celTitle').textContent = o.title; $('#celSub').textContent = o.sub;
   $('#celebrate').hidden = false;
   confetti(); setTimeout(confetti, 380);
