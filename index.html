@@ -437,6 +437,14 @@ dialog{border-radius:24px}
 .toast{border-radius:999px}
 .mascot-empty{display:flex;align-items:center;gap:10px}
 .mascot-empty svg{width:34px;height:34px;flex:none}
+
+/* feel like an app on the mobile web: no zoom when a field is focused (iOS zooms inputs under 16px),
+   no double-tap zoom, no rubber-band bounce or pull-to-refresh, no sideways drift */
+html{touch-action:manipulation;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+body{overscroll-behavior:none;overflow-x:clip}
+input,select,textarea{font-size:16px !important}
+/* narrow phones: the run distance and time (h : m : s) don't fit side by side, so stack them */
+@media (max-width:400px){#runBox .row{grid-template-columns:minmax(0,1fr)} #runBox .row .cell-f+.cell-f{border-left:0;border-top:1px solid var(--line)}}
 </style>
 <style>
 /* base reset that the artifact host used to provide */
