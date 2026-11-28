@@ -1286,7 +1286,18 @@ function renderStats(){
 }
 
 /* ---------- log: form ---------- */
+/* a CrossFit class is about an hour: fill 60 minutes when it's picked and the time is empty,
+   and take it back out if CrossFit is unpicked before the person touched the time */
+const DEFAULT_MIN = {crossfit: 60};
+let minAuto = false;
+function defaultMinutes(id){
+  const el = $('#dayMin');
+  if (!(id in DEFAULT_MIN)) return;
+  if (S.formTypes.has(id)){ if (el.value === ''){ el.value = DEFAULT_MIN[id]; minAuto = true; } }
+  else if (minAuto && el.value === String(DEFAULT_MIN[id]) && ![...S.formTypes].some(t => t in DEFAULT_MIN)){ el.value = ''; minAuto = false; }
+}
 function loadForm(){
+  minAuto = false;
   const w = S.workouts[S.sel];
   S.formTypes = new Set((w && w.types) || []);
   $('#dayDate').value = S.sel;
@@ -1323,6 +1334,7 @@ $('#typeChips').addEventListener('click', e => {
   const id = b.dataset.type;
   if (S.formTypes.has(id)) S.formTypes.delete(id); else S.formTypes.add(id);
   S.formDirty = true; $('#dayErr').textContent = '';
+  defaultMinutes(id);
   b.setAttribute('aria-pressed', S.formTypes.has(id));
   toggleRunBox();
 });
@@ -1342,6 +1354,7 @@ async function addType(){
 $('#newTypeAdd').addEventListener('click', addType);
 $('#newType').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); addType(); } if (e.key === 'Escape'){ $('#newTypeRow').hidden = true; } });
 ['#dayMin','#dayFeel','#dayNote'].forEach(s => $(s).addEventListener('input', () => S.formDirty = true));
+$('#dayMin').addEventListener('input', () => { minAuto = false; });
 ['#runKm','#runH','#runM','#runS'].forEach(s => $(s).addEventListener('input', () => { S.formDirty = true; $('#dayErr').textContent = ''; updatePace(); }));
 $('#dayDate').addEventListener('change', e => { if (e.target.value) select(e.target.value, false); });
 
