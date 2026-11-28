@@ -1,6 +1,6 @@
 // 관리자 페이지(admin.html) 확인: 로그인 화면 · 관리자 아님 · 대시보드(휴대폰/데스크톱 다크)
 // 사용법: node dev/tests/admin_test.js <스크린샷 폴더> <통계 JSON 파일>
-//   통계 JSON 모양: {"stats": admin_stats() 결과, "fb": admin_feedback() 결과 배열}
+//   통계 JSON 모양: {"stats": admin_stats() 결과, "fb": admin_feedback() 결과 배열, "users": admin_users() 결과 배열(없으면 예전 SQL처럼 동작)}
 const {chromium, devices} = require('playwright');
 const fs = require('fs');
 const OUT = process.argv[2], DATA = fs.readFileSync(process.argv[3], 'utf8');
@@ -23,6 +23,7 @@ const mock = (DATA) => {
         if (!admin) return {data:null, error:{code:'42501', message:'관리자만 볼 수 있어요.'}};
         if (fn === 'admin_stats') return {data:D.stats, error:null};
         if (fn === 'admin_feedback') return {data:D.fb, error:null};
+        if (fn === 'admin_users') return D.users ? {data:D.users, error:null} : {data:null, error:{code:'PGRST202', message:'Could not find the function public.admin_users'}};
       },
     };
   }};
@@ -60,6 +61,11 @@ const mock = (DATA) => {
   await bars[25].dispatchEvent('pointerdown'); await r.p.waitForTimeout(100);
   console.log('tip:', await r.p.textContent('#chDaily .tip'));
   await r.p.locator('#chDaily').screenshot({path:OUT + '/a_tip.png'});
+  console.log('members:', await r.p.textContent('#uCount'), '| first:', (await r.p.textContent('#uList li')).replace(/\s+/g, ' ').slice(0, 70));
+  await r.p.fill('#uSearch', '김'); console.log('search 김:', await r.p.$$eval('#uList li .u-who b', l => l.map(e => e.textContent)));
+  await r.p.fill('#uSearch', ''); await r.p.click('[data-sort=days]');
+  console.log('most workouts first:', await r.p.$$eval('#uList li .u-num b', l => l.slice(0, 3).map(e => e.textContent)));
+  await r.p.locator('#uList').screenshot({path:OUT + '/a_users.png'});
   await r.p.click('[data-cat=bug]');
   console.log('bug feedback rows:', await r.p.$$eval('#fbList li', l => l.length));
   await r.p.click('#logoutBtn'); await r.p.waitForTimeout(200);

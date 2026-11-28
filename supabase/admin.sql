@@ -154,14 +154,48 @@ begin
 end;
 $$;
 
+-- 5) 가입자 목록 (관리자만, 최근 가입한 순서)
+--    이름·이메일·가입일·마지막 로그인과, 기록 개수만 돌려줘요. (기록 내용은 돌려주지 않아요)
+create or replace function public.admin_users(p_limit integer default 500)
+returns table (id uuid, email text, name text, joined_at timestamptz, last_sign_in_at timestamptz,
+               workout_days bigint, last_workout text, lift_records bigint, has_goal boolean)
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+begin
+  if not public.is_admin() then
+    raise exception '관리자만 볼 수 있어요.' using errcode = '42501';
+  end if;
+  return query
+    select u.id,
+           u.email::text,
+           coalesce(u.raw_user_meta_data->>'full_name', u.raw_user_meta_data->>'name'),
+           u.created_at,
+           u.last_sign_in_at,
+           (select count(*) from public.entries e where e.user_id = u.id and e.kind = 'workout'),
+           (select max(e.key) from public.entries e where e.user_id = u.id and e.kind = 'workout' and e.key ~ '^\d{4}-\d{2}-\d{2}$'),
+           (select coalesce(sum(case when jsonb_typeof(e.data->'history') = 'array' then jsonb_array_length(e.data->'history') else 0 end), 0)::bigint
+              from public.entries e where e.user_id = u.id and e.kind = 'lift'),
+           exists (select 1 from public.entries e, jsonb_array_elements(case when jsonb_typeof(e.data->'goals') = 'array' then e.data->'goals' else '[]'::jsonb end) g
+                   where e.user_id = u.id and e.kind = 'settings' and coalesce((g->>'perWeek')::numeric, 0) > 0)
+    from auth.users u
+    order by u.created_at desc
+    limit least(greatest(coalesce(p_limit, 500), 1), 2000);
+end;
+$$;
+
 -- 함수는 로그인한 사람만 부를 수 있고, 안에서 다시 관리자인지 확인해요.
 revoke all on function public.is_admin()            from public, anon;
 revoke all on function public.admin_stats()         from public, anon;
 revoke all on function public.admin_feedback(integer) from public, anon;
+revoke all on function public.admin_users(integer)    from public, anon;
 grant execute on function public.is_admin()            to authenticated;
 grant execute on function public.admin_stats()         to authenticated;
 grant execute on function public.admin_feedback(integer) to authenticated;
+grant execute on function public.admin_users(integer)    to authenticated;
 
--- 5) 나를 관리자로 등록하기 (한 번만)
+-- 6) 나를 관리자로 등록하기 (한 번만)
 --    아래 줄의 이메일을 앱에 구글로 로그인한 내 이메일로 바꾸고, 맨 앞의 "--" 두 글자를 지운 뒤 Run 하세요.
 -- insert into public.admins (user_id) select id from auth.users where email = '내-구글-이메일@gmail.com' on conflict do nothing;

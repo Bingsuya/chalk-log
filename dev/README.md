@@ -47,6 +47,7 @@ GitHub Pages가 `main` 브랜치 루트를 그대로 배포해요.
 - **관리자** (`supabase/admin.sql`): 표 `admins`(관리자 명단)와 함수 `is_admin()`, `admin_stats()`, `admin_feedback(p_limit)`.
   - 함수는 `security definer`라 표를 직접 열지 않고, 안에서 `admins`에 있는 사람인지 먼저 확인해요. 아니면 `42501` 오류.
   - 관리자도 다른 사람 기록을 한 줄씩 보지 않고, 숫자로 묶은 통계와 받은 의견만 봐요.
+  - `admin_users(p_limit)`는 가입자 목록(이름·이메일·가입일·마지막 로그인·운동한 날 수·마지막 운동일·PR 기록 수)을 돌려줘요. 기록 내용은 돌려주지 않아요.
   - `admin_stats()`는 `{totals, daily(30일), weekly(12주), types, depth}`를 돌려줘요. 날짜는 한국 시간, '운동한 날'은 기록의 날짜(`key`) 기준이에요.
 - **로그인 없이 쓰면** 브라우저 `localStorage`의 `chalklog.data.v1`에 같은 모양으로 저장돼요. 로그인하면 계정으로 자동 이동해요.
 - 로그인 상태에서는 기기에 사본(`chalklog.cloud.<id>`)과 보내지 못한 변경 목록(`chalklog.queue.<id>`)을 두고, 연결되면 보내요.

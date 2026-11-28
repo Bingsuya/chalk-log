@@ -118,6 +118,19 @@ th{color:var(--muted); font-weight:500}
 .fb-msg{white-space:pre-wrap; word-break:break-word; font-size:14.5px}
 .fb-extra{color:var(--muted); font-size:12.5px; margin-top:4px; word-break:break-all}
 .more{display:block; margin:10px auto 0}
+.u-tools{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:6px}
+.u-tools input{flex:1 1 180px; min-width:0; font:inherit; font-size:16px; padding:8px 12px; border:1px solid var(--line); border-radius:999px; background:var(--surface); color:var(--ink)}
+.u-list{list-style:none; margin:0; padding:0}
+.u-list li{display:grid; grid-template-columns:36px minmax(0,1fr) auto; gap:10px; align-items:center; padding:10px 0; border-bottom:1px solid var(--hair)}
+.u-list li:last-child{border-bottom:0}
+.u-list li.empty{display:block; text-align:center}
+.u-av{width:36px; height:36px; border-radius:50%; background:var(--accent-soft); color:var(--accent-2); display:grid; place-items:center; font-weight:700; font-size:15px}
+.u-who{min-width:0}
+.u-who b{display:block; font-size:14.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.u-who span{display:block; font-size:12.5px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.u-num{text-align:right; font-size:12.5px; color:var(--muted); white-space:nowrap}
+.u-num b{color:var(--ink); font-size:14px; font-variant-numeric:tabular-nums}
+.u-new{display:inline-block; font-size:11px; font-weight:700; color:var(--accent-2); background:var(--accent-soft); border-radius:999px; padding:0 6px; margin-left:6px; vertical-align:1px}
 
 .note{color:var(--muted); font-size:12.5px; margin:16px 2px 0}
 .err{color:var(--danger)}
@@ -213,6 +226,20 @@ th{color:var(--muted); font-weight:500}
 
       <section class="card span2">
         <div class="fb-head">
+          <h3>가입자 <small class="meta" id="uCount"></small></h3>
+          <div class="chips" id="uSort">
+            <button class="chip" type="button" data-sort="joined" aria-pressed="true">최근 가입</button>
+            <button class="chip" type="button" data-sort="seen" aria-pressed="false">최근 로그인</button>
+            <button class="chip" type="button" data-sort="days" aria-pressed="false">운동 많이</button>
+          </div>
+        </div>
+        <div class="u-tools"><input type="search" id="uSearch" placeholder="이름이나 이메일로 찾기" aria-label="가입자 찾기"></div>
+        <ul class="u-list" id="uList"></ul>
+        <button class="btn more" id="uMore" type="button" hidden>더 보기</button>
+      </section>
+
+      <section class="card span2">
+        <div class="fb-head">
           <h3>받은 의견</h3>
           <div class="chips" id="fbChips">
             <button class="chip" type="button" data-cat="all" aria-pressed="true">전체</button>
@@ -252,6 +279,7 @@ const TYPES = {
 const CATS = {idea:'💡 아이디어', bug:'🐞 오류', etc:'💬 기타'};
 
 let sb = null, session = null, stats = null, feedback = [], fbCat = 'all', fbShown = 20;
+let users = null, usersErr = '', uSort = 'joined', uShown = 20;
 
 function loadSupabase(){
   if (window.supabase && window.supabase.createClient) return Promise.resolve(true);
@@ -315,10 +343,13 @@ async function load(){
   const btn = $('#refreshBtn');
   btn.hidden = false; btn.disabled = true; btn.textContent = '불러오는 중…';
   try {
-    const [st, fb] = await Promise.all([sb.rpc('admin_stats'), sb.rpc('admin_feedback', {p_limit:200})]);
+    const [st, fb, us] = await Promise.all([sb.rpc('admin_stats'), sb.rpc('admin_feedback', {p_limit:200}), sb.rpc('admin_users', {p_limit:2000})]);
     if (st.error) throw st.error;
     if (fb.error) throw fb.error;
-    stats = st.data; feedback = fb.data || []; fbShown = 20;
+    stats = st.data; feedback = fb.data || []; fbShown = 20; uShown = 20;
+    // the member list needs the newer admin.sql; without it the rest of the page still works
+    users = us.error ? null : (us.data || []);
+    usersErr = us.error ? (us.error.code === 'PGRST202' || /admin_users/.test(us.error.message || '') ? 'old' : (us.error.message || us.error.code || '')) : '';
     show('vDash');
     render();
   } catch(e){
@@ -350,7 +381,7 @@ function render(){
     ['운동 기록을 남긴 사람', fmt(t.recorders) + '명', `가입자의 ${pct(t.recorders, t.users)}%`],
     ['전체 운동 기록', fmt(t.workouts) + '일', ''],
     ['러닝 기록 (거리·시간)', fmt(t.runs) + '번', ''],
-    ['1RM 기록한 사람', fmt(t.lifters) + '명', `기록 ${fmt(t.liftRecords)}개`],
+    ['PR 보드에 기록한 사람', fmt(t.lifters) + '명', `기록 ${fmt(t.liftRecords)}개`],
     ['주간 목표 정한 사람', fmt(t.goalSetters) + '명', `가입자의 ${pct(t.goalSetters, t.users)}%`],
   ];
   const ul = $('#facts'); ul.innerHTML = '';
@@ -389,6 +420,7 @@ function render(){
   ], '아직 가입자가 없어요.', true);
 
   renderFeedback();
+  renderUsers();
 
   const at = new Date(stats.generatedAt || Date.now());
   $('#updated').textContent = `마지막 업데이트 ${at.toLocaleString('ko-KR', {month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit'})} · 날짜는 한국 시간 기준이에요.`;
@@ -486,6 +518,47 @@ function hbars(ul, rows, emptyMsg, keepZero){
   });
 }
 
+const ago = iso => {
+  if (!iso) return '-';
+  const d = new Date(iso), days = Math.floor((Date.now() - d) / 86400000);
+  return days <= 0 ? '오늘' : days === 1 ? '어제' : days < 30 ? `${days}일 전` : d.toLocaleDateString('ko-KR', {year:'2-digit', month:'numeric', day:'numeric'});
+};
+function renderUsers(){
+  const ul = $('#uList'); ul.innerHTML = '';
+  if (!users){
+    $('#uCount').textContent = ''; $('#uMore').hidden = true;
+    ul.append(el('li', 'empty', usersErr === 'old' ? 'Supabase SQL Editor에서 supabase/admin.sql을 다시 실행하면 가입자 목록이 보여요.' : '가입자 목록을 불러오지 못했어요. (' + usersErr + ')'));
+    return;
+  }
+  const q = $('#uSearch').value.trim().toLowerCase();
+  const key = {joined: u => u.joined_at || '', seen: u => u.last_sign_in_at || '', days: u => String(u.workout_days).padStart(8, '0') + (u.last_workout || '')}[uSort];
+  const list = users.filter(u => !q || (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q))
+    .sort((a, b) => key(a) < key(b) ? 1 : key(a) > key(b) ? -1 : 0);
+  $('#uCount').textContent = q ? `${fmt(list.length)} / ${fmt(users.length)}명` : `${fmt(users.length)}명`;
+  if (!list.length){ ul.append(el('li', 'empty', q ? '찾는 가입자가 없어요.' : '아직 가입자가 없어요.')); $('#uMore').hidden = true; return; }
+  const weekAgo = Date.now() - 7 * 86400000;
+  list.slice(0, uShown).forEach(u => {
+    const li = el('li'), name = u.name || (u.email || '').split('@')[0] || '이름 없음';
+    li.append(el('div', 'u-av', name.slice(0, 1).toUpperCase()));
+    const who = el('div', 'u-who'), nm = el('b', null, u.name || '이름 없음');
+    if (u.joined_at && new Date(u.joined_at) > weekAgo) nm.append(el('span', 'u-new', 'NEW'));
+    who.append(nm, el('span', null, u.email || '(이메일 없음)'), el('span', null, `가입 ${ago(u.joined_at)} · 로그인 ${ago(u.last_sign_in_at)}`));
+    const num = el('div', 'u-num'), top = el('div');
+    top.append(el('b', null, fmt(u.workout_days)), document.createTextNode('일 운동'));
+    num.append(top, el('div', null, u.last_workout ? `마지막 ${md(u.last_workout)}` : '기록 없음'));
+    if (u.lift_records) num.append(el('div', null, `PR 기록 ${fmt(u.lift_records)}개`));
+    li.append(who, num); ul.append(li);
+  });
+  $('#uMore').hidden = list.length <= uShown;
+}
+$('#uSort').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  uSort = b.dataset.sort; uShown = 20;
+  document.querySelectorAll('#uSort .chip').forEach(c => c.setAttribute('aria-pressed', String(c === b)));
+  renderUsers();
+});
+$('#uSearch').addEventListener('input', () => { uShown = 20; renderUsers(); });
+$('#uMore').addEventListener('click', () => { uShown += 20; renderUsers(); });
 function renderFeedback(){
   const ul = $('#fbList'); ul.innerHTML = '';
   const list = feedback.filter(f => fbCat === 'all' || f.category === fbCat);
